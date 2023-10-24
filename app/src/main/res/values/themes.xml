@@ -3,6 +3,8 @@
     <style name="Base.Theme.MinnanoTanjyoubi" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="android:windowSplashScreenBackground" tools:targetApi="S">@color/thema_gray</item>
+
     </style>
 
     <style name="Theme.MinnanoTanjyoubi" parent="Base.Theme.MinnanoTanjyoubi" />
