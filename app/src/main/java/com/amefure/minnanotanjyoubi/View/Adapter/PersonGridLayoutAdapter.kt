@@ -1,4 +1,4 @@
-package com.amefure.minnanotanjyoubi.View
+package com.amefure.minnanotanjyoubi.View.Adapter
 
 import android.view.LayoutInflater
 import android.view.View

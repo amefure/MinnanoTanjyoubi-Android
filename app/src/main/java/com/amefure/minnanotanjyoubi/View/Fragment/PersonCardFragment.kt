@@ -1,4 +1,4 @@
-package com.amefure.minnanotanjyoubi.View
+package com.amefure.minnanotanjyoubi.View.Fragment
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

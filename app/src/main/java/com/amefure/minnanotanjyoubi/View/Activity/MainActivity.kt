@@ -1,4 +1,4 @@
-package com.amefure.minnanotanjyoubi.View
+package com.amefure.minnanotanjyoubi.View.Activity
 
 import android.os.Bundle
 import android.widget.Button
@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.amefure.minnanotanjyoubi.Domain.NotificationRequestManager
 import com.amefure.minnanotanjyoubi.Model.Database.Person
 import com.amefure.minnanotanjyoubi.R
+import com.amefure.minnanotanjyoubi.View.Adapter.PersonGridLayoutAdapter
+import com.amefure.minnanotanjyoubi.View.Fragment.InputPersonFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -24,6 +26,7 @@ class MainActivity : AppCompatActivity() {
         launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
 
 
+        // グリッドレイアウトの実装
         val recyclerView: RecyclerView = findViewById(R.id.main_list)
         recyclerView.layoutManager = GridLayoutManager(this, 3, RecyclerView.VERTICAL, false)
         recyclerView.addItemDecoration(
@@ -31,12 +34,22 @@ class MainActivity : AppCompatActivity() {
         )
         recyclerView.adapter = PersonGridLayoutAdapter(Person.getDemoData())
 
+        val registerButton: Button = findViewById(R.id.register_button)
+        registerButton.setOnClickListener {
+            supportFragmentManager.beginTransaction().apply {
+                add(R.id.main_frame, InputPersonFragment())
+                addToBackStack(null)
+                commit()
+            }
+        }
+
+
         val notificationRequestManager = NotificationRequestManager(this)
 
         // チャンネルの生成
         notificationRequestManager.createNotificationChannel()
 
-        val buttonNotification: Button = findViewById(R.id.button)
+        val buttonNotification: Button = findViewById(R.id.delete_button)
         buttonNotification.setOnClickListener {
             //  通知発行用のブロードキャストをセット
             notificationRequestManager.setBroadcast()
