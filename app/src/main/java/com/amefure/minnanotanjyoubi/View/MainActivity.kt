@@ -6,7 +6,11 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import android.Manifest
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.amefure.minnanotanjyoubi.Domain.NotificationRequestManager
+import com.amefure.minnanotanjyoubi.Model.Database.Person
 import com.amefure.minnanotanjyoubi.R
 
 class MainActivity : AppCompatActivity() {
@@ -19,6 +23,13 @@ class MainActivity : AppCompatActivity() {
         // 許可ダイアログを表示
         launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
 
+
+        val recyclerView: RecyclerView = findViewById(R.id.main_list)
+        recyclerView.layoutManager = GridLayoutManager(this, 3, RecyclerView.VERTICAL, false)
+        recyclerView.addItemDecoration(
+            DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
+        )
+        recyclerView.adapter = PersonGridLayoutAdapter(Person.getDemoData())
 
         val notificationRequestManager = NotificationRequestManager(this)
 
