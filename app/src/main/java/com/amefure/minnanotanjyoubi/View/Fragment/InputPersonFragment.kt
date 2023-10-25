@@ -37,11 +37,23 @@ class InputPersonFragment : Fragment() {
 
         dateEditButton.setOnClickListener {
 
-            // 現在の日付情報を取得
-            val c = Calendar.getInstance()
-            val year = c.get(Calendar.YEAR)
-            val month = c.get(Calendar.MONTH)
-            val day = c.get(Calendar.DAY_OF_MONTH)
+            var year = 0
+            var month = 0
+            var day = 0
+            if (viewModel.selectDate.value != null) {
+                // 日付を選択済みの場合は初期値を変更
+                val dateStr = viewModel.selectDate.value!!
+                val parts = dateStr.split("[年月日]".toRegex())
+                year = parts[0].toInt()
+                month = parts[1].toInt() - 1
+                day = parts[2].toInt()
+            } else {
+                // 現在の日付情報を取得
+                val c = Calendar.getInstance()
+                year = c.get(Calendar.YEAR)
+                month = c.get(Calendar.MONTH)
+                day = c.get(Calendar.DAY_OF_MONTH)
+            }
 
             val dialog = DatePickerDialog(requireContext(), android.R.style.Theme_Holo_Dialog,dateListener, year, month, day)
 
