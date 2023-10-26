@@ -4,7 +4,7 @@
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
         <item name="android:windowSplashScreenBackground" tools:targetApi="S">@color/thema_gray_dark</item>
-
+        <item name="android:statusBarColor">@color/thema_gray_dark</item>
     </style>
 
     <style name="Theme.MinnanoTanjyoubi" parent="Base.Theme.MinnanoTanjyoubi" />
