@@ -6,6 +6,8 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import android.Manifest
+import android.util.Log
+import androidx.activity.viewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -14,25 +16,26 @@ import com.amefure.minnanotanjyoubi.Model.Database.Person
 import com.amefure.minnanotanjyoubi.R
 import com.amefure.minnanotanjyoubi.View.Adapter.PersonGridLayoutAdapter
 import com.amefure.minnanotanjyoubi.View.Fragment.InputPersonFragment
+import com.amefure.minnanotanjyoubi.ViewModel.MainViewModel
 
 class MainActivity : AppCompatActivity() {
+
+    private val viewModel: MainViewModel by viewModels()
+
+    private lateinit var adapter: PersonGridLayoutAdapter
+    private lateinit var recyclerView: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        viewModel.fetchAllPerson()
 
         // 許可ダイアログを表示
         launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
 
-
-        // グリッドレイアウトの実装
-        val recyclerView: RecyclerView = findViewById(R.id.main_list)
-        recyclerView.layoutManager = GridLayoutManager(this, 3, RecyclerView.VERTICAL, false)
-        recyclerView.addItemDecoration(
-            DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
-        )
-        recyclerView.adapter = PersonGridLayoutAdapter(Person.getDemoData())
+        recyclerView = findViewById(R.id.main_list)
+        observedPersonData()
 
         val registerButton: Button = findViewById(R.id.register_button)
         registerButton.setOnClickListener {
@@ -53,6 +56,19 @@ class MainActivity : AppCompatActivity() {
         buttonNotification.setOnClickListener {
             //  通知発行用のブロードキャストをセット
             notificationRequestManager.setBroadcast()
+        }
+    }
+
+    // DBの観測とリサイクルビューへの紐付け
+    private fun observedPersonData() {
+        recyclerView.layoutManager = GridLayoutManager(this, 3, RecyclerView.VERTICAL, false)
+        recyclerView.addItemDecoration(
+            DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
+        )
+        viewModel.personList.observe(this) {
+            adapter = PersonGridLayoutAdapter(it)
+//            adapter = PersonGridLayoutAdapter(Person.getDemoData())
+            recyclerView.adapter = adapter
         }
     }
 

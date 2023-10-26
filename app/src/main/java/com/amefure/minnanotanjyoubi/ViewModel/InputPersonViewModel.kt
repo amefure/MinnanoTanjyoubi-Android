@@ -4,11 +4,16 @@ import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
-class InputPersonViewModel(app: Application):RootViewModel(app) {
+class InputPersonViewModel(app: Application): RootViewModel(app) {
+
+    // 日付ピッカーで選択された日付が格納される
     private val _selectDate: MutableLiveData<String> = MutableLiveData<String>(getTodayString())
     val selectDate: LiveData<String> = _selectDate
 
@@ -25,6 +30,8 @@ class InputPersonViewModel(app: Application):RootViewModel(app) {
     }
 
     public fun insertPerson(name: String, ruby: String, date: String, relation: String, memo: String, alert:Boolean) {
-        rootRepository.insertPerson(name, ruby, date, relation, memo ,alert)
+        viewModelScope.launch(Dispatchers.IO) {
+            rootRepository.insertPerson(name, ruby, date, relation, memo ,alert)
+        }
     }
 }

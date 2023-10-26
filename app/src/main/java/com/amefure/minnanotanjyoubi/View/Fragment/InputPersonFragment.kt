@@ -12,11 +12,13 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Spinner
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.amefure.minnanotanjyoubi.Model.Relation
 import com.amefure.minnanotanjyoubi.R
 import com.amefure.minnanotanjyoubi.ViewModel.InputPersonViewModel
+import com.google.android.material.snackbar.Snackbar
 import java.util.Calendar
 
 class InputPersonFragment : Fragment() {
@@ -63,8 +65,14 @@ class InputPersonFragment : Fragment() {
              val relation = selectRelation
              val memo = memoEdit.text.toString()
              viewModel.insertPerson(name,ruby,date,relation,memo,false)
+             Snackbar.make(view,"追加しました。", Snackbar.LENGTH_SHORT)
+                 .setBackgroundTint(ContextCompat.getColor(view.context,R.color.positive_color))
+                 .show()
+             parentFragmentManager.apply {
+                 popBackStack()
+             }
         }
-        
+
         viewModel.selectDate.observe(this.requireActivity(), Observer {
             dateEditButton.text = it
         })
