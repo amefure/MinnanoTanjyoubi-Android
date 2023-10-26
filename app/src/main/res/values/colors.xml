@@ -2,5 +2,13 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="thema_gray">#545454</color>
+    <color name="thema_gray_dark">#545454</color>
+    <color name="thema_gray_light">#ACACAC</color>
+    <color name="thema_orange">#FF9500</color>
+    <color name="thema_red">#C84311</color>
+    <color name="thema_blue">#0BA5A4</color>
+    <color name="thema_yelow">#E8AC14</color>
+    <color name="text_color">#555555</color>
+    <color name="positive_color">#30bd4e</color>
+    <color name="negative_color">#B00020</color>
 </resources>
