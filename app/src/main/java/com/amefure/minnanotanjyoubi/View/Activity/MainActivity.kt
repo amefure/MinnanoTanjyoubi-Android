@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.Manifest
 import android.graphics.Color
 import android.util.Log
+import android.widget.ImageButton
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -39,7 +40,7 @@ class MainActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.main_list)
         observedPersonData()
 
-        val registerButton: Button = findViewById(R.id.register_button)
+        val registerButton: ImageButton = findViewById(R.id.register_button)
         registerButton.setOnClickListener {
             supportFragmentManager.beginTransaction().apply {
                 add(R.id.main_frame, InputPersonFragment())
@@ -54,7 +55,7 @@ class MainActivity : AppCompatActivity() {
         // チャンネルの生成
         notificationRequestManager.createNotificationChannel()
 
-        val buttonNotification: Button = findViewById(R.id.delete_button)
+        val buttonNotification: ImageButton = findViewById(R.id.delete_button)
         buttonNotification.setOnClickListener {
             //  通知発行用のブロードキャストをセット
             notificationRequestManager.setBroadcast()
