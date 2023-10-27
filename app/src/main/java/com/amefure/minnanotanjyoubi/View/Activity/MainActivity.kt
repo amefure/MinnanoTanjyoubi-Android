@@ -14,6 +14,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.amefure.minnanotanjyoubi.Domain.CalcPersonInfoManager
 import com.amefure.minnanotanjyoubi.Domain.NotificationRequestManager
 import com.amefure.minnanotanjyoubi.Model.Database.Person
 import com.amefure.minnanotanjyoubi.R
@@ -28,6 +29,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var adapter: PersonGridLayoutAdapter
     private lateinit var recyclerView: RecyclerView
 
+    private val calcPersonInfoManager = CalcPersonInfoManager()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -69,7 +71,7 @@ class MainActivity : AppCompatActivity() {
             DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
         )
         viewModel.personList.observe(this) {
-            adapter = PersonGridLayoutAdapter(it)
+            adapter = PersonGridLayoutAdapter(it.sortedBy { calcPersonInfoManager.daysLater(it.date) })
 //            adapter = PersonGridLayoutAdapter(Person.getDemoData())
             recyclerView.adapter = adapter
         }

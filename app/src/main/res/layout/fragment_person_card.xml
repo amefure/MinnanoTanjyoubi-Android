@@ -93,9 +93,10 @@
                 android:textSize="12sp" />
 
             <TextView
-                android:id="@+id/person_limit_day"
+                android:id="@+id/person_days_later"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:text="50"
                 android:textAlignment="center"

@@ -109,7 +109,7 @@ class InputPersonFragment : Fragment() {
         val spinnerAdapter = ArrayAdapter<String>(this.requireContext(), android.R.layout.simple_spinner_item)
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         Relation.values().forEach {
-            spinnerAdapter.add(it.name)
+            spinnerAdapter.add(it.value())
         }
         relationSpinner.adapter = spinnerAdapter
         relationSpinner.onItemSelectedListener = spinnerAdapterListener
