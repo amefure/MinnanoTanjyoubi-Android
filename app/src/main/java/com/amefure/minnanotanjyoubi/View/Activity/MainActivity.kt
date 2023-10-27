@@ -1,22 +1,17 @@
 package com.amefure.minnanotanjyoubi.View.Activity
 
 import android.os.Bundle
-import android.widget.Button
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import android.Manifest
-import android.graphics.Color
-import android.util.Log
 import android.widget.ImageButton
 import androidx.activity.viewModels
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.amefure.minnanotanjyoubi.Domain.CalcPersonInfoManager
 import com.amefure.minnanotanjyoubi.Domain.NotificationRequestManager
-import com.amefure.minnanotanjyoubi.Model.Database.Person
 import com.amefure.minnanotanjyoubi.R
 import com.amefure.minnanotanjyoubi.View.Adapter.PersonGridLayoutAdapter
 import com.amefure.minnanotanjyoubi.View.Fragment.InputPersonFragment
@@ -57,7 +52,7 @@ class MainActivity : AppCompatActivity() {
         // チャンネルの生成
         notificationRequestManager.createNotificationChannel()
 
-        val buttonNotification: ImageButton = findViewById(R.id.delete_button)
+        val buttonNotification: ImageButton = findViewById(R.id.age_text)
         buttonNotification.setOnClickListener {
             //  通知発行用のブロードキャストをセット
             notificationRequestManager.setBroadcast()

@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/frameLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/thema_gray_light"
+    android:clickable="true"
+    android:orientation="vertical"
+    tools:context=".View.Fragment.DetailPersonFragment">
+
+
+    <LinearLayout
+        android:id="@+id/header_logo_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/thema_gray_dark"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            app:srcCompat="@drawable/app_logo" />
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/header_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/header_logo_layout">
+
+        <ImageButton
+            android:id="@+id/back_button"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/input_circle_background"
+            android:src="?attr/homeAsUpIndicator"
+            android:tint="@color/white" />
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:background="@drawable/input_right_radius_bar" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/info_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/header_layout">
+
+        <TextView
+            android:id="@+id/relation_text"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_weight="1"
+            android:background="@drawable/detail_radius_label_background"
+            android:padding="5dp"
+            android:text="友達"
+            android:textAlignment="center"
+            android:textColor="@color/white" />
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="2" />
+
+        <TextView
+            android:id="@+id/days_later_text"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
+            android:layout_weight="1"
+            android:background="@drawable/detail_radius_label_background"
+            android:padding="5dp"
+            android:text="あとXX日"
+            android:textAlignment="center"
+            android:textColor="@color/white" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/ruby_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="よしだ　まひろ"
+        android:textAlignment="center"
+        android:textSize="12sp"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toStartOf="@+id/header_logo_layout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/info_layout" />
+
+    <TextView
+        android:id="@+id/name_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="吉田　真紘"
+        android:textAlignment="center"
+        android:textSize="34sp"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toStartOf="@+id/header_logo_layout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ruby_text" />
+
+    <TextView
+        android:id="@+id/date_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="1995年12月1日(平成7年)"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toStartOf="@+id/header_logo_layout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/name_text" />
+
+
+    <LinearLayout
+        android:id="@+id/age_info_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/date_text">
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/age_text"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:background="@drawable/footer_delete_button_background"
+            android:elevation="20dp"
+            android:gravity="center"
+            android:text="27歳"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="10sp" />
+
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/sort_button"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:background="@drawable/footer_sort_button_background"
+            android:elevation="20dp"
+            android:gravity="center"
+            android:text="みずがめ座"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="10sp" />
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/register_button"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:background="@drawable/footer_register_button_background"
+            android:elevation="20dp"
+            android:gravity="center"
+            android:lines="2"
+            android:text="いのしし年"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="10sp" />
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/memo_text"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginRight="30dp"
+        android:background="@drawable/input_memo_layer_stroke"
+        android:padding="8dp"
+        android:text="1995年12月1日(平成7年)"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toStartOf="@+id/header_logo_layout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/age_info_layout" />
+
+    <LinearLayout
+        android:id="@+id/notify_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/memo_text">
+
+        <TextView
+            android:id="@+id/notify_label"
+            android:layout_width="12dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_weight="1"
+            android:text="通知"
+            android:textAlignment="viewStart"
+            android:textColor="@color/white" />
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <Switch
+            android:id="@+id/notify_edit_button"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:layout_weight="1"
+            android:buttonTint="@color/thema_orange"
+            android:foregroundTint="@color/thema_orange" />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/footer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <View
+            android:id="@+id/view2"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:background="@drawable/input_left_radius_bar" />
+
+        <ImageButton
+            android:id="@+id/register_button"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/input_circle_background"
+            android:contentDescription="Person情報登録ボタン"
+            android:src="@drawable/ic_check" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

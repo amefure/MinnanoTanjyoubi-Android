@@ -17,6 +17,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
+        android:id="@+id/header_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/thema_gray_dark"
@@ -49,19 +50,22 @@
         android:layout_height="600dp"
         android:layout_marginTop="60dp"
         android:background="@color/thema_gray_light"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintBottom_toTopOf="@+id/age_info_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="409dp"
-        android:layout_height="63dp"
+        android:id="@+id/age_info_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:background="@color/thema_gray_dark"
         android:orientation="horizontal"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
         <Space
@@ -70,7 +74,7 @@
             android:layout_weight="1" />
 
         <ImageButton
-            android:id="@+id/delete_button"
+            android:id="@+id/age_text"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:background="@drawable/footer_delete_button_background"
