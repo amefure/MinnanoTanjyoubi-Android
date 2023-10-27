@@ -1,143 +1,285 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/white"
+    android:background="@color/thema_gray_light"
     android:clickable="true"
+    android:orientation="vertical"
     tools:context=".View.Fragment.InputPersonFragment">
 
 
     <LinearLayout
+        android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
-        android:layout_height="74dp"
-        android:orientation="horizontal">
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout5"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
+
+        <ImageButton
+            android:id="@+id/imageButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/input_circle_background"
+            android:src="?attr/homeAsUpIndicator"
+            android:tint="@color/white" />
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:background="@drawable/input_right_radius_bar" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout10"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
 
         <TextView
             android:id="@+id/name_label"
-            android:layout_width="wrap_content"
+            android:layout_width="20dp"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
             android:layout_weight="1"
-            android:text="名　前" />
+            android:text="名　前"
+            android:textAlignment="viewStart" />
 
         <EditText
             android:id="@+id/name_edit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="2"
+            android:background="@drawable/input_radius_edit_background"
             android:ems="10"
+            android:hint="名前"
             android:inputType="text"
-            android:hint="名前" />
+            android:padding="8dp" />
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/linearLayout10"
         android:layout_width="match_parent"
-        android:layout_height="83dp"
-        android:orientation="horizontal">
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout9"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout5">
 
         <TextView
             android:id="@+id/ruby_label"
-            android:layout_width="wrap_content"
+            android:layout_width="20dp"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
             android:layout_weight="1"
-            android:text="ふりがな" />
+            android:text="ふりがな"
+            android:textAlignment="viewStart" />
 
         <EditText
             android:id="@+id/ruby_edit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="2"
+            android:background="@drawable/input_radius_edit_background"
             android:ems="10"
+            android:hint="ふりがな"
             android:inputType="text"
-            android:hint="ふりがな"  />
+            android:padding="8dp" />
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/linearLayout9"
         android:layout_width="match_parent"
-        android:layout_height="81dp"
-        android:orientation="horizontal">
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout10">
 
         <TextView
             android:id="@+id/date_label"
-            android:layout_width="wrap_content"
+            android:layout_width="12dp"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
             android:layout_weight="1"
-            android:text="生年月日" />
+            android:text="生年月日"
+            android:textAlignment="viewStart" />
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
 
         <Button
             android:id="@+id/date_edit_button"
-            android:layout_width="wrap_content"
+            android:layout_width="80dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
             android:layout_weight="1"
+            android:backgroundTint="@color/thema_gray_dark"
             android:text="2023年10月25日" />
     </LinearLayout>
 
-    <Spinner
-        android:id="@+id/relation_spinner"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/linearLayout3"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="parent"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout7"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout9">
+
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="3" />
+
+        <Spinner
+            android:id="@+id/relation_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            app:layout_constraintBottom_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="2" />
+
+    </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/linearLayout7"
         android:layout_width="match_parent"
-        android:layout_height="97dp"
-        android:orientation="horizontal">
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout6"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout3">
 
         <TextView
             android:id="@+id/notify_label"
-            android:layout_width="wrap_content"
+            android:layout_width="12dp"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
             android:layout_weight="1"
-            android:text="通知" />
+            android:text="通知"
+            android:textAlignment="viewStart" />
 
-        <Button
-            android:id="@+id/notify_edit_button"
+        <Space
             android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <Switch
+            android:id="@+id/notify_edit_button"
+            android:layout_width="80dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
             android:layout_weight="1"
-            android:text="通知" />
+            android:buttonTint="@color/thema_orange"
+            android:foregroundTint="@color/thema_orange" />
+
+
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/linearLayout6"
         android:layout_width="match_parent"
-        android:layout_height="234dp"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:layout_weight="8"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout7">
 
         <TextView
             android:id="@+id/memo_label"
-            android:layout_width="74dp"
-            android:layout_height="9dp"
-            android:layout_weight="1"
-            android:text="MEMO" />
+            android:layout_width="112dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginBottom="8dp"
+            android:text="MEMO"
+            android:textAlignment="viewStart" />
 
         <EditText
             android:id="@+id/memo_edit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="130dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
             android:ems="10"
-            android:inputType="text"
+            android:background="@drawable/input_radius_edit_background"
+            android:inputType="textMultiLine"
             android:text="" />
     </LinearLayout>
 
-    <LinearLayout
+    <Space
         android:layout_width="match_parent"
-        android:layout_height="83dp"
-        android:orientation="horizontal">
+        android:layout_height="wrap_content"
+        android:layout_weight="2" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <View
+            android:id="@+id/view2"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:background="@drawable/input_left_radius_bar" />
 
         <ImageButton
             android:id="@+id/register_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="Person情報登録ボタン"
             style="?android:attr/borderlessButtonStyle"
-            android:src="@drawable/ic_launcher_foreground" />
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/input_circle_background"
+            android:contentDescription="Person情報登録ボタン"
+            android:src="@drawable/ic_check" />
 
     </LinearLayout>
-
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
+<!--</LinearLayout>-->
