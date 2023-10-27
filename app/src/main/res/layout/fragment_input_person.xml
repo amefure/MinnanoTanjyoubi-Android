@@ -13,19 +13,19 @@
 
 
     <LinearLayout
-        android:id="@+id/linearLayout2"
+        android:id="@+id/header_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout5"
+        app:layout_constraintBottom_toTopOf="@+id/name_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0">
 
         <ImageButton
-            android:id="@+id/imageButton"
+            android:id="@+id/back_button"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginLeft="20dp"
@@ -42,15 +42,15 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/linearLayout5"
+        android:id="@+id/name_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout10"
+        app:layout_constraintBottom_toTopOf="@+id/ruby_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
+        app:layout_constraintTop_toBottomOf="@+id/header_layout">
 
         <TextView
             android:id="@+id/name_label"
@@ -74,16 +74,16 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/linearLayout10"
+        android:id="@+id/ruby_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout9"
+        app:layout_constraintBottom_toTopOf="@+id/date_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout5">
+        app:layout_constraintTop_toBottomOf="@+id/name_layout">
 
         <TextView
             android:id="@+id/ruby_label"
@@ -107,15 +107,15 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/linearLayout9"
+        android:id="@+id/date_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout3"
+        app:layout_constraintBottom_toTopOf="@+id/relation_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout10">
+        app:layout_constraintTop_toBottomOf="@+id/ruby_layout">
 
         <TextView
             android:id="@+id/date_label"
@@ -142,16 +142,16 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/linearLayout3"
+        android:id="@+id/relation_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:orientation="horizontal"
         android:textAlignment="center"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout7"
+        app:layout_constraintBottom_toTopOf="@+id/notify_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout9">
+        app:layout_constraintTop_toBottomOf="@+id/date_layout">
 
 
         <Space
@@ -177,16 +177,16 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/linearLayout7"
+        android:id="@+id/notify_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:orientation="horizontal"
         android:textAlignment="center"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout6"
+        app:layout_constraintBottom_toTopOf="@+id/memo_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout3">
+        app:layout_constraintTop_toBottomOf="@+id/relation_layout">
 
         <TextView
             android:id="@+id/notify_label"
@@ -215,15 +215,15 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/linearLayout6"
+        android:id="@+id/memo_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="8"
         android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout4"
+        app:layout_constraintBottom_toTopOf="@+id/footer_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout7">
+        app:layout_constraintTop_toBottomOf="@+id/notify_layout">
 
         <TextView
             android:id="@+id/memo_label"
@@ -246,13 +246,8 @@
             android:text="" />
     </LinearLayout>
 
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="2" />
-
     <LinearLayout
-        android:id="@+id/linearLayout4"
+        android:id="@+id/footer_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"

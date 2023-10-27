@@ -1,17 +1,20 @@
 package com.amefure.minnanotanjyoubi.View.Fragment
 
 import android.app.DatePickerDialog
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Spinner
+import android.widget.Switch
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -37,49 +40,50 @@ class InputPersonFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // Button
+        val backButton: ImageButton= view.findViewById(R.id.back_button)
+        val registerButton:ImageButton = view.findViewById(R.id.register_button)
+
         // 入力View
-        val nameEdit:EditText= view.findViewById(R.id.name_edit)
-        val rubyEdit:EditText= view.findViewById(R.id.ruby_edit)
-        val memoEdit:EditText= view.findViewById(R.id.memo_edit)
+        val nameEdit: EditText= view.findViewById(R.id.name_edit)
+        val rubyEdit: EditText= view.findViewById(R.id.ruby_edit)
+        val dateEditButton:Button = view.findViewById(R.id.date_edit_button)
         val relationSpinner:Spinner = view.findViewById(R.id.relation_spinner)
+        val notifySwitch: Switch= view.findViewById(R.id.notify_edit_button)
+        val memoEdit: EditText= view.findViewById(R.id.memo_edit)
 
-
-        val spinnerAdapter = ArrayAdapter<String>(this.requireContext(), android.R.layout.simple_spinner_item)
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        Relation.values().forEach {
-            spinnerAdapter.add(it.name)
+        // 戻るボタン
+        backButton.setOnClickListener {
+            parentFragmentManager.popBackStack()
         }
-
-        relationSpinner.adapter = spinnerAdapter
-        relationSpinner.onItemSelectedListener = spinnerAdapterListener
 
         // 登録ボタン
-        val registerButton:ImageButton = view.findViewById(R.id.register_button)
-        // 日付ピッカーダイアログの表示
-        val dateEditButton:Button = view.findViewById(R.id.date_edit_button)
+        registerButton.setOnClickListener {
+            val name = nameEdit.text.toString()
+            val ruby = rubyEdit.text.toString()
+            val date = dateEditButton.text.toString()
+            val relation = selectRelation
+            var notify = notifySwitch.isChecked
+            val memo = memoEdit.text.toString()
 
-         registerButton.setOnClickListener {
-             val name = nameEdit.text.toString()
-             val ruby = rubyEdit.text.toString()
-             val date = dateEditButton.text.toString()
-             val relation = selectRelation
-             val memo = memoEdit.text.toString()
-             viewModel.insertPerson(name,ruby,date,relation,memo,false)
-             Snackbar.make(view,"追加しました。", Snackbar.LENGTH_SHORT)
-                 .setBackgroundTint(ContextCompat.getColor(view.context,R.color.positive_color))
-                 .show()
-             parentFragmentManager.apply {
-                 popBackStack()
-             }
+            if (!name.isEmpty()) {
+                viewModel.insertPerson(name,ruby,date,relation,memo,notify)
+                Snackbar.make(view,"追加しました。", Snackbar.LENGTH_SHORT)
+                    .setBackgroundTint(ContextCompat.getColor(view.context,R.color.positive_color))
+                    .show()
+                showOffKeyboard()
+                parentFragmentManager.apply {
+                    popBackStack()
+                }
+            } else {
+                Snackbar.make(view,"名前を入力してください。", Snackbar.LENGTH_SHORT)
+                    .setBackgroundTint(ContextCompat.getColor(view.context,R.color.negative_color))
+                    .show()
+            }
         }
 
-        viewModel.selectDate.observe(this.requireActivity(), Observer {
-            dateEditButton.text = it
-        })
-
-
+        // 日付ダイアログ表示ボタン
         dateEditButton.setOnClickListener {
-
             var year = 0
             var month = 0
             var day = 0
@@ -97,11 +101,24 @@ class InputPersonFragment : Fragment() {
                 month = c.get(Calendar.MONTH)
                 day = c.get(Calendar.DAY_OF_MONTH)
             }
-
             val dialog = DatePickerDialog(requireContext(), android.R.style.Theme_Holo_Dialog,dateListener, year, month, day)
-
             dialog.show()
         }
+
+        // スピナーセット
+        val spinnerAdapter = ArrayAdapter<String>(this.requireContext(), android.R.layout.simple_spinner_item)
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        Relation.values().forEach {
+            spinnerAdapter.add(it.name)
+        }
+        relationSpinner.adapter = spinnerAdapter
+        relationSpinner.onItemSelectedListener = spinnerAdapterListener
+
+        // 選択される日付を観測
+        viewModel.selectDate.observe(this.requireActivity(), Observer {
+            dateEditButton.text = it
+        })
+
     }
 
     // DatePickerFragmentから選択された日付を反映させる
@@ -124,5 +141,10 @@ class InputPersonFragment : Fragment() {
         override fun onNothingSelected(parent: AdapterView<*>?) {
             // 選択されなかった時に実行したい処理
         }
+    }
+
+    private fun showOffKeyboard() {
+        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view?.windowToken, 0)
     }
 }
