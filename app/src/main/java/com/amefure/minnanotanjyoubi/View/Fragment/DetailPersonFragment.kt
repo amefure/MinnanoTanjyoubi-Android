@@ -75,8 +75,8 @@ class DetailPersonFragment : Fragment() {
         rubyLabel.text = ruby
         dateLabel.text = date + "（" + calcPersonInfoManager.japaneseEraName(date) + "）"
         ageLabel.text = calcPersonInfoManager.currentAge(date).toString() + "歳"
-        signOgZodiacLabel.text = "水瓶ざ"
-        zodiacLabel.text = "いのしし年"
+        signOgZodiacLabel.text = calcPersonInfoManager.signOfZodiac(date)
+        zodiacLabel.text = calcPersonInfoManager.zodiac(date)
         memoLabel.text = memo
         notifySwitch.isChecked = notify
     }
