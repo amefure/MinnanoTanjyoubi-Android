@@ -17,4 +17,17 @@ enum class Relation {
         override fun value():String = "その他"
     };
     abstract fun value(): String
+
+    companion object {
+        fun getIndex(value: String): Int {
+            when(value) {
+                FRIEND.value() -> return 0
+                FAMILY.value() -> return 1
+                SCHOOL.value() -> return 2
+                WORK.value() -> return 3
+                OTHER.value() -> return 4
+                else -> return 0
+            }
+        }
+    }
 }

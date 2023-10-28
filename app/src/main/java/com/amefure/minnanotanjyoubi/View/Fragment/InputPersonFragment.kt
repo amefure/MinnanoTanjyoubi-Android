@@ -18,7 +18,6 @@ import android.widget.Switch
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import com.amefure.minnanotanjyoubi.Domain.CalcDateInfoManager
 import com.amefure.minnanotanjyoubi.Model.Relation
 import com.amefure.minnanotanjyoubi.R
 import com.amefure.minnanotanjyoubi.ViewModel.InputPersonViewModel
@@ -79,11 +78,6 @@ class InputPersonFragment : Fragment() {
         relationSpinner = view.findViewById(R.id.relation_spinner)
         notifySwitch = view.findViewById(R.id.notify_edit_button)
         memoEdit = view.findViewById(R.id.memo_edit)
-
-        // 詳細画面からの遷移の場合は情報をセット
-        if (receiveId != null) {
-            setReceiveUIText()
-        }
 
         // 戻るボタン
         backButton.setOnClickListener {
@@ -170,6 +164,12 @@ class InputPersonFragment : Fragment() {
             dateEditButton.text = it
         })
 
+        // 詳細画面からの遷移の場合は情報をセット
+        // 全ての初期化の最後に実装
+        if (receiveId != null) {
+            setReceiveUIText()
+        }
+
     }
 
     // DatePickerFragmentから選択された日付を反映させる
@@ -203,7 +203,7 @@ class InputPersonFragment : Fragment() {
         nameEdit.setText(receiveName)
         rubyEdit.setText(receiveRuby)
         viewModel.setSelectDate(receiveDate)
-        relationSpinner.setSelection(0)
+        relationSpinner.setSelection(Relation.getIndex(receiveRelation))
         notifySwitch.isChecked = receiveNotify
         memoEdit.setText(receiveMemo)
     }
