@@ -111,23 +111,37 @@ class SettingFragment : Fragment() {
         val notifyDayButton: Button = view.findViewById(R.id.notify_setting_day_button)
         val notifyEditMsg: TextView = view.findViewById(R.id.notify_setting_edit_msg)
 
-        lifecycleScope.launch{
+        // lifecycleScope.launchはまとめると動作しないので分割
+        lifecycleScope.launch {
             dataStoreManager.observeNotifyTime().collect {
                 if (it != null) {
                     notifyTimeButton.text = it
                     notifyTime = it
+                } else {
+                    // 初期値格納
+                    dataStoreManager.saveNotifyTime("7:00")
                 }
             }
 
+        }
+        lifecycleScope.launch {
             dataStoreManager.observeNotifyDay().collect {
                 if (it != null) {
                     notifyDayButton.text = it
+                } else {
+                    // 初期値格納
+                    dataStoreManager.saveNotifyDay("当日")
                 }
             }
 
+        }
+        lifecycleScope.launch {
             dataStoreManager.observeNotifyMsg().collect {
                 if (it != null) {
                     notifyEditMsg.text = it
+                }else {
+                    // 初期値格納
+                    dataStoreManager.saveNotifyMsg("明日は{userName}の誕生日！お祝いしてあげよう！")
                 }
             }
         }
