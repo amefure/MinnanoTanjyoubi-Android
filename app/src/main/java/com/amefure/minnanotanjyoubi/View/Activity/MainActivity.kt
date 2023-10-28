@@ -17,6 +17,7 @@ import com.amefure.minnanotanjyoubi.R
 import com.amefure.minnanotanjyoubi.View.Adapter.PersonGridLayoutAdapter
 import com.amefure.minnanotanjyoubi.View.Fragment.DetailPersonFragment
 import com.amefure.minnanotanjyoubi.View.Fragment.InputPersonFragment
+import com.amefure.minnanotanjyoubi.View.Fragment.SettingFragment
 import com.amefure.minnanotanjyoubi.ViewModel.MainViewModel
 
 class MainActivity : AppCompatActivity() {
@@ -58,6 +59,15 @@ class MainActivity : AppCompatActivity() {
         buttonNotification.setOnClickListener {
             //  通知発行用のブロードキャストをセット
             notificationRequestManager.setBroadcast()
+        }
+
+        val settingButton: ImageButton = findViewById(R.id.setting_button)
+        settingButton.setOnClickListener {
+            supportFragmentManager.beginTransaction().apply {
+                add(R.id.main_frame, SettingFragment())
+                addToBackStack(null)
+                commit()
+            }
         }
     }
 
