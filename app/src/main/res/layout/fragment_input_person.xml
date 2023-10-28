@@ -242,6 +242,7 @@
             android:background="@drawable/input_memo_layer_stroke"
             android:ems="10"
             android:inputType="textMultiLine"
+            android:padding="8dp"
             android:text="" />
     </LinearLayout>
 

@@ -12,8 +12,10 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.amefure.minnanotanjyoubi.Domain.CalcPersonInfoManager
 import com.amefure.minnanotanjyoubi.Domain.NotificationRequestManager
+import com.amefure.minnanotanjyoubi.Model.Database.Person
 import com.amefure.minnanotanjyoubi.R
 import com.amefure.minnanotanjyoubi.View.Adapter.PersonGridLayoutAdapter
+import com.amefure.minnanotanjyoubi.View.Fragment.DetailPersonFragment
 import com.amefure.minnanotanjyoubi.View.Fragment.InputPersonFragment
 import com.amefure.minnanotanjyoubi.ViewModel.MainViewModel
 
@@ -67,6 +69,27 @@ class MainActivity : AppCompatActivity() {
         )
         viewModel.personList.observe(this) {
             adapter = PersonGridLayoutAdapter(it.sortedBy { calcPersonInfoManager.daysLater(it.date) })
+            adapter.setOnBookCellClickListener(
+                object : PersonGridLayoutAdapter.OnBookCellClickListener {
+                    override fun onItemClick(person: Person) {
+
+                        val fragment = DetailPersonFragment.newInstance(
+                            id = person.id,
+                            name = person.name,
+                            ruby = person.ruby,
+                            date = person.date,
+                            relation = person.relation,
+                            notify = person.alert,
+                            memo = person.memo
+                        )
+                        supportFragmentManager
+                            .beginTransaction()
+                            .replace(R.id.main_frame, fragment)
+                            .addToBackStack(null)
+                            .commit()
+                    }
+                }
+            )
 //            adapter = PersonGridLayoutAdapter(Person.getDemoData())
             recyclerView.adapter = adapter
         }

@@ -164,15 +164,15 @@
 
         <TextView
             android:id="@+id/age_text"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
             android:background="@drawable/footer_delete_button_background"
             android:elevation="20dp"
             android:gravity="center"
             android:text="27歳"
             android:textAlignment="center"
             android:textColor="@color/white"
-            android:textSize="10sp" />
+            android:textSize="12sp" />
 
 
         <Space
@@ -181,16 +181,16 @@
             android:layout_weight="1" />
 
         <TextView
-            android:id="@+id/sort_button"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:id="@+id/sign_of_zodiac_text"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
             android:background="@drawable/footer_sort_button_background"
             android:elevation="20dp"
             android:gravity="center"
             android:text="みずがめ座"
             android:textAlignment="center"
             android:textColor="@color/white"
-            android:textSize="10sp" />
+            android:textSize="11sp" />
 
         <Space
             android:layout_width="wrap_content"
@@ -198,9 +198,9 @@
             android:layout_weight="1" />
 
         <TextView
-            android:id="@+id/register_button"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:id="@+id/zodiac_text"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
             android:background="@drawable/footer_register_button_background"
             android:elevation="20dp"
             android:gravity="center"
@@ -208,7 +208,7 @@
             android:text="いのしし年"
             android:textAlignment="center"
             android:textColor="@color/white"
-            android:textSize="10sp" />
+            android:textSize="11sp" />
 
         <Space
             android:layout_width="wrap_content"
@@ -290,7 +290,7 @@
             android:background="@drawable/input_left_radius_bar" />
 
         <ImageButton
-            android:id="@+id/register_button"
+            android:id="@+id/edit_button"
             style="?android:attr/borderlessButtonStyle"
             android:layout_width="50dp"
             android:layout_height="50dp"

@@ -54,6 +54,7 @@ class InputPersonFragment : Fragment() {
 
         // 戻るボタン
         backButton.setOnClickListener {
+            showOffKeyboard()
             parentFragmentManager.popBackStack()
         }
 
