@@ -298,8 +298,8 @@
             android:layout_marginRight="20dp"
             android:layout_marginBottom="20dp"
             android:background="@drawable/input_circle_background"
-            android:contentDescription="Person情報登録ボタン"
-            android:src="@drawable/ic_check" />
+            android:contentDescription="Person情報更新ボタン"
+            android:src="@drawable/ic_edit" />
 
     </LinearLayout>
 

@@ -8,16 +8,10 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.Switch
 import android.widget.TextView
-import com.amefure.minnanotanjyoubi.Domain.CalcPersonInfoManager
+import com.amefure.minnanotanjyoubi.Domain.CalcDateInfoManager
+import com.amefure.minnanotanjyoubi.Model.Keys.*
 import com.amefure.minnanotanjyoubi.R
 
-private const val ARG_ID_KEY = "ARG_ID_KEY"
-private const val ARG_NAME_KEY = "ARG_NAME_KEY"
-private const val ARG_RUBY_KEY = "ARG_RUBY_KEY"
-private const val ARG_DATE_KEY = "ARG_DATE_KEY"
-private const val ARG_RELATION_KEY = "ARG_RELATION_KEY"
-private const val ARG_NOTIFY_KEY = "ARG_NOTIFY_KEY"
-private const val ARG_MEMO_KEY = "ARG_MEMO_KEY"
 
 class DetailPersonFragment : Fragment() {
 
@@ -29,7 +23,7 @@ class DetailPersonFragment : Fragment() {
     private var notify: Boolean = false
     private var memo:String = ""
 
-    private val calcPersonInfoManager = CalcPersonInfoManager()
+    private val calcPersonInfoManager = CalcDateInfoManager()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,7 +38,6 @@ class DetailPersonFragment : Fragment() {
             notify = it.getBoolean(ARG_NOTIFY_KEY,true)
             memo = it.getString(ARG_MEMO_KEY,"")
         }
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_detail_person, container, false)
     }
 
@@ -69,6 +62,16 @@ class DetailPersonFragment : Fragment() {
             parentFragmentManager.popBackStack()
         }
 
+        editButton.setOnClickListener {
+            // input画面にレコードの情報を渡して生成
+            var nextFragment = InputPersonFragment.editInstance(id, name, ruby, date, relation, notify, memo)
+            parentFragmentManager.beginTransaction().apply {
+                add(R.id.main_frame, nextFragment)
+                addToBackStack(null)
+                commit()
+            }
+        }
+
         relationLabel.text = relation
         daysLaterLabel.text = "あと" + calcPersonInfoManager.daysLater(date).toString() + "日"
         nameLabel.text = name
@@ -80,7 +83,6 @@ class DetailPersonFragment : Fragment() {
         memoLabel.text = memo
         notifySwitch.isChecked = notify
     }
-
 
     companion object{
         @JvmStatic

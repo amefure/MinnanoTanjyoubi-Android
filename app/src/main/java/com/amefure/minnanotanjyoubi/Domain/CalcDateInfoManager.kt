@@ -1,15 +1,24 @@
 package com.amefure.minnanotanjyoubi.Domain
 
 import java.time.LocalDate
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.time.chrono.JapaneseDate
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.util.Locale
 
-class CalcPersonInfoManager {
+class CalcDateInfoManager {
 
-    private val formatter = DateTimeFormatter.ofPattern("yyyy年M月d日")
+    private val formatter = DateTimeFormatter.ofPattern("yyyy年MM月dd日")
     private val today = LocalDate.now()
+
+    // 本日の日付を文字列で取得する
+    public fun getTodayString() :String {
+        val now = ZonedDateTime.now(ZoneId.of("Asia/Tokyo"))
+        val fdate = formatter.format(now)
+        return fdate
+    }
 
     // 現在の年齢を計算する
     public fun currentAge(date: String): Int {
@@ -81,13 +90,13 @@ class CalcPersonInfoManager {
         }
     }
 
-    // 日付を受け取ってLocalDate型に変換する
+    // signOfZodiacで利用：日付を受け取ってLocalDate型に変換する
     private fun getDate(year: String, day: String): LocalDate {
         val df = DateTimeFormatter.ofPattern("yyyy/M/d")
         return LocalDate.parse(year + day, df)
     }
 
-    // 日付が期間の範囲内か識別
+    // signOfZodiacで利用：日付が期間の範囲内か識別
     private fun isDateInRange(dateToCheck: LocalDate, startDate: LocalDate, endDate: LocalDate): Boolean {
         return (dateToCheck.isEqual(startDate) || dateToCheck.isAfter(startDate)) && dateToCheck.isBefore(endDate)
     }

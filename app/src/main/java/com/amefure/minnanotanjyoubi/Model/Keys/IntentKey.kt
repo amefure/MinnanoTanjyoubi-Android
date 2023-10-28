@@ -1,4 +1,4 @@
-package com.amefure.minnanotanjyoubi.Model
+package com.amefure.minnanotanjyoubi.Model.Keys
 
 // インテントでデータを渡す際のキー
 const val INTENT_KEY_PERSON = "PERSON"

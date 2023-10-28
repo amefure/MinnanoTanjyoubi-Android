@@ -9,8 +9,8 @@ import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import com.amefure.minnanotanjyoubi.Model.INTENT_KEY_NOTIFY_ID
-import com.amefure.minnanotanjyoubi.Model.INTENT_KEY_PERSON
+import com.amefure.minnanotanjyoubi.Model.Keys.INTENT_KEY_NOTIFY_ID
+import com.amefure.minnanotanjyoubi.Model.Keys.INTENT_KEY_PERSON
 import com.amefure.minnanotanjyoubi.R
 import java.util.Calendar
 import java.util.TimeZone

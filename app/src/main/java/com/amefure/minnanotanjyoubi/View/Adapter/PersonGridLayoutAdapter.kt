@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.amefure.minnanotanjyoubi.Domain.CalcPersonInfoManager
+import com.amefure.minnanotanjyoubi.Domain.CalcDateInfoManager
 import com.amefure.minnanotanjyoubi.Model.Database.Person
 import com.amefure.minnanotanjyoubi.R
 
@@ -14,7 +14,7 @@ class PersonGridLayoutAdapter (personList: List<Person>) :RecyclerView.Adapter<P
     private val _personList: MutableList<Person> = personList.toMutableList()
     override fun getItemCount(): Int = _personList.size
 
-    private val calcPersonInfoManager = CalcPersonInfoManager()
+    private val calcPersonInfoManager = CalcDateInfoManager()
 
     private lateinit var listener: OnBookCellClickListener
     // 2. インターフェースを作成
