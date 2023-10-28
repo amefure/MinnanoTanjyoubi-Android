@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.amefure.minnanotanjyoubi.Domain.CalcDateInfoManager
+import com.amefure.minnanotanjyoubi.Model.Database.Person
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.time.ZoneId
@@ -24,9 +25,10 @@ class InputPersonViewModel(app: Application): RootViewModel(app) {
         _selectDate.value = selectDate
     }
 
-    public fun insertPerson(name: String, ruby: String, date: String, relation: String, memo: String, alert:Boolean) {
+    public fun insertPerson(name: String, ruby: String, date: String, relation: String, memo: String, alert:Boolean, callback: (Long) -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
-            rootRepository.insertPerson(name, ruby, date, relation, memo ,alert)
+            val id = rootRepository.insertPerson(name, ruby, date, relation, memo ,alert)
+            callback(id)
         }
     }
 

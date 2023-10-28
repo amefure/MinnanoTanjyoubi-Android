@@ -55,10 +55,9 @@ class MainActivity : AppCompatActivity() {
         // チャンネルの生成
         notificationRequestManager.createNotificationChannel()
 
-        val buttonNotification: ImageButton = findViewById(R.id.age_text)
+        val buttonNotification: ImageButton = findViewById(R.id.delete_button)
         buttonNotification.setOnClickListener {
             //  通知発行用のブロードキャストをセット
-            notificationRequestManager.setBroadcast()
         }
 
         val settingButton: ImageButton = findViewById(R.id.setting_button)

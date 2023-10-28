@@ -75,7 +75,7 @@
             android:layout_weight="1" />
 
         <ImageButton
-            android:id="@+id/age_text"
+            android:id="@+id/delete_button"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:background="@drawable/footer_delete_button_background"
@@ -89,7 +89,7 @@
             android:layout_weight="1" />
 
         <ImageButton
-            android:id="@+id/sign_of_zodiac_text"
+            android:id="@+id/filter_button"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:background="@drawable/footer_sort_button_background"

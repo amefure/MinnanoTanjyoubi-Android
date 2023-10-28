@@ -30,7 +30,7 @@ class RootRepository (context: Context) {
         )
     }
 
-    public fun insertPerson(name: String, ruby: String, date: String, relation: String, memo: String, alert:Boolean) {
+    public fun insertPerson(name: String, ruby: String, date: String, relation: String, memo: String, alert:Boolean): Long{
         val person = Person(
             id = 0,
             name = name,
@@ -40,7 +40,7 @@ class RootRepository (context: Context) {
             memo = memo,
             alert = alert
         )
-        personDao.insertPerson(person)
+        return personDao.insertPerson(person)
     }
 
     public fun updatePerson(id: Int, name: String, ruby: String, date: String, relation: String, memo: String, alert:Boolean) {

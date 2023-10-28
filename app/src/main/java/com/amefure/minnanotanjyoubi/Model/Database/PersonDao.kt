@@ -10,7 +10,7 @@ import io.reactivex.Flowable
 @Dao
 interface PersonDao {
     @Insert
-    fun insertPerson(person: Person)
+    fun insertPerson(person: Person): Long
 
     @Update
     fun updatePerson(person: Person)

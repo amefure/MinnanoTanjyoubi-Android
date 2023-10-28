@@ -10,7 +10,7 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.amefure.minnanotanjyoubi.Model.Keys.INTENT_KEY_NOTIFY_ID
-import com.amefure.minnanotanjyoubi.Model.Keys.INTENT_KEY_PERSON
+import com.amefure.minnanotanjyoubi.Model.Keys.INTENT_KEY_NOTIFY_MESSAGE
 import com.amefure.minnanotanjyoubi.R
 import java.util.Calendar
 import java.util.TimeZone
@@ -39,29 +39,34 @@ class NotificationRequestManager(private var context: Context) {
     }
 
     // 通知リクエストを送信
-    public fun setBroadcast() {
+    public fun setBroadcast(id: Int, month: Int, day: Int, hour: Int, minutes: Int, msg: String) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val notificationIntent = Intent(context, ReceivedActivity::class.java)
 
-        notificationIntent.putExtra(INTENT_KEY_PERSON, "NAME")
-        notificationIntent.putExtra(INTENT_KEY_NOTIFY_ID, "ID")
+        notificationIntent.putExtra(INTENT_KEY_NOTIFY_MESSAGE, msg)
+        notificationIntent.putExtra(INTENT_KEY_NOTIFY_ID, id)
         val pendingIntent = PendingIntent.getBroadcast(context, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE)
 
         val timeZone = TimeZone.getTimeZone("Asia/Tokyo")
-        val calendar = Calendar.getInstance(timeZone)
-        calendar.timeInMillis = 0
-        calendar.set(Calendar.YEAR, 2023)               // 任意の年を設定
-        calendar.set(Calendar.MONTH, Calendar.OCTOBER)  // 任意の月を設定
-        calendar.set(Calendar.DAY_OF_MONTH, 23)         // 任意の日を設定
-        calendar.set(Calendar.HOUR_OF_DAY, 21)          // 任意の時を設定
-        calendar.set(Calendar.MINUTE, 35)               // 任意の分を設定
-        calendar.set(Calendar.SECOND, 0)                // 任意の秒を設定
-        val triggerTime = calendar.timeInMillis         // 指定した日時のミリ秒表現を取得
+        val c = Calendar.getInstance(timeZone)
+        c.timeInMillis = 0
+        c.set(Calendar.YEAR, c.get(Calendar.YEAR)) // 当年の年を設定
+        c.set(Calendar.MONTH, month - 1)           // 誕生月を設定
+        c.set(Calendar.DAY_OF_MONTH, day)          // 誕生月日を設定
+        c.set(Calendar.HOUR_OF_DAY, hour)          // 設定時間を設定
+        c.set(Calendar.MINUTE, minutes)            // 設定分数を設定
+        c.set(Calendar.SECOND, 0)                  // 固定値の秒数を設定(正確ではないため無意味)
+        val triggerTime = c.timeInMillis           // 指定した日時のミリ秒表現を取得
 
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+        alarmManager.setInexactRepeating(
+            AlarmManager.RTC_WAKEUP,
+            triggerTime,
+            AlarmManager.INTERVAL_DAY * 365,
+            pendingIntent
+        )
     }
 
-    public fun sendNotificationRequest(person: String,notifyId: Int) {
+    public fun sendNotificationRequest(msg: String, notifyId: Int) {
         val notificationIntent = Intent(context, ReceivedActivity::class.java)
         val pendingIntent: PendingIntent = PendingIntent.getActivity(context, 0, notificationIntent,  PendingIntent.FLAG_IMMUTABLE)
         val res = context.resources
@@ -69,7 +74,7 @@ class NotificationRequestManager(private var context: Context) {
         var builder = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle(res.getString(R.string.app_name))
-            .setContentText("今日は" + person + "さんの誕生日")
+            .setContentText(msg)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)

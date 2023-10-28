@@ -26,7 +26,6 @@ import java.util.Calendar
 class SettingFragment : Fragment() {
 
     lateinit var dataStoreManager: DataStoreManager
-
     private var notifyTime: String? = null
 
     override fun onCreateView(

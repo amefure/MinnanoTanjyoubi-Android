@@ -24,6 +24,8 @@
         android:id="@+id/register_msg_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="30dp"
         android:backgroundTint="@color/thema_gray_dark"
         android:text="登録"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -34,6 +36,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
         android:text="通知メッセージ"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/notify_msg_edit"

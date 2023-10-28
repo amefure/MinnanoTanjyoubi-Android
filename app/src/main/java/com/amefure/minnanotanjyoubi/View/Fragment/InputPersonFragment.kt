@@ -3,6 +3,7 @@ package com.amefure.minnanotanjyoubi.View.Fragment
 import android.app.DatePickerDialog
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -18,18 +19,24 @@ import android.widget.Switch
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
+import com.amefure.minnanotanjyoubi.Domain.NotificationRequestManager
+import com.amefure.minnanotanjyoubi.Model.DataStore.DataStoreManager
 import com.amefure.minnanotanjyoubi.Model.Relation
 import com.amefure.minnanotanjyoubi.R
 import com.amefure.minnanotanjyoubi.ViewModel.InputPersonViewModel
 import com.google.android.material.snackbar.Snackbar
 import java.util.Calendar
 import com.amefure.minnanotanjyoubi.Model.Keys.*
+import kotlinx.coroutines.launch
+
 class InputPersonFragment : Fragment() {
 
     private val viewModel:InputPersonViewModel by viewModels()
+    lateinit var dataStoreManager: DataStoreManager
+    private var notifyTime: String = "7:00"
 
-
-
+    private lateinit var notificationRequestManager: NotificationRequestManager
     private var selectRelation: String = Relation.FRIEND.name
 
     // 更新時に値が格納される
@@ -53,6 +60,8 @@ class InputPersonFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        dataStoreManager = DataStoreManager(this.requireContext())
+        notificationRequestManager = NotificationRequestManager(this.requireContext())
         arguments?.let {
             receiveId = it.getInt(ARG_ID_KEY,0)
             receiveName = it.getString(ARG_NAME_KEY,"")
@@ -70,6 +79,8 @@ class InputPersonFragment : Fragment() {
         // Button
         val backButton: ImageButton= view.findViewById(R.id.back_button)
         val registerButton:ImageButton = view.findViewById(R.id.register_button)
+
+        observeNotifyTime()
 
         // 入力View
         nameEdit = view.findViewById(R.id.name_edit)
@@ -97,7 +108,11 @@ class InputPersonFragment : Fragment() {
             if (!name.isEmpty()) {
 
                 if (receiveId == null) {
-                    viewModel.insertPerson(name,ruby,date,relation,memo,notify)
+                    viewModel.insertPerson(name,ruby,date,relation,memo,notify) {
+                        if (notify) {
+                            notificationRequestManager.setBroadcast(it.toInt(),10,28,23,16,"YHOOO")
+                        }
+                    }
                     Snackbar.make(view,"追加しました。", Snackbar.LENGTH_SHORT)
                         .setBackgroundTint(ContextCompat.getColor(view.context,R.color.positive_color))
                         .show()
@@ -105,6 +120,7 @@ class InputPersonFragment : Fragment() {
                     parentFragmentManager.apply {
                         popBackStack()
                     }
+
                 } else {
                     // 編集モード
                     viewModel.updatePerson(receiveId!!,name,ruby,date,relation,memo,notify)
@@ -206,6 +222,16 @@ class InputPersonFragment : Fragment() {
         relationSpinner.setSelection(Relation.getIndex(receiveRelation))
         notifySwitch.isChecked = receiveNotify
         memoEdit.setText(receiveMemo)
+    }
+
+    private fun observeNotifyTime() {
+        lifecycleScope.launch {
+            dataStoreManager.observeNotifyTime().collect {
+                if (it != null) {
+                    notifyTime = it
+                }
+            }
+        }
     }
 
     companion object {
