@@ -49,6 +49,9 @@ dependencies {
     // viewmodelsのために追加
     implementation 'androidx.fragment:fragment-ktx:1.2.2'
 
+    // DataStore
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+
     // Room
     def room_version = "2.5.0"
 
