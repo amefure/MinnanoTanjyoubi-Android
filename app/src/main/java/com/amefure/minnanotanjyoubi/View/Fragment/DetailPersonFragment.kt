@@ -9,12 +9,15 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.Switch
 import android.widget.TextView
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.amefure.minnanotanjyoubi.Domain.CalcDateInfoManager
 import com.amefure.minnanotanjyoubi.Domain.NotificationRequestManager
 import com.amefure.minnanotanjyoubi.Model.DataStore.DataStoreManager
 import com.amefure.minnanotanjyoubi.Model.Keys.*
 import com.amefure.minnanotanjyoubi.R
+import com.amefure.minnanotanjyoubi.ViewModel.DetailPersonViewModel
+import com.amefure.minnanotanjyoubi.ViewModel.InputPersonViewModel
 import kotlinx.coroutines.launch
 
 
@@ -28,6 +31,7 @@ class DetailPersonFragment : Fragment() {
     private var notify: Boolean = false
     private var memo:String = ""
 
+    private val viewModel: DetailPersonViewModel by viewModels()
     private lateinit var dataStoreManager: DataStoreManager
     private lateinit var notificationRequestManager: NotificationRequestManager
     private val calcDateInfoManager = CalcDateInfoManager()
@@ -120,8 +124,16 @@ class DetailPersonFragment : Fragment() {
 
                 val msg = notifyMsg.replace("{userName}",name)
 
+                // 通知をセット
                 notificationRequestManager.setBroadcast(id,month,day,time[0].toInt(),time[1].toInt(),msg)
+
+                // ローカルデータを更新
+                viewModel.updatePerson(id,name,ruby,date,relation,memo,isChecked)
             } else {
+                // 通知をリセット
+                notificationRequestManager.deleteBroadcast(id)
+                // ローカルデータを更新
+                viewModel.updatePerson(id,name,ruby,date,relation,memo,isChecked)
             }
         }
 

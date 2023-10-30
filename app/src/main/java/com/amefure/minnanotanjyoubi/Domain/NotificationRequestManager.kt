@@ -42,10 +42,10 @@ class NotificationRequestManager(private var context: Context) {
     public fun setBroadcast(id: Int, month: Int, day: Int, hour: Int, minutes: Int, msg: String) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val notificationIntent = Intent(context, ReceivedActivity::class.java)
-
+        notificationIntent.setType("NotifyIntent：" + id.toString())
         notificationIntent.putExtra(INTENT_KEY_NOTIFY_MESSAGE, msg)
         notificationIntent.putExtra(INTENT_KEY_NOTIFY_ID, id)
-        val pendingIntent = PendingIntent.getBroadcast(context, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE)
+        val pendingIntent = PendingIntent.getBroadcast(context, id, notificationIntent, PendingIntent.FLAG_IMMUTABLE)
 
         val timeZone = TimeZone.getTimeZone("Asia/Tokyo")
         val c = Calendar.getInstance(timeZone)
@@ -66,6 +66,17 @@ class NotificationRequestManager(private var context: Context) {
         )
     }
 
+    public fun deleteBroadcast(id: Int) {
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val notificationIntent = Intent(context, ReceivedActivity::class.java)
+        notificationIntent.setType("NotifyIntent：" + id.toString())
+        val pendingIntent = PendingIntent.getBroadcast(context, id, notificationIntent, PendingIntent.FLAG_IMMUTABLE)
+
+        pendingIntent.cancel();
+        alarmManager.cancel(pendingIntent)
+    }
+
+    // 通知を送信(レシーバーから呼ばれる)
     public fun sendNotificationRequest(msg: String, notifyId: Int) {
         val notificationIntent = Intent(context, ReceivedActivity::class.java)
         val pendingIntent: PendingIntent = PendingIntent.getActivity(context, notifyId, notificationIntent,  PendingIntent.FLAG_IMMUTABLE)
