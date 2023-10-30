@@ -1,5 +1,6 @@
 package com.amefure.minnanotanjyoubi.View.Fragment
 
+import android.content.res.Resources
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -8,9 +9,13 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.Switch
 import android.widget.TextView
+import androidx.lifecycle.lifecycleScope
 import com.amefure.minnanotanjyoubi.Domain.CalcDateInfoManager
+import com.amefure.minnanotanjyoubi.Domain.NotificationRequestManager
+import com.amefure.minnanotanjyoubi.Model.DataStore.DataStoreManager
 import com.amefure.minnanotanjyoubi.Model.Keys.*
 import com.amefure.minnanotanjyoubi.R
+import kotlinx.coroutines.launch
 
 
 class DetailPersonFragment : Fragment() {
@@ -23,12 +28,29 @@ class DetailPersonFragment : Fragment() {
     private var notify: Boolean = false
     private var memo:String = ""
 
-    private val calcPersonInfoManager = CalcDateInfoManager()
+    private lateinit var dataStoreManager: DataStoreManager
+    private lateinit var notificationRequestManager: NotificationRequestManager
+    private val calcDateInfoManager = CalcDateInfoManager()
+
+    private lateinit var res: Resources
+
+    private var notifyTime: String = ""
+    private var notifyMsg: String = ""
+    private var notifyDay: String = ""
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        dataStoreManager = DataStoreManager(this.requireContext())
+        notificationRequestManager = NotificationRequestManager(this.requireContext())
+
+        res = this.requireContext().resources
+        notifyTime = res.getString(R.string.notify_default_time)
+        notifyMsg = res.getString(R.string.notify_default_message)
+        notifyDay = res.getString(R.string.notify_default_day)
+
         arguments?.let {
             id = it.getInt(ARG_ID_KEY,0)
             name = it.getString(ARG_NAME_KEY,"")
@@ -73,15 +95,61 @@ class DetailPersonFragment : Fragment() {
         }
 
         relationLabel.text = relation
-        daysLaterLabel.text = "あと" + calcPersonInfoManager.daysLater(date).toString() + "日"
+        daysLaterLabel.text = "あと" + calcDateInfoManager.daysLater(date).toString() + "日"
         nameLabel.text = name
         rubyLabel.text = ruby
-        dateLabel.text = date + "（" + calcPersonInfoManager.japaneseEraName(date) + "）"
-        ageLabel.text = calcPersonInfoManager.currentAge(date).toString() + "歳"
-        signOgZodiacLabel.text = calcPersonInfoManager.signOfZodiac(date)
-        zodiacLabel.text = calcPersonInfoManager.zodiac(date)
+        dateLabel.text = date + "（" + calcDateInfoManager.japaneseEraName(date) + "）"
+        ageLabel.text = calcDateInfoManager.currentAge(date).toString() + "歳"
+        signOgZodiacLabel.text = calcDateInfoManager.signOfZodiac(date)
+        zodiacLabel.text = calcDateInfoManager.zodiac(date)
         memoLabel.text = memo
         notifySwitch.isChecked = notify
+
+        notifySwitch.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                val time = notifyTime.split(":")
+                var thisDate = date
+                if (notifyDay != res.getString(R.string.notify_default_day)) {
+                    // "前日"が指定されている場合は一日前の日付取得
+                    thisDate = calcDateInfoManager.getBeforeOneDayString(thisDate)
+                }
+
+                val parts = thisDate.split("[年月日]".toRegex())
+                val month = parts[1].toInt()
+                val day = parts[2].toInt()
+
+                val msg = notifyMsg.replace("{userName}",name)
+
+                notificationRequestManager.setBroadcast(id,month,day,time[0].toInt(),time[1].toInt(),msg)
+            } else {
+            }
+        }
+
+    }
+
+    private fun observeNotifyInfo() {
+        lifecycleScope.launch {
+            dataStoreManager.observeNotifyTime().collect {
+                if (it != null) {
+                    notifyTime = it
+                }
+            }
+        }
+        lifecycleScope.launch {
+            dataStoreManager.observeNotifyDay().collect {
+                if (it != null) {
+                    notifyDay = it
+                }
+            }
+
+        }
+        lifecycleScope.launch {
+            dataStoreManager.observeNotifyMsg().collect {
+                if (it != null) {
+                    notifyMsg = it
+                }
+            }
+        }
     }
 
     companion object{

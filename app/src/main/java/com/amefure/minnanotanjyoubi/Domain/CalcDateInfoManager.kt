@@ -43,6 +43,14 @@ class CalcDateInfoManager {
         return daysLaterInt
     }
 
+    // 本日の日付を文字列で取得する
+    public fun getBeforeOneDayString(date: String): String {
+        val birthday = LocalDate.parse(date, formatter)
+        val oneDayBefore = birthday.minusDays(1)
+        val fdate = formatter.format(oneDayBefore)
+        return fdate
+    }
+
     // 元号(和暦)を取得 ：令和5年形式
     public fun japaneseEraName(date: String): String {
         val birthday = LocalDate.parse(date, formatter)

@@ -139,7 +139,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="20dp"
                     android:backgroundTint="@color/thema_gray_dark"
-                    android:text="7:00" />
+                    android:text="@string/notify_default_time" />
             </LinearLayout>
 
             <LinearLayout
@@ -179,7 +179,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="20dp"
                     android:backgroundTint="@color/thema_red"
-                    android:text="当日" />
+                    android:text="@string/notify_default_day" />
             </LinearLayout>
 
             <LinearLayout
@@ -207,7 +207,7 @@
                     android:layout_marginStart="20dp"
                     android:maxWidth="200dp"
                     android:maxLines="2"
-                    android:text="明日は{userName}の誕生日！お祝いしてあげよう！"
+                    android:text="@string/notify_default_message"
                     android:textColor="@color/white" />
 
                 <Space

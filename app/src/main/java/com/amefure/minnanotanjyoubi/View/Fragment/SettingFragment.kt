@@ -64,10 +64,10 @@ class SettingFragment : Fragment() {
                 minute = parts[1].toInt()
             } else {
                 // 現在の日付情報を取得
+                // 初期値として7:00を格納しているため実行されない予定
                 val c = Calendar.getInstance()
                 hour = c.get(Calendar.HOUR_OF_DAY)
                 minute = c.get(Calendar.MINUTE)
-
             }
             // 取得した日付情報を元にダイアログを生成
             val dialog = TimePickerDialog(requireContext(), android.R.style.Theme_Holo_Dialog, timeListener, hour, minute,false)
@@ -91,14 +91,18 @@ class SettingFragment : Fragment() {
         }
         notifyMsgButton.setOnClickListener {
             val dialog = InputNotifyMsgDialogFragment()
-            dialog.show(parentFragmentManager, "custom")
+            dialog.show(parentFragmentManager, "通知メッセージダイアログ")
         }
     }
 
 
     // 日付ピッカーから選択された時に呼ばれるリスナー
     private var timeListener = TimePickerDialog.OnTimeSetListener { view, hour , minutes ->
-        val time = hour.toString() + ":" + minutes.toString()
+        var minutesStr = minutes.toString()
+        if (minutesStr.length == 1) {
+            minutesStr = "0" + minutesStr
+        }
+        val time = hour.toString() + ":" + minutesStr
         lifecycleScope.launch{
             dataStoreManager.saveNotifyTime(time)
         }
@@ -118,7 +122,7 @@ class SettingFragment : Fragment() {
                     notifyTime = it
                 } else {
                     // 初期値格納
-                    dataStoreManager.saveNotifyTime("7:00")
+                    dataStoreManager.saveNotifyTime(getString(R.string.notify_default_time))
                 }
             }
 
@@ -129,7 +133,7 @@ class SettingFragment : Fragment() {
                     notifyDayButton.text = it
                 } else {
                     // 初期値格納
-                    dataStoreManager.saveNotifyDay("当日")
+                    dataStoreManager.saveNotifyDay(getString(R.string.notify_default_day))
                 }
             }
 
@@ -138,9 +142,9 @@ class SettingFragment : Fragment() {
             dataStoreManager.observeNotifyMsg().collect {
                 if (it != null) {
                     notifyEditMsg.text = it
-                }else {
+                } else {
                     // 初期値格納
-                    dataStoreManager.saveNotifyMsg("明日は{userName}の誕生日！お祝いしてあげよう！")
+                    dataStoreManager.saveNotifyMsg(getString(R.string.notify_default_message))
                 }
             }
         }

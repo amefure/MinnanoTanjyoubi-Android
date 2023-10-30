@@ -68,7 +68,7 @@ class NotificationRequestManager(private var context: Context) {
 
     public fun sendNotificationRequest(msg: String, notifyId: Int) {
         val notificationIntent = Intent(context, ReceivedActivity::class.java)
-        val pendingIntent: PendingIntent = PendingIntent.getActivity(context, 0, notificationIntent,  PendingIntent.FLAG_IMMUTABLE)
+        val pendingIntent: PendingIntent = PendingIntent.getActivity(context, notifyId, notificationIntent,  PendingIntent.FLAG_IMMUTABLE)
         val res = context.resources
         // 通知オブジェクトの作成
         var builder = NotificationCompat.Builder(context, CHANNEL_ID)
