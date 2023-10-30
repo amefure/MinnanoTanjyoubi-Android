@@ -17,7 +17,6 @@ import com.amefure.minnanotanjyoubi.Model.DataStore.DataStoreManager
 import com.amefure.minnanotanjyoubi.Model.Keys.*
 import com.amefure.minnanotanjyoubi.R
 import com.amefure.minnanotanjyoubi.ViewModel.DetailPersonViewModel
-import com.amefure.minnanotanjyoubi.ViewModel.InputPersonViewModel
 import kotlinx.coroutines.launch
 
 
@@ -136,7 +135,6 @@ class DetailPersonFragment : Fragment() {
                 viewModel.updatePerson(id,name,ruby,date,relation,memo,isChecked)
             }
         }
-
     }
 
     private fun observeNotifyInfo() {

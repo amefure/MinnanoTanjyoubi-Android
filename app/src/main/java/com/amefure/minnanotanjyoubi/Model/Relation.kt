@@ -29,5 +29,16 @@ enum class Relation {
                 else -> return 0
             }
         }
+
+        fun getRelation(value: String): Relation {
+            when(value) {
+                "0"-> return FRIEND
+                "1" -> return FAMILY
+                "2" -> return SCHOOL
+                "3" -> return WORK
+                "4" -> return OTHER
+                else -> return FRIEND
+            }
+        }
     }
 }

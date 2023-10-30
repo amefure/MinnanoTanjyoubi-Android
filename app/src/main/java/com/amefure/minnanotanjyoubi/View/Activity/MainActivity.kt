@@ -7,12 +7,15 @@ import androidx.appcompat.app.AppCompatActivity
 import android.Manifest
 import android.widget.ImageButton
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.amefure.minnanotanjyoubi.Domain.CalcDateInfoManager
 import com.amefure.minnanotanjyoubi.Domain.NotificationRequestManager
 import com.amefure.minnanotanjyoubi.Model.Database.Person
+import com.amefure.minnanotanjyoubi.Model.Relation
 import com.amefure.minnanotanjyoubi.R
 import com.amefure.minnanotanjyoubi.View.Adapter.PersonGridLayoutAdapter
 import com.amefure.minnanotanjyoubi.View.Fragment.DetailPersonFragment
@@ -23,14 +26,22 @@ import com.amefure.minnanotanjyoubi.ViewModel.MainViewModel
 class MainActivity : AppCompatActivity() {
 
     private val viewModel: MainViewModel by viewModels()
+    private lateinit var notificationRequestManager: NotificationRequestManager
 
     private lateinit var adapter: PersonGridLayoutAdapter
     private lateinit var recyclerView: RecyclerView
 
     private val calcPersonInfoManager = CalcDateInfoManager()
+
+    private var isFilter = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        val registerButton: ImageButton = findViewById(R.id.register_button)
+        val fillterButton: ImageButton = findViewById(R.id.filter_button)
+        val deleteButton: ImageButton = findViewById(R.id.delete_button)
+        val settingButton: ImageButton = findViewById(R.id.setting_button)
 
         viewModel.fetchAllPerson()
 
@@ -40,7 +51,6 @@ class MainActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.main_list)
         observedPersonData()
 
-        val registerButton: ImageButton = findViewById(R.id.register_button)
         registerButton.setOnClickListener {
             supportFragmentManager.beginTransaction().apply {
                 add(R.id.main_frame, InputPersonFragment())
@@ -49,18 +59,41 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-
-        val notificationRequestManager = NotificationRequestManager(this)
+        notificationRequestManager = NotificationRequestManager(this)
 
         // チャンネルの生成
         notificationRequestManager.createNotificationChannel()
 
-        val buttonNotification: ImageButton = findViewById(R.id.delete_button)
-        buttonNotification.setOnClickListener {
+
+        fillterButton.setOnClickListener {
+            if (isFilter) {
+                viewModel.fetchAllPerson()
+                isFilter = false
+                fillterButton.imageTintList = ContextCompat.getColorStateList(this,R.color.white)
+            } else {
+                var list = mutableListOf<String>()
+                Relation.values().forEach {
+                    list += it.value()
+                }
+                AlertDialog
+                    .Builder(this)
+                    .setTitle("フィルターカテゴリ")
+                    .setSingleChoiceItems(list.toTypedArray(), 0, { dialog, which ->
+                        viewModel.fetchFilterPerson(Relation.getRelation(which.toString()))
+                        fillterButton.imageTintList = ContextCompat.getColorStateList(this,R.color.thema_red)
+                        isFilter = true
+                        dialog.dismiss()
+                    })
+                    .show()
+            }
+        }
+
+
+        deleteButton.setOnClickListener {
             //  通知発行用のブロードキャストをセット
         }
 
-        val settingButton: ImageButton = findViewById(R.id.setting_button)
+
         settingButton.setOnClickListener {
             supportFragmentManager.beginTransaction().apply {
                 add(R.id.main_frame, SettingFragment())
