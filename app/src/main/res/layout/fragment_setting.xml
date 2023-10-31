@@ -125,7 +125,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginStart="20dp"
-                    android:text="通知時間"
+                    android:text="@string/notify_setting_label2"
                     android:textColor="@color/white" />
 
                 <Space
@@ -165,7 +165,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginStart="20dp"
-                    android:text="通知日"
+                    android:text="@string/notify_setting_label2"
                     android:textColor="@color/white" />
 
                 <Space
@@ -241,7 +241,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
                     android:layout_weight="1"
-                    android:text="・通知設定を変更以降にONにした通知を設定されます。"
+                    android:text="@string/notify_desc_label1"
                     android:textColor="@color/white" />
 
                 <TextView
@@ -251,7 +251,7 @@
                     android:layout_marginStart="20dp"
                     android:layout_marginEnd="20dp"
                     android:layout_weight="1"
-                    android:text="・通知メッセージは{userName}部分が名前に自動で置き換わります。"
+                    android:text="@string/notify_desc_label2"
                     android:textColor="@color/white" />
             </LinearLayout>
 
@@ -299,7 +299,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginStart="20dp"
-                    android:text="広告を視聴して容量を増やす"
+                    android:text="@string/ads_setting_show_label"
                     android:textColor="@color/white" />
 
                 <Space
@@ -334,12 +334,12 @@
                     android:src="@drawable/ic_person" />
 
                 <TextView
-                    android:id="@+id/ads_setting_label2"
+                    android:id="@+id/ads_setting_capacity_label"
                     android:layout_width="200dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginStart="20dp"
-                    android:text="現在の容量：45人"
+                    android:text="@string/ads_setting_capacity_label"
                     android:textColor="@color/white" />
 
                 <Space

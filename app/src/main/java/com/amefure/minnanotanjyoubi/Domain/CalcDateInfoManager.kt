@@ -6,6 +6,7 @@ import java.time.ZonedDateTime
 import java.time.chrono.JapaneseDate
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
+import java.util.Calendar
 import java.util.Locale
 
 class CalcDateInfoManager {
@@ -18,6 +19,14 @@ class CalcDateInfoManager {
         val now = ZonedDateTime.now(ZoneId.of("Asia/Tokyo"))
         val fdate = formatter.format(now)
         return fdate
+    }
+
+    // 同じ日付かどうか
+    fun isToday(date: String): Boolean {
+        if (date.isEmpty()) { return false }
+        val day = LocalDate.parse(date, formatter)
+        val today = LocalDate.now()
+        return isDateInRange(day, today, today.plusDays(1))
     }
 
     // 現在の年齢を計算する

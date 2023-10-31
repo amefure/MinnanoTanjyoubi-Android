@@ -1,5 +1,6 @@
 package com.amefure.minnanotanjyoubi.View.Fragment
 
+import android.app.AlertDialog
 import android.app.TimePickerDialog
 import android.content.Context
 import android.os.Bundle
@@ -123,17 +124,28 @@ class SettingFragment : Fragment() {
         }
 
         adsPlayButton.setOnClickListener {
-            rewardedAd?.let { ad ->
-                ad.show(this.requireActivity(), OnUserEarnedRewardListener { rewardItem ->
-                    lifecycleScope.launch{
-                        // 広告を視聴し終えたら容量の追加と視聴日を保存
-                        val newCapacity = limitCapacity + Capacity.addCapacity
-                        dataStoreManager.saveLimitCapacity(newCapacity)
-                        dataStoreManager.saveLastAcquisitionDate(calcDateInfoManager.getTodayString())
-                    }
-                })
-            } ?: run {
-                Log.d("TAG", "リワード広告がまだセットされていません。")
+
+            if (!calcDateInfoManager.isToday(lastDate)) {
+                rewardedAd?.let { ad ->
+                    ad.show(this.requireActivity(), OnUserEarnedRewardListener { rewardItem ->
+                        lifecycleScope.launch{
+                            // 広告を視聴し終えたら容量の追加と視聴日を保存
+                            val newCapacity = limitCapacity + Capacity.addCapacity
+                            dataStoreManager.saveLimitCapacity(newCapacity)
+                            dataStoreManager.saveLastAcquisitionDate(calcDateInfoManager.getTodayString())
+                        }
+                    })
+                } ?: run {
+                    Log.d("TAG", "リワード広告がまだセットされていません。")
+                }
+            } else {
+                AlertDialog.Builder(this.requireContext())
+                    .setTitle("お知らせ")
+                    .setMessage("広告を視聴できるのは1日に1回までです。")
+                    .setPositiveButton("OK", { dialog, which ->
+                        // ボタンクリック時の処理
+                    })
+                    .show()
             }
         }
     }
@@ -169,7 +181,7 @@ class SettingFragment : Fragment() {
         val notifyEditMsg: TextView = view.findViewById(R.id.notify_setting_edit_msg)
 
         val label: TextView = view.findViewById(R.id.notify_desc_label1)
-        val label2: TextView = view.findViewById(R.id.notify_desc_label2)
+        val capacityLabel: TextView = view.findViewById(R.id.ads_setting_capacity_label)
 
 
 
@@ -211,9 +223,8 @@ class SettingFragment : Fragment() {
         lifecycleScope.launch {
             dataStoreManager.observeLimitCapacity().collect {
                 if (it != null) {
-                     limitCapacity = it
-                    label.text = it.toString()
-
+                    limitCapacity = it
+                    capacityLabel.text = requireContext().getString(R.string.ads_setting_capacity_label,it)
                 } else {
                     // 初期値格納
                     dataStoreManager.saveLimitCapacity(Capacity.initialCapacity)
@@ -225,7 +236,7 @@ class SettingFragment : Fragment() {
             dataStoreManager.observeLastAcquisitionDate().collect {
                 if (it != null) {
                     lastDate = it
-                    label2.text = it.toString()
+                    label.text = it.toString()
                 } else {
                     // 初期値格納
                     dataStoreManager.saveLastAcquisitionDate("")
