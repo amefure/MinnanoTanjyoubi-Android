@@ -1,9 +1,8 @@
 package com.amefure.minnanotanjyoubi.View.Fragment
 
-import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
-import android.graphics.Color
+import android.media.tv.AdRequest
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -13,13 +12,17 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.ImageButton
-import android.widget.Switch
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.alpha
 import androidx.lifecycle.lifecycleScope
 import com.amefure.minnanotanjyoubi.Model.DataStore.DataStoreManager
 import com.amefure.minnanotanjyoubi.R
+import com.google.android.gms.ads.AdError
+import com.google.android.gms.ads.FullScreenContentCallback
+import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.OnUserEarnedRewardListener
+import com.google.android.gms.ads.rewarded.RewardedAd
+import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
@@ -27,6 +30,57 @@ class SettingFragment : Fragment() {
 
     lateinit var dataStoreManager: DataStoreManager
     private var notifyTime: String? = null
+
+    private var rewardedAd: RewardedAd? = null
+    private final var TAG = "MainActivity"
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        var adRequest = AdRequest.Builder().build()
+        RewardedAd.load(this.requireContext(),"ca-app-pub-3940256099942544/5224354917", adRequest, object : RewardedAdLoadCallback() {
+            override fun onAdFailedToLoad(adError: LoadAdError) {
+                Log.d(TAG, adError?.toString())
+                rewardedAd = null
+            }
+
+            override fun onAdLoaded(ad: RewardedAd) {
+                Log.d(TAG, "Ad was loaded.")
+                rewardedAd = ad
+            }
+        })
+
+        rewardedAd?.fullScreenContentCallback = object: FullScreenContentCallback() {
+            override fun onAdClicked() {
+                // Called when a click is recorded for an ad.
+                Log.d(TAG, "Ad was clicked.")
+            }
+
+            override fun onAdDismissedFullScreenContent() {
+                // Called when ad is dismissed.
+                // Set the ad reference to null so you don't show the ad a second time.
+                Log.d(TAG, "Ad dismissed fullscreen content.")
+                rewardedAd = null
+            }
+
+            override fun onAdFailedToShowFullScreenContent(adError: AdError?) {
+                // Called when ad fails to show.
+                Log.e(TAG, "Ad failed to show fullscreen content.")
+                rewardedAd = null
+            }
+
+            override fun onAdImpression() {
+                // Called when an impression is recorded for an ad.
+                Log.d(TAG, "Ad recorded an impression.")
+            }
+
+            override fun onAdShowedFullScreenContent() {
+                // Called when ad is shown.
+                Log.d(TAG, "Ad showed fullscreen content.")
+            }
+        }
+    }
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,8 +104,21 @@ class SettingFragment : Fragment() {
 
         // 戻るボタン
         backButton.setOnClickListener {
-            showOffKeyboard()
-            parentFragmentManager.popBackStack()
+
+
+            rewardedAd?.let { ad ->
+                ad.show(this.requireActivity(), OnUserEarnedRewardListener { rewardItem ->
+                    // Handle the reward.
+                    val rewardAmount = rewardItem.amount
+                    val rewardType = rewardItem.type
+                    Log.d(TAG, "User earned the reward.")
+                })
+            } ?: run {
+                Log.d(TAG, "The rewarded ad wasn't ready yet.")
+            }
+
+//            showOffKeyboard()
+//            parentFragmentManager.popBackStack()
         }
 
         notifyTimeButton.setOnClickListener {
