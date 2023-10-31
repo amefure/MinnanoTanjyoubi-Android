@@ -214,11 +214,11 @@ class MainActivity : AppCompatActivity() {
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { result ->
             // ダイアログの結果で処理を分岐
             if (result) {
-                Toast.makeText(this, "許可されました", Toast.LENGTH_SHORT)
-                    .show()
+//                Toast.makeText(this, "許可されました", Toast.LENGTH_SHORT)
+//                    .show()
             } else {
-                Toast.makeText(this, "否認されました", Toast.LENGTH_SHORT)
-                    .show()
+//                Toast.makeText(this, "否認されました", Toast.LENGTH_SHORT)
+//                    .show()
             }
         }
 }
