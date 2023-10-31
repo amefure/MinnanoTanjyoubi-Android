@@ -308,12 +308,12 @@
                     android:layout_weight="1" />
 
                 <Button
-                    android:id="@+id/ads_setting_time_button"
-                    android:layout_width="90dp"
+                    android:id="@+id/ads_reward_play_button"
+                    android:layout_width="120dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="20dp"
                     android:backgroundTint="@color/thema_gray_dark"
-                    android:text="追加" />
+                    android:text="loading..." />
             </LinearLayout>
 
             <LinearLayout

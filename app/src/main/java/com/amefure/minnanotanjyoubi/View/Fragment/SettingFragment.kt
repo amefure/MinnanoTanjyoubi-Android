@@ -2,7 +2,6 @@ package com.amefure.minnanotanjyoubi.View.Fragment
 
 import android.app.TimePickerDialog
 import android.content.Context
-import android.media.tv.AdRequest
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -15,9 +14,10 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
+import com.amefure.minnanotanjyoubi.Domain.CalcDateInfoManager
+import com.amefure.minnanotanjyoubi.Model.Capacity
 import com.amefure.minnanotanjyoubi.Model.DataStore.DataStoreManager
 import com.amefure.minnanotanjyoubi.R
-import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.OnUserEarnedRewardListener
@@ -25,67 +25,41 @@ import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import kotlinx.coroutines.launch
 import java.util.Calendar
+import com.google.android.gms.ads.AdRequest
 
 class SettingFragment : Fragment() {
 
     lateinit var dataStoreManager: DataStoreManager
-    private var notifyTime: String? = null
+    private val calcDateInfoManager = CalcDateInfoManager()
 
     private var rewardedAd: RewardedAd? = null
-    private final var TAG = "MainActivity"
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        var adRequest = AdRequest.Builder().build()
-        RewardedAd.load(this.requireContext(),"ca-app-pub-3940256099942544/5224354917", adRequest, object : RewardedAdLoadCallback() {
-            override fun onAdFailedToLoad(adError: LoadAdError) {
-                Log.d(TAG, adError?.toString())
-                rewardedAd = null
-            }
-
-            override fun onAdLoaded(ad: RewardedAd) {
-                Log.d(TAG, "Ad was loaded.")
-                rewardedAd = ad
-            }
-        })
-
-        rewardedAd?.fullScreenContentCallback = object: FullScreenContentCallback() {
-            override fun onAdClicked() {
-                // Called when a click is recorded for an ad.
-                Log.d(TAG, "Ad was clicked.")
-            }
-
-            override fun onAdDismissedFullScreenContent() {
-                // Called when ad is dismissed.
-                // Set the ad reference to null so you don't show the ad a second time.
-                Log.d(TAG, "Ad dismissed fullscreen content.")
-                rewardedAd = null
-            }
-
-            override fun onAdFailedToShowFullScreenContent(adError: AdError?) {
-                // Called when ad fails to show.
-                Log.e(TAG, "Ad failed to show fullscreen content.")
-                rewardedAd = null
-            }
-
-            override fun onAdImpression() {
-                // Called when an impression is recorded for an ad.
-                Log.d(TAG, "Ad recorded an impression.")
-            }
-
-            override fun onAdShowedFullScreenContent() {
-                // Called when ad is shown.
-                Log.d(TAG, "Ad showed fullscreen content.")
-            }
-        }
-    }
-
-
+    // ローカルデータ格納用
+    private var notifyTime: String? = null
+    private var limitCapacity: Int = Capacity.initialCapacity
+    private var lastDate: String = ""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        var adRequest = AdRequest.Builder().build()
+        RewardedAd.load(this.requireContext(),this.getString(R.string.admob_reward_id), adRequest, object : RewardedAdLoadCallback() {
+            override fun onAdFailedToLoad(adError: LoadAdError) {
+                Log.d("", "ロード失敗")
+                rewardedAd = null
+                updateAdsButtonState(view!!)
+            }
+            override fun onAdLoaded(ad: RewardedAd) {
+                Log.d("", "ロード完了")
+                rewardedAd = ad
+                updateAdsButtonState(view!!)
+            }
+        })
+
+        // これがないと視聴できない？
+        rewardedAd?.fullScreenContentCallback = object: FullScreenContentCallback() {}
+
         dataStoreManager = DataStoreManager(this.requireContext())
         return inflater.inflate(R.layout.fragment_setting, container, false)
     }
@@ -97,28 +71,15 @@ class SettingFragment : Fragment() {
         val notifyTimeButton: Button = view.findViewById(R.id.notify_setting_time_button)
         val notifyDayButton: Button = view.findViewById(R.id.notify_setting_day_button)
         val notifyMsgButton: Button = view.findViewById(R.id.notify_setting_msg_button)
-
+        val adsPlayButton: Button = view.findViewById(R.id.ads_reward_play_button)
 
         // ローカルに保存している通知情報を取得
         observeNotifyInfo(view)
 
         // 戻るボタン
         backButton.setOnClickListener {
-
-
-            rewardedAd?.let { ad ->
-                ad.show(this.requireActivity(), OnUserEarnedRewardListener { rewardItem ->
-                    // Handle the reward.
-                    val rewardAmount = rewardItem.amount
-                    val rewardType = rewardItem.type
-                    Log.d(TAG, "User earned the reward.")
-                })
-            } ?: run {
-                Log.d(TAG, "The rewarded ad wasn't ready yet.")
-            }
-
-//            showOffKeyboard()
-//            parentFragmentManager.popBackStack()
+            showOffKeyboard()
+            parentFragmentManager.popBackStack()
         }
 
         notifyTimeButton.setOnClickListener {
@@ -160,6 +121,32 @@ class SettingFragment : Fragment() {
             val dialog = InputNotifyMsgDialogFragment()
             dialog.show(parentFragmentManager, "通知メッセージダイアログ")
         }
+
+        adsPlayButton.setOnClickListener {
+            rewardedAd?.let { ad ->
+                ad.show(this.requireActivity(), OnUserEarnedRewardListener { rewardItem ->
+                    lifecycleScope.launch{
+                        // 広告を視聴し終えたら容量の追加と視聴日を保存
+                        val newCapacity = limitCapacity + Capacity.addCapacity
+                        dataStoreManager.saveLimitCapacity(newCapacity)
+                        dataStoreManager.saveLastAcquisitionDate(calcDateInfoManager.getTodayString())
+                    }
+                })
+            } ?: run {
+                Log.d("TAG", "リワード広告がまだセットされていません。")
+            }
+        }
+    }
+
+    private fun updateAdsButtonState(view: View) {
+        val adsPlayButton: Button = view.findViewById(R.id.ads_reward_play_button)
+        if (rewardedAd != null) {
+            adsPlayButton.setText("追加")
+            adsPlayButton.setBackgroundColor(ContextCompat.getColor(this.requireContext(),R.color.thema_yelow))
+        } else {
+            adsPlayButton.setText("読み込み中")
+            adsPlayButton.setBackgroundColor(ContextCompat.getColor(this.requireContext(),R.color.thema_gray_dark))
+        }
     }
 
 
@@ -180,6 +167,11 @@ class SettingFragment : Fragment() {
         val notifyTimeButton: Button = view.findViewById(R.id.notify_setting_time_button)
         val notifyDayButton: Button = view.findViewById(R.id.notify_setting_day_button)
         val notifyEditMsg: TextView = view.findViewById(R.id.notify_setting_edit_msg)
+
+        val label: TextView = view.findViewById(R.id.notify_desc_label1)
+        val label2: TextView = view.findViewById(R.id.notify_desc_label2)
+
+
 
         // lifecycleScope.launchはまとめると動作しないので分割
         lifecycleScope.launch {
@@ -212,6 +204,31 @@ class SettingFragment : Fragment() {
                 } else {
                     // 初期値格納
                     dataStoreManager.saveNotifyMsg(getString(R.string.notify_default_message))
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            dataStoreManager.observeLimitCapacity().collect {
+                if (it != null) {
+                     limitCapacity = it
+                    label.text = it.toString()
+
+                } else {
+                    // 初期値格納
+                    dataStoreManager.saveLimitCapacity(Capacity.initialCapacity)
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            dataStoreManager.observeLastAcquisitionDate().collect {
+                if (it != null) {
+                    lastDate = it
+                    label2.text = it.toString()
+                } else {
+                    // 初期値格納
+                    dataStoreManager.saveLastAcquisitionDate("")
                 }
             }
         }
