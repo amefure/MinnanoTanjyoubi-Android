@@ -37,3 +37,4 @@ GoogleService-Info.plist
 
 # Android Profiling
 *.hprof
+app-release.aab
