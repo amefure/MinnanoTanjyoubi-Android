@@ -22,6 +22,9 @@ import com.amefure.minnanotanjyoubi.View.Fragment.DetailPersonFragment
 import com.amefure.minnanotanjyoubi.View.Fragment.InputPersonFragment
 import com.amefure.minnanotanjyoubi.View.Fragment.SettingFragment
 import com.amefure.minnanotanjyoubi.ViewModel.MainViewModel
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.MobileAds
 
 class MainActivity : AppCompatActivity() {
 
@@ -43,6 +46,12 @@ class MainActivity : AppCompatActivity() {
         val fillterButton: ImageButton = findViewById(R.id.filter_button)
         val deleteButton: ImageButton = findViewById(R.id.delete_button)
         val settingButton: ImageButton = findViewById(R.id.setting_button)
+
+        // 初期化
+        MobileAds.initialize(this)
+        // 広告の読み込み
+        var adView: AdView = findViewById(R.id.adView)
+        adView.loadAd(AdRequest.Builder().build())
 
         viewModel.fetchAllPerson()
 
