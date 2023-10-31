@@ -171,6 +171,7 @@ class MainActivity : AppCompatActivity() {
         )
         viewModel.personList.observe(this) {
             adapter = PersonGridLayoutAdapter(it.sortedBy { calcPersonInfoManager.daysLater(it.date) })
+//            adapter = PersonGridLayoutAdapter(Person.getDemoData())
             adapter.setOnBookCellClickListener(
                 object : PersonGridLayoutAdapter.OnBookCellClickListener {
                     override fun onItemClick(person: Person) {
@@ -192,7 +193,6 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             )
-//            adapter = PersonGridLayoutAdapter(Person.getDemoData())
             recyclerView.adapter = adapter
         }
     }
