@@ -78,8 +78,8 @@ class SettingFragment : Fragment() {
         var adView: AdView = view.findViewById(R.id.adView)
         adView.loadAd(AdRequest.Builder().build())
 
-        // ローカルに保存している通知情報を取得
-        observeNotifyInfo(view)
+        // ローカルに保存している情報を取得
+        observeLocalData(view)
 
         // 戻るボタン
         backButton.setOnClickListener {
@@ -178,8 +178,8 @@ class SettingFragment : Fragment() {
         }
     }
 
-    // ローカルの通知情報を観測
-    private fun observeNotifyInfo(view: View) {
+    // ローカルの情報を観測
+    private fun observeLocalData(view: View) {
         val notifyTimeButton: Button = view.findViewById(R.id.notify_setting_time_button)
         val notifyDayButton: Button = view.findViewById(R.id.notify_setting_day_button)
         val notifyEditMsg: TextView = view.findViewById(R.id.notify_setting_edit_msg)

@@ -9,11 +9,14 @@ import android.widget.ImageButton
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.amefure.minnanotanjyoubi.Domain.CalcDateInfoManager
 import com.amefure.minnanotanjyoubi.Domain.NotificationRequestManager
+import com.amefure.minnanotanjyoubi.Model.Capacity
+import com.amefure.minnanotanjyoubi.Model.DataStore.DataStoreManager
 import com.amefure.minnanotanjyoubi.Model.Database.Person
 import com.amefure.minnanotanjyoubi.Model.Relation
 import com.amefure.minnanotanjyoubi.R
@@ -25,17 +28,20 @@ import com.amefure.minnanotanjyoubi.ViewModel.MainViewModel
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.MobileAds
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
     private val viewModel: MainViewModel by viewModels()
     private lateinit var notificationRequestManager: NotificationRequestManager
+    lateinit var dataStoreManager: DataStoreManager
 
     private lateinit var adapter: PersonGridLayoutAdapter
     private lateinit var recyclerView: RecyclerView
 
     private val calcPersonInfoManager = CalcDateInfoManager()
 
+    private var limitCapacity: Int = Capacity.initialCapacity
     private var isFilter = false
     private var isSelectMode = false
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,6 +59,9 @@ class MainActivity : AppCompatActivity() {
         var adView: AdView = findViewById(R.id.adView)
         adView.loadAd(AdRequest.Builder().build())
 
+        dataStoreManager = DataStoreManager(this)
+        observeLocalData()
+
         viewModel.fetchAllPerson()
 
         // 許可ダイアログを表示
@@ -62,10 +71,20 @@ class MainActivity : AppCompatActivity() {
         observedPersonData()
 
         registerButton.setOnClickListener {
-            supportFragmentManager.beginTransaction().apply {
-                add(R.id.main_frame, InputPersonFragment())
-                addToBackStack(null)
-                commit()
+            if (limitCapacity > viewModel.personList.value!!.count()) {
+                supportFragmentManager.beginTransaction().apply {
+                    add(R.id.main_frame, InputPersonFragment())
+                    addToBackStack(null)
+                    commit()
+                }
+            } else {
+                android.app.AlertDialog.Builder(this)
+                    .setTitle("保存容量が上限に達しました...")
+                    .setMessage("設定から広告を視聴すると\n保存容量を増やすことができます。")
+                    .setPositiveButton("OK", { dialog, which ->
+                        // ボタンクリック時の処理
+                    })
+                    .show()
             }
         }
 
@@ -175,6 +194,19 @@ class MainActivity : AppCompatActivity() {
             )
 //            adapter = PersonGridLayoutAdapter(Person.getDemoData())
             recyclerView.adapter = adapter
+        }
+    }
+
+    private fun observeLocalData() {
+        lifecycleScope.launch {
+            dataStoreManager.observeLimitCapacity().collect {
+                if (it != null) {
+                    limitCapacity = it
+                } else {
+                    // 初期値格納
+                    dataStoreManager.saveLimitCapacity(Capacity.initialCapacity)
+                }
+            }
         }
     }
 
