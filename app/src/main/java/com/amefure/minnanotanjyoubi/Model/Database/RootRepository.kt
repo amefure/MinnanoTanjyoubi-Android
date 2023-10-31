@@ -56,8 +56,8 @@ class RootRepository (context: Context) {
         personDao.updatePerson(person)
     }
 
-    public fun deletePerson(person: Person) {
-        personDao.deletePerson(person)
+    public fun deletePerson(id: Int) {
+        personDao.deletePerson(id)
     }
 
 }

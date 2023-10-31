@@ -52,4 +52,10 @@ class MainViewModel(app: Application): RootViewModel(app)  {
             }
         }
     }
+
+    public fun deletePerson(id: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            rootRepository.deletePerson(id)
+        }
+    }
 }

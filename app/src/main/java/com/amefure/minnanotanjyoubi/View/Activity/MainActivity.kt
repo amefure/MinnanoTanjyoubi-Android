@@ -34,6 +34,7 @@ class MainActivity : AppCompatActivity() {
     private val calcPersonInfoManager = CalcDateInfoManager()
 
     private var isFilter = false
+    private var isSelectMode = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -90,7 +91,38 @@ class MainActivity : AppCompatActivity() {
 
 
         deleteButton.setOnClickListener {
-            //  通知発行用のブロードキャストをセット
+            if (isSelectMode) {
+
+                val idSet = adapter.getSelectedPersonIds()
+
+                if (idSet.count() == 0) {
+                    adapter.inactiveSelectMode()
+                    isSelectMode = false
+                } else {
+                    AlertDialog
+                        .Builder(this)
+                        .setMessage("選択された人物を削除しますか？")
+                        .setPositiveButton("OK", { dialog, id ->
+
+                            for(id in idSet) {
+                                viewModel.deletePerson(id)
+                            }
+
+                            adapter.inactiveSelectMode()
+                            isSelectMode = false
+                        })
+                        .setNegativeButton("キャンセル", { dialog, id ->
+                            dialog.dismiss()
+                            adapter.inactiveSelectMode()
+                            isSelectMode = false
+                        })
+                        .show()
+
+                }
+            } else {
+                adapter.activeSelectMode()
+                isSelectMode = true
+            }
         }
 
 

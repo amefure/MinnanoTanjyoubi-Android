@@ -29,14 +29,14 @@
             android:text="吉田　真紘"
             android:textAlignment="center"
             android:textColor="@android:color/white"
-            android:textSize="16sp" />
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/person_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAlignment="center"
             android:text="2023年12月25日"
+            android:textAlignment="center"
             android:textColor="@android:color/white"
             android:textSize="12sp" />
 
@@ -88,8 +88,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAlignment="center"
                 android:text="あと"
+                android:textAlignment="center"
                 android:textColor="@android:color/white"
                 android:textSize="12sp" />
 
@@ -107,8 +107,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAlignment="center"
                 android:text="日"
+                android:textAlignment="center"
                 android:textColor="@android:color/white"
                 android:textSize="12sp" />
 
@@ -126,4 +126,35 @@
 
 
     </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/select_wrapper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone">
+
+
+        <View
+            android:id="@+id/select_layer"
+            android:layout_width="match_parent"
+            android:layout_height="130dp"
+            android:alpha="0.4"
+            android:background="@color/thema_gray_light"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/select_button"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_card_check_dis_select" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.cardview.widget.CardView>

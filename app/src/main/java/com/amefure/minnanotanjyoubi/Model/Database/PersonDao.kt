@@ -15,8 +15,8 @@ interface PersonDao {
     @Update
     fun updatePerson(person: Person)
 
-    @Delete
-    fun deletePerson(person: Person)
+    @Query("DELETE FROM person_table WHERE id = :id")
+    fun deletePerson(id: Int)
 
     @Query("SELECT * FROM person_table")
     fun getAllPerson(): Flowable<List<Person>>
