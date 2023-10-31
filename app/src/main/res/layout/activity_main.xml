@@ -49,18 +49,19 @@
         android:id="@+id/main_list"
         android:layout_width="match_parent"
         android:layout_height="600dp"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="88dp"
         android:background="@color/thema_gray_light"
-        app:layout_constraintBottom_toTopOf="@+id/age_info_layout"
+        app:layout_constraintBottom_toTopOf="@+id/footer_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
-        android:id="@+id/age_info_layout"
+        android:id="@+id/footer_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="50dp"
         android:background="@color/thema_gray_dark"
         android:orientation="horizontal"
         android:paddingTop="8dp"
@@ -137,6 +138,6 @@
         app:adUnitId="ca-app-pub-3940256099942544/6300978111"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintStart_toStartOf="@id/footer_layout"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

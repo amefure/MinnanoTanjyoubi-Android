@@ -27,6 +27,7 @@ import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdView
 
 class SettingFragment : Fragment() {
 
@@ -73,6 +74,9 @@ class SettingFragment : Fragment() {
         val notifyDayButton: Button = view.findViewById(R.id.notify_setting_day_button)
         val notifyMsgButton: Button = view.findViewById(R.id.notify_setting_msg_button)
         val adsPlayButton: Button = view.findViewById(R.id.ads_reward_play_button)
+
+        var adView: AdView = view.findViewById(R.id.adView)
+        adView.loadAd(AdRequest.Builder().build())
 
         // ローカルに保存している通知情報を取得
         observeNotifyInfo(view)
@@ -179,11 +183,7 @@ class SettingFragment : Fragment() {
         val notifyTimeButton: Button = view.findViewById(R.id.notify_setting_time_button)
         val notifyDayButton: Button = view.findViewById(R.id.notify_setting_day_button)
         val notifyEditMsg: TextView = view.findViewById(R.id.notify_setting_edit_msg)
-
-        val label: TextView = view.findViewById(R.id.notify_desc_label1)
         val capacityLabel: TextView = view.findViewById(R.id.ads_setting_capacity_label)
-
-
 
         // lifecycleScope.launchはまとめると動作しないので分割
         lifecycleScope.launch {
@@ -236,7 +236,6 @@ class SettingFragment : Fragment() {
             dataStoreManager.observeLastAcquisitionDate().collect {
                 if (it != null) {
                     lastDate = it
-                    label.text = it.toString()
                 } else {
                     // 初期値格納
                     dataStoreManager.saveLastAcquisitionDate("")

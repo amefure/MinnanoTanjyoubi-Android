@@ -12,7 +12,7 @@
     <string name="ads_setting_show_label">広告を視聴して容量を増やす</string>
     <string name="ads_setting_capacity_label">現在の容量：%1$d人</string>
     <string name="ads_setting_desc_label1">・追加される容量は5個です。</string>
-    <string name="ads_setting_desc_label2">容量の追加は1日に1回までです。</string>
+    <string name="ads_setting_desc_label2">・容量の追加は1日に1回までです。</string>
 
     <!-- Dev -->
     <string name="admob_app_id">ca-app-pub-3940256099942544~3347511713</string>
