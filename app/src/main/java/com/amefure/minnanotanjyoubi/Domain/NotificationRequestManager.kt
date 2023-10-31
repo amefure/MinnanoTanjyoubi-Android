@@ -83,7 +83,8 @@ class NotificationRequestManager(private var context: Context) {
         val res = context.resources
         // 通知オブジェクトの作成
         var builder = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(R.drawable.app_logo)
+            .setSmallIcon(R.drawable.ic_notify_icon)
+            .setColor(res.getColor(R.color.thema_gray_dark))
             .setContentTitle(res.getString(R.string.app_name))
             .setContentText(msg)
             .setPriority(NotificationCompat.PRIORITY_HIGH)

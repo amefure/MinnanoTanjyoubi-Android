@@ -82,6 +82,8 @@ class DetailPersonFragment : Fragment() {
         val memoLabel: TextView = view.findViewById(R.id.memo_text)
         val notifySwitch: Switch = view.findViewById(R.id.notify_edit_button)
 
+        observeNotifyInfo()
+
         // 戻るボタン
         backButton.setOnClickListener {
             parentFragmentManager.popBackStack()
