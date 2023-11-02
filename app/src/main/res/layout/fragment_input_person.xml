@@ -58,7 +58,8 @@
             android:layout_marginLeft="20dp"
             android:layout_weight="1"
             android:text="名　前"
-            android:textAlignment="viewStart" />
+            android:textAlignment="viewStart"
+            android:textColor="@color/white" />
 
         <EditText
             android:id="@+id/name_edit"
@@ -91,7 +92,8 @@
             android:layout_marginLeft="20dp"
             android:layout_weight="1"
             android:text="ふりがな"
-            android:textAlignment="viewStart" />
+            android:textAlignment="viewStart"
+            android:textColor="@color/white" />
 
         <EditText
             android:id="@+id/ruby_edit"
@@ -123,7 +125,8 @@
             android:layout_marginLeft="20dp"
             android:layout_weight="1"
             android:text="生年月日"
-            android:textAlignment="viewStart" />
+            android:textAlignment="viewStart"
+            android:textColor="@color/white" />
 
         <Space
             android:layout_width="wrap_content"
@@ -137,7 +140,8 @@
             android:layout_marginEnd="20dp"
             android:layout_weight="1"
             android:backgroundTint="@color/thema_gray_dark"
-            android:text="2023年10月25日" />
+            android:text="2023年10月25日"
+            android:textColor="@color/white" />
     </LinearLayout>
 
     <LinearLayout
@@ -194,7 +198,8 @@
             android:layout_marginLeft="20dp"
             android:layout_weight="1"
             android:text="通知"
-            android:textAlignment="viewStart" />
+            android:textAlignment="viewStart"
+            android:textColor="@color/white" />
 
         <Space
             android:layout_width="wrap_content"
@@ -231,7 +236,8 @@
             android:layout_marginLeft="20dp"
             android:layout_marginBottom="8dp"
             android:text="MEMO"
-            android:textAlignment="viewStart" />
+            android:textAlignment="viewStart"
+            android:textColor="@color/white" />
 
         <EditText
             android:id="@+id/memo_edit"

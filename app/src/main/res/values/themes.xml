@@ -7,5 +7,19 @@
         <item name="android:statusBarColor">@color/thema_gray_dark</item>
     </style>
 
-    <style name="Theme.MinnanoTanjyoubi" parent="Base.Theme.MinnanoTanjyoubi" />
+    <style name="Theme.MinnanoTanjyoubi" parent="Base.Theme.MinnanoTanjyoubi">
+        <!-- ActionBarの背景色 -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <!-- ステータスバーの背景色 -->
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <!-- TabLayoutの下線やRadioButton選択時などの色 -->
+        <item name="colorAccent">@color/colorAccent</item>
+        <!--ActionBarの文字色 -->
+        <item name="android:textColorPrimary">@color/textColorPrimary</item>
+        <!-- ウィンドウ背景色 -->
+        <item name="android:windowBackground">@color/windowBackground</item>
+        <!-- ナビゲーションバー（戻るキー・ホームキーなどがあるバー）の背景色 -->
+        <item name="android:navigationBarColor">@color/navigationBarColor</item>
+
+    </style>
 </resources>

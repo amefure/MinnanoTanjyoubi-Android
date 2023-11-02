@@ -141,7 +141,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="20dp"
                     android:backgroundTint="@color/thema_gray_dark"
-                    android:text="@string/notify_default_time" />
+                    android:text="@string/notify_default_time"
+                    android:textColor="@color/white" />
             </LinearLayout>
 
             <LinearLayout
@@ -181,7 +182,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="20dp"
                     android:backgroundTint="@color/thema_red"
-                    android:text="@string/notify_default_day" />
+                    android:text="@string/notify_default_day"
+                    android:textColor="@color/white"
+                    android:textColorHighlight="@color/white" />
             </LinearLayout>
 
             <LinearLayout
@@ -223,7 +226,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="20dp"
                     android:backgroundTint="@color/thema_gray_light"
-                    android:text="編集" />
+                    android:text="編集"
+                    android:textColor="@color/white" />
             </LinearLayout>
 
 
@@ -315,7 +319,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="20dp"
                     android:backgroundTint="@color/thema_gray_dark"
-                    android:text="loading..." />
+                    android:text="loading..."
+                    android:textColor="@color/white"
+                    android:textColorHighlight="@color/white" />
             </LinearLayout>
 
             <LinearLayout

@@ -6,7 +6,7 @@
 
     <string name="notify_setting_label">通知時間</string>
     <string name="notify_setting_label2">通知日</string>
-    <string name="notify_desc_label1">・通知設定を変更以降にONにした通知を設定されます。</string>
+    <string name="notify_desc_label1">・通知設定を変更以降にONにした通知が設定されます。</string>
     <string name="notify_desc_label2">・通知メッセージは{userName}部分が名前に自動で置き換わります。</string>
     <string name="ads_setting_show_label">広告を視聴して容量を増やす</string>
     <string name="ads_setting_capacity_label">現在の容量：%1$d人</string>

@@ -11,4 +11,17 @@
     <color name="text_color">#555555</color>
     <color name="positive_color">#30bd4e</color>
     <color name="negative_color">#B00020</color>
+
+    <!-- ActionBarの背景色 -->
+    <color name="colorPrimary">@color/thema_gray_dark</color>
+    <!-- ステータスバーの背景色 -->
+    <color name="colorPrimaryDark">@color/thema_gray_dark</color>
+    <!-- TabLayoutの下線やRadioButton選択時などの色 -->
+    <color name="colorAccent">@color/thema_orange</color>
+    <!-- ActionBarの文字色 -->
+    <color name="textColorPrimary">@color/text_color</color>
+    <!-- ウィンドウ背景色 -->
+    <color name="windowBackground">@color/thema_gray_dark</color>
+    <!-- ナビゲーションバー（戻るキー・ホームキーなどがあるバー）の背景色 -->
+    <color name="navigationBarColor">@color/thema_gray_dark</color>
 </resources>
