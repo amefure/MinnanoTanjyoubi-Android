@@ -38,3 +38,5 @@ GoogleService-Info.plist
 # Android Profiling
 *.hprof
 app-release.aab
+Keystore
+private_key.pepk
