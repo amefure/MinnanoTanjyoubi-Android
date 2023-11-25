@@ -49,8 +49,20 @@ class NotificationRequestManager(private var context: Context) {
 
         val timeZone = TimeZone.getTimeZone("Asia/Tokyo")
         val c = Calendar.getInstance(timeZone)
+
+        var year = c.get(Calendar.YEAR)
+
+        /// 登録された日付が今日より過去なら登録時に通知が発行されてしまうので来年からにする
+        val nowMonth = c.get(Calendar.MONTH) + 1
+        val nowDay = c.get(Calendar.DAY_OF_MONTH)
+
+        if (month < nowMonth) {
+            year += 1
+        } else if(nowMonth == month && day < nowDay) {
+            year += 1
+        }
         c.timeInMillis = 0
-        c.set(Calendar.YEAR, c.get(Calendar.YEAR)) // 当年の年を設定
+        c.set(Calendar.YEAR, year)                 // 当年or来年の年を設定
         c.set(Calendar.MONTH, month - 1)           // 誕生月を設定
         c.set(Calendar.DAY_OF_MONTH, day)          // 誕生月日を設定
         c.set(Calendar.HOUR_OF_DAY, hour)          // 設定時間を設定
