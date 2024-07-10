@@ -7,14 +7,14 @@ plugins {
 
 android {
     namespace 'com.amefure.minnanotanjyoubi'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.amefure.minnanotanjyoubi"
         minSdk 26
-        targetSdk 33
-        versionCode 4
-        versionName "1.3.0"
+        targetSdk 34
+        versionCode 5
+        versionName "1.3.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
