@@ -4,7 +4,9 @@
 
     <!-- 通知 -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <!-- ヘッドアップ通知用　-->
     <uses-permission android:name="android.permission.VIBRATE"/>
+
     <!-- ブロードキャスト -->
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
     <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>
@@ -33,6 +35,7 @@
             </intent-filter>
         </activity>
         <receiver android:name=".Domain.ReceivedActivity"
-            android:process=":remote" />
+            android:process=":remote"
+            android:exported="true"/>
     </application>
 </manifest>
