@@ -6,7 +6,6 @@ import java.time.ZonedDateTime
 import java.time.chrono.JapaneseDate
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
-import java.util.Calendar
 import java.util.Locale
 
 class CalcDateInfoManager {
@@ -22,11 +21,19 @@ class CalcDateInfoManager {
     }
 
     // 同じ日付かどうか
-    fun isToday(date: String): Boolean {
+    public fun isToday(date: String): Boolean {
         if (date.isEmpty()) { return false }
         val day = LocalDate.parse(date, formatter)
         val today = LocalDate.now()
         return isDateInRange(day, today, today.plusDays(1))
+    }
+
+    /** 誕生日当日かどうか */
+    public fun isBirthDay(date: String): Boolean {
+        if (date.isEmpty()) { return false }
+        val birthday = LocalDate.parse(date, formatter)
+        val today = LocalDate.now()
+        return birthday.month == today.month && birthday.dayOfMonth == today.dayOfMonth
     }
 
     // 現在の年齢を計算する
@@ -45,11 +52,8 @@ class CalcDateInfoManager {
         } else {
             ChronoUnit.DAYS.between(today, nextBirthday)
         }
-        var daysLaterInt = daysUntilNextBirthday.toInt()
-        if (daysLaterInt == 366) {
-            daysLaterInt = 0
-        }
-        return daysLaterInt
+        // 閏年も考慮して？
+        return if (daysUntilNextBirthday == 366L) 0 else daysUntilNextBirthday.toInt()
     }
 
     // 本日の日付を文字列で取得する

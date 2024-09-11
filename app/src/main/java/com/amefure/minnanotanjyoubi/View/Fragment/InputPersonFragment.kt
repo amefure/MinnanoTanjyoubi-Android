@@ -11,11 +11,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.EditText
 import android.widget.ImageButton
-import android.widget.Spinner
-import android.widget.Switch
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -29,6 +25,9 @@ import com.amefure.minnanotanjyoubi.ViewModel.InputPersonViewModel
 import com.google.android.material.snackbar.Snackbar
 import java.util.Calendar
 import com.amefure.minnanotanjyoubi.Model.Keys.*
+import com.amefure.minnanotanjyoubi.databinding.FragmentDetailPersonBinding
+import com.amefure.minnanotanjyoubi.databinding.FragmentInputPersonBinding
+import com.amefure.minnanotanjyoubi.databinding.FragmentSettingBinding
 import kotlinx.coroutines.launch
 
 class InputPersonFragment : Fragment() {
@@ -37,6 +36,9 @@ class InputPersonFragment : Fragment() {
     private lateinit var dataStoreManager: DataStoreManager
     private lateinit var notificationRequestManager: NotificationRequestManager
     private val calcDateInfoManager = CalcDateInfoManager()
+
+    private var _binding: FragmentInputPersonBinding? = null
+    private val binding get() = _binding!!
 
     private lateinit var res: Resources
 
@@ -55,18 +57,12 @@ class InputPersonFragment : Fragment() {
     private var receiveNotify: Boolean = false
     private var receiveMemo:String = ""
 
-    // Input UI
-    private lateinit var nameEdit: EditText
-    private lateinit var rubyEdit: EditText
-    private lateinit var dateEditButton:Button
-    private lateinit var relationSpinner:Spinner
-    private lateinit var notifySwitch: Switch
-    private lateinit var memoEdit: EditText
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
+        _binding = FragmentInputPersonBinding.inflate(inflater, container, false)
+
         dataStoreManager = DataStoreManager(this.requireContext())
         notificationRequestManager = NotificationRequestManager(this.requireContext())
 
@@ -85,7 +81,7 @@ class InputPersonFragment : Fragment() {
             receiveNotify = it.getBoolean(ARG_NOTIFY_KEY,true)
             receiveMemo = it.getString(ARG_MEMO_KEY,"")
         }
-        return inflater.inflate(R.layout.fragment_input_person, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -96,14 +92,6 @@ class InputPersonFragment : Fragment() {
 
         observeNotifyInfo()
 
-        // 入力View
-        nameEdit = view.findViewById(R.id.name_edit)
-        rubyEdit = view.findViewById(R.id.ruby_edit)
-        dateEditButton = view.findViewById(R.id.date_edit_button)
-        relationSpinner = view.findViewById(R.id.relation_spinner)
-        notifySwitch = view.findViewById(R.id.notify_edit_button)
-        memoEdit = view.findViewById(R.id.memo_edit)
-
         // 戻るボタン
         backButton.setOnClickListener {
             showOffKeyboard()
@@ -112,12 +100,12 @@ class InputPersonFragment : Fragment() {
 
         // 登録ボタン
         registerButton.setOnClickListener {
-            val name = nameEdit.text.toString()
-            val ruby = rubyEdit.text.toString()
-            val date = dateEditButton.text.toString()
+            val name = binding.nameEdit.text.toString()
+            val ruby = binding.rubyEdit.text.toString()
+            val date = binding.dateEditButton.text.toString()
             val relation = selectRelation
-            var notify = notifySwitch.isChecked
-            val memo = memoEdit.text.toString()
+            val notify = binding.notifyEditButton.isChecked
+            val memo = binding.memoEdit.text.toString()
 
             if (!name.isEmpty()) {
 
@@ -171,7 +159,7 @@ class InputPersonFragment : Fragment() {
         }
 
         // 日付ダイアログ表示ボタン
-        dateEditButton.setOnClickListener {
+        binding.dateEditButton.setOnClickListener {
             var year = 0
             var month = 0
             var day = 0
@@ -199,12 +187,12 @@ class InputPersonFragment : Fragment() {
         Relation.values().forEach {
             spinnerAdapter.add(it.value())
         }
-        relationSpinner.adapter = spinnerAdapter
-        relationSpinner.onItemSelectedListener = spinnerAdapterListener
+        binding.relationSpinner.adapter = spinnerAdapter
+        binding.relationSpinner.onItemSelectedListener = spinnerAdapterListener
 
         // 選択される日付を観測
         viewModel.selectDate.observe(this.requireActivity(), Observer {
-            dateEditButton.text = it
+            binding.dateEditButton.text = it
         })
 
         // 詳細画面からの遷移の場合は情報をセット
@@ -243,12 +231,12 @@ class InputPersonFragment : Fragment() {
     }
 
     private fun setReceiveUIText() {
-        nameEdit.setText(receiveName)
-        rubyEdit.setText(receiveRuby)
+        binding.nameEdit.setText(receiveName)
+        binding.rubyEdit.setText(receiveRuby)
         viewModel.setSelectDate(receiveDate)
-        relationSpinner.setSelection(Relation.getIndex(receiveRelation))
-        notifySwitch.isChecked = receiveNotify
-        memoEdit.setText(receiveMemo)
+        binding.relationSpinner.setSelection(Relation.getIndex(receiveRelation))
+        binding.notifyEditButton.isChecked = receiveNotify
+        binding.memoEdit.setText(receiveMemo)
     }
 
     private fun observeNotifyInfo() {
@@ -274,6 +262,11 @@ class InputPersonFragment : Fragment() {
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        _binding = null
+        super.onDestroy()
     }
 
     companion object {

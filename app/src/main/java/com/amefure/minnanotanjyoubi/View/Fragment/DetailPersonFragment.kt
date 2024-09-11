@@ -6,9 +6,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.Switch
-import android.widget.TextView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.amefure.minnanotanjyoubi.Domain.CalcDateInfoManager
@@ -17,6 +14,7 @@ import com.amefure.minnanotanjyoubi.Model.DataStore.DataStoreManager
 import com.amefure.minnanotanjyoubi.Model.Keys.*
 import com.amefure.minnanotanjyoubi.R
 import com.amefure.minnanotanjyoubi.ViewModel.DetailPersonViewModel
+import com.amefure.minnanotanjyoubi.databinding.FragmentDetailPersonBinding
 import kotlinx.coroutines.launch
 
 
@@ -41,11 +39,15 @@ class DetailPersonFragment : Fragment() {
     private var notifyMsg: String = ""
     private var notifyDay: String = ""
 
+    private var _binding: FragmentDetailPersonBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
+        _binding = FragmentDetailPersonBinding.inflate(inflater, container, false)
+
         dataStoreManager = DataStoreManager(this.requireContext())
         notificationRequestManager = NotificationRequestManager(this.requireContext())
 
@@ -63,35 +65,22 @@ class DetailPersonFragment : Fragment() {
             notify = it.getBoolean(ARG_NOTIFY_KEY,true)
             memo = it.getString(ARG_MEMO_KEY,"")
         }
-        return inflater.inflate(R.layout.fragment_detail_person, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val backButton: ImageButton = view.findViewById(R.id.back_button)
-        val editButton: ImageButton = view.findViewById(R.id.edit_button)
-
-        val relationLabel: TextView = view.findViewById(R.id.relation_text)
-        val daysLaterLabel: TextView = view.findViewById(R.id.days_later_text)
-        val nameLabel: TextView = view.findViewById(R.id.name_text)
-        val rubyLabel: TextView = view.findViewById(R.id.ruby_text)
-        val dateLabel: TextView = view.findViewById(R.id.date_text)
-        val ageLabel: TextView = view.findViewById(R.id.age_text)
-        val signOgZodiacLabel: TextView = view.findViewById(R.id.sign_of_zodiac_text)
-        val zodiacLabel: TextView = view.findViewById(R.id.zodiac_text)
-        val memoLabel: TextView = view.findViewById(R.id.memo_text)
-        val notifySwitch: Switch = view.findViewById(R.id.notify_edit_button)
 
         observeNotifyInfo()
 
         // 戻るボタン
-        backButton.setOnClickListener {
+        binding.backButton.setOnClickListener {
             parentFragmentManager.popBackStack()
         }
 
-        editButton.setOnClickListener {
+        binding.editButton.setOnClickListener {
             // input画面にレコードの情報を渡して生成
-            var nextFragment = InputPersonFragment.editInstance(id, name, ruby, date, relation, notify, memo)
+            val nextFragment = InputPersonFragment.editInstance(id, name, ruby, date, relation, notify, memo)
             parentFragmentManager.beginTransaction().apply {
                 add(R.id.main_frame, nextFragment)
                 addToBackStack(null)
@@ -99,18 +88,23 @@ class DetailPersonFragment : Fragment() {
             }
         }
 
-        relationLabel.text = relation
-        daysLaterLabel.text = "あと" + calcDateInfoManager.daysLater(date).toString() + "日"
-        nameLabel.text = name
-        rubyLabel.text = ruby
-        dateLabel.text = date + "（" + calcDateInfoManager.japaneseEraName(date) + "）"
-        ageLabel.text = calcDateInfoManager.currentAge(date).toString() + "歳"
-        signOgZodiacLabel.text = calcDateInfoManager.signOfZodiac(date)
-        zodiacLabel.text = calcDateInfoManager.zodiac(date)
-        memoLabel.text = memo
-        notifySwitch.isChecked = notify
+        binding.relationText.text = relation
+        if (calcDateInfoManager.isBirthDay(date)) {
+            binding.daysLaterText.text = "HAPPY BIRTHDAY"
+        } else {
+            binding.daysLaterText.text = "あと" + calcDateInfoManager.daysLater(date).toString() + "日"
+        }
 
-        notifySwitch.setOnCheckedChangeListener { _, isChecked ->
+        binding.nameText.text = name
+        binding.rubyText.text = ruby
+        binding.dateText.text = date + "（" + calcDateInfoManager.japaneseEraName(date) + "）"
+        binding.ageText.text = calcDateInfoManager.currentAge(date).toString() + "歳"
+        binding.signOfZodiacText.text = calcDateInfoManager.signOfZodiac(date)
+        binding.zodiacText.text = calcDateInfoManager.zodiac(date)
+        binding.memoText.text = memo
+        binding.notifyEditButton.isChecked = notify
+
+        binding.notifyEditButton.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 val time = notifyTime.split(":")
                 var thisDate = date
@@ -162,6 +156,11 @@ class DetailPersonFragment : Fragment() {
                 }
             }
         }
+    }
+
+    override fun onDestroyView() {
+        _binding = null
+        super.onDestroyView()
     }
 
     companion object{

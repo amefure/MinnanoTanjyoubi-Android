@@ -3,15 +3,15 @@ package com.amefure.minnanotanjyoubi.View.Adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.amefure.minnanotanjyoubi.Domain.CalcDateInfoManager
 import com.amefure.minnanotanjyoubi.Model.Database.Person
 import com.amefure.minnanotanjyoubi.R
+import com.amefure.minnanotanjyoubi.databinding.FragmentPersonCardBinding
 
 class PersonGridLayoutAdapter (personList: List<Person>) :RecyclerView.Adapter<PersonGridLayoutAdapter.MainViewHolder>() {
 
@@ -20,41 +20,42 @@ class PersonGridLayoutAdapter (personList: List<Person>) :RecyclerView.Adapter<P
 
     private val calcPersonInfoManager = CalcDateInfoManager()
 
-
     private var isSelectableMode = false
     // 削除対象のIDを保持
     private val selectedPersonIds = mutableSetOf<Int>()
 
     private lateinit var listener: OnBookCellClickListener
-    // 2. インターフェースを作成
+
+    // インターフェースを作成
     interface OnBookCellClickListener {
         fun onItemClick(person: Person)
     }
 
     // セレクトモード活性
-    public fun activeSelectMode(){
+    public fun activeSelectMode() {
         isSelectableMode = true
         notifyDataSetChanged()
     }
 
     // セレクトモード非活性
-    public fun inactiveSelectMode(){
+    public fun inactiveSelectMode() {
         selectedPersonIds.removeAll(selectedPersonIds)
         isSelectableMode = false
         notifyDataSetChanged()
     }
 
-    // 3. リスナーをセット
+    // リスナーをセット
     fun setOnBookCellClickListener(listener: OnBookCellClickListener) {
         // 定義した変数listenerに実行したい処理を引数で渡す（BookListFragmentで渡している）
         this.listener = listener
     }
 
+    private var _binding: FragmentPersonCardBinding? = null
+    private val binding get() = _binding!!
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainViewHolder {
-        return MainViewHolder(
-            // XMLレイアウトファイルからViewオブジェクトを作成
-            LayoutInflater.from(parent.context).inflate(R.layout.fragment_person_card, parent, false)
-        )
+        _binding = FragmentPersonCardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return MainViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
@@ -94,19 +95,28 @@ class PersonGridLayoutAdapter (personList: List<Person>) :RecyclerView.Adapter<P
         holder.date.text = person.date
         holder.age.text = age.toString()
         holder.daysLater.text = daysLater.toString()
+
+        if (calcPersonInfoManager.isBirthDay(person.date)) {
+            holder.birthdayMsg.visibility = View.VISIBLE
+            holder.daysLaterLayout.visibility = View.GONE
+        } else {
+            holder.birthdayMsg.visibility = View.GONE
+            holder.daysLaterLayout.visibility = View.VISIBLE
+        }
     }
 
     fun getSelectedPersonIds() : Set<Int> {
         return selectedPersonIds.toSet()
     }
 
-    class MainViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val name: TextView = itemView.findViewById(R.id.person_name)
-        val date: TextView = itemView.findViewById(R.id.person_date)
-        val age: TextView = itemView.findViewById(R.id.person_age)
-        val daysLater: TextView = itemView.findViewById(R.id.person_days_later)
-        val selectWrapper: ConstraintLayout = itemView.findViewById(R.id.select_wrapper)
-        val selectButton: ImageView = itemView.findViewById(R.id.select_button)
+    class MainViewHolder(binding: FragmentPersonCardBinding) : RecyclerView.ViewHolder(binding.root) {
+        val name: TextView = binding.personName
+        val date: TextView = binding.personDate
+        val age: TextView = binding.personAge
+        val daysLaterLayout: LinearLayout = binding.personDaysLaterLayout
+        val daysLater: TextView = binding.personDaysLater
+        val birthdayMsg: LinearLayout = binding.birthdayMsg
+        val selectWrapper: ConstraintLayout = binding.selectWrapper
+        val selectButton: ImageView = binding.selectButton
     }
-
 }

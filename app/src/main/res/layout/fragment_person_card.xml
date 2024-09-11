@@ -77,8 +77,10 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/person_days_later_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:visibility="visible">
 
             <Space
                 android:layout_width="wrap_content"
@@ -116,6 +118,25 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/birthday_msg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:text="HAPPY BIRTHDAY"
+                android:textAlignment="center"
+                android:textColor="@color/thema_yelow"
+                android:textSize="14sp" />
 
         </LinearLayout>
 

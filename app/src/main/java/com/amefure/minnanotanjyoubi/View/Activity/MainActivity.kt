@@ -1,11 +1,9 @@
 package com.amefure.minnanotanjyoubi.View.Activity
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import android.Manifest
-import android.widget.ImageButton
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
@@ -25,8 +23,8 @@ import com.amefure.minnanotanjyoubi.View.Fragment.DetailPersonFragment
 import com.amefure.minnanotanjyoubi.View.Fragment.InputPersonFragment
 import com.amefure.minnanotanjyoubi.View.Fragment.SettingFragment
 import com.amefure.minnanotanjyoubi.ViewModel.MainViewModel
+import com.amefure.minnanotanjyoubi.databinding.ActivityMainBinding
 import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.MobileAds
 import kotlinx.coroutines.launch
 
@@ -34,30 +32,27 @@ class MainActivity : AppCompatActivity() {
 
     private val viewModel: MainViewModel by viewModels()
     private lateinit var notificationRequestManager: NotificationRequestManager
-    lateinit var dataStoreManager: DataStoreManager
+    private lateinit var dataStoreManager: DataStoreManager
 
     private lateinit var adapter: PersonGridLayoutAdapter
-    private lateinit var recyclerView: RecyclerView
 
     private val calcPersonInfoManager = CalcDateInfoManager()
 
     private var limitCapacity: Int = Capacity.initialCapacity
     private var isFilter = false
     private var isSelectMode = false
+
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
-        val registerButton: ImageButton = findViewById(R.id.register_button)
-        val fillterButton: ImageButton = findViewById(R.id.filter_button)
-        val deleteButton: ImageButton = findViewById(R.id.delete_button)
-        val settingButton: ImageButton = findViewById(R.id.setting_button)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         // 初期化
         MobileAds.initialize(this)
         // 広告の読み込み
-        var adView: AdView = findViewById(R.id.adView)
-        adView.loadAd(AdRequest.Builder().build())
+        binding.adView.loadAd(AdRequest.Builder().build())
 
         dataStoreManager = DataStoreManager(this)
         observeLocalData()
@@ -67,10 +62,9 @@ class MainActivity : AppCompatActivity() {
         // 許可ダイアログを表示
         launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
 
-        recyclerView = findViewById(R.id.main_list)
         observedPersonData()
 
-        registerButton.setOnClickListener {
+        binding.registerButton.setOnClickListener {
             if (limitCapacity > viewModel.personList.value!!.count()) {
                 supportFragmentManager.beginTransaction().apply {
                     add(R.id.main_frame, InputPersonFragment())
@@ -94,13 +88,13 @@ class MainActivity : AppCompatActivity() {
         notificationRequestManager.createNotificationChannel()
 
 
-        fillterButton.setOnClickListener {
+        binding.filterButton.setOnClickListener {
             if (isFilter) {
                 viewModel.fetchAllPerson()
                 isFilter = false
-                fillterButton.imageTintList = ContextCompat.getColorStateList(this,R.color.white)
+                binding.filterButton.imageTintList = ContextCompat.getColorStateList(this,R.color.white)
             } else {
-                var list = mutableListOf<String>()
+                val list = mutableListOf<String>()
                 Relation.values().forEach {
                     list += it.value()
                 }
@@ -109,7 +103,7 @@ class MainActivity : AppCompatActivity() {
                     .setTitle("フィルターカテゴリ")
                     .setSingleChoiceItems(list.toTypedArray(), 0, { dialog, which ->
                         viewModel.fetchFilterPerson(Relation.getRelation(which.toString()))
-                        fillterButton.imageTintList = ContextCompat.getColorStateList(this,R.color.thema_red)
+                        binding.filterButton.imageTintList = ContextCompat.getColorStateList(this,R.color.thema_red)
                         isFilter = true
                         dialog.dismiss()
                     })
@@ -118,7 +112,7 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-        deleteButton.setOnClickListener {
+        binding.deleteButton.setOnClickListener {
             if (isSelectMode) {
 
                 val idSet = adapter.getSelectedPersonIds()
@@ -154,7 +148,7 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-        settingButton.setOnClickListener {
+        binding.settingButton.setOnClickListener {
             supportFragmentManager.beginTransaction().apply {
                 add(R.id.main_frame, SettingFragment())
                 addToBackStack(null)
@@ -165,8 +159,8 @@ class MainActivity : AppCompatActivity() {
 
     // DBの観測とリサイクルビューへの紐付け
     private fun observedPersonData() {
-        recyclerView.layoutManager = GridLayoutManager(this, 3, RecyclerView.VERTICAL, false)
-        recyclerView.addItemDecoration(
+        binding.mainList.layoutManager = GridLayoutManager(this, 3, RecyclerView.VERTICAL, false)
+        binding.mainList.addItemDecoration(
             DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
         )
         viewModel.personList.observe(this) {
@@ -193,7 +187,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             )
-            recyclerView.adapter = adapter
+            binding.mainList.adapter = adapter
         }
     }
 
@@ -221,5 +215,10 @@ class MainActivity : AppCompatActivity() {
 //                    .show()
             }
         }
+
+    override fun onDestroy() {
+        binding.mainList.adapter = null
+        super.onDestroy()
+    }
 }
 
