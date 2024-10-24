@@ -35,6 +35,15 @@ render.experimental.xml
 google-services.json
 GoogleService-Info.plist
 
+# fastlane
+fastlane/.env
+fastlane/secrets/*
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/test_output
+fastlane/AppFile
+fastlane/Deliverfile
+
 # Android Profiling
 *.hprof
 app-release.aab
