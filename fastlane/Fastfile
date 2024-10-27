@@ -27,16 +27,29 @@ platform :android do
     gradle(task: "clean assembleRelease")
   end
 
-  desc "リリースAABファイルを生成"
+  desc "認証済みリリースAABファイルを生成してGoogle Play Consoleへアップロード"
   lane :build_aab do
+    # AABファイル生成
     gradle(
       task: "clean bundle",
-      build_type: "release"
+      build_type: "release",
+      properties: {
+        # KeyStore情報を指定して認証
+        "android.injected.signing.store.file" => ENV['KEY_FILE_PATH'],
+        "android.injected.signing.store.password" => ENV['KEY_STORE_PASS'],
+        "android.injected.signing.key.alias" => ENV['KEY_STORE_ALIAS'],
+        "android.injected.signing.key.password" =>  ENV['KEY_STORE_PASS'],
+      }
     )
+    
     upload_to_play_store(
+        # 内部テストとしてアップロード
         track: "internal",
+        # リリースのステータスを下書きとする
         release_status: "draft",
+        # APKファイルのアップロードをスキップ
         skip_upload_apk: true,
+        # 各メタデータのアップロードをスキップ
         skip_upload_metadata: true,
         skip_upload_changelogs: true,
         skip_upload_images: true,
