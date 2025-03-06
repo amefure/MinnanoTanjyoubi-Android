@@ -41,7 +41,7 @@ platform :android do
         "android.injected.signing.key.password" =>  ENV['KEY_STORE_PASS'],
       }
     )
-    
+    # Google Play Consoleへアップロード    
     upload_to_play_store(
         # 内部テストとしてアップロード
         track: "internal",
