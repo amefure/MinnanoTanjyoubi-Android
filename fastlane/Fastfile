@@ -44,9 +44,13 @@ platform :android do
     # Google Play Consoleへアップロード    
     upload_to_play_store(
         # 内部テストとしてアップロード
-        track: "internal",
+        # track: "internal",
+        # 本番としてアップロード
+        track: "production",
         # リリースのステータスを下書きとする
-        release_status: "draft",
+        # release_status: "draft",
+        # リリースを即時公開（下書きではない）
+        release_status: "completed",
         # APKファイルのアップロードをスキップ
         skip_upload_apk: true,
         # 各メタデータのアップロードをスキップ
