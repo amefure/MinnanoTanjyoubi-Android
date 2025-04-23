@@ -28,7 +28,7 @@ platform :android do
   end
 
   desc "認証済みリリースAABファイルを生成してGoogle Play Consoleへアップロード"
-  lane :build_aab do
+  lane :upload_aab do
     # AABファイル生成
     gradle(
       task: "clean bundle",

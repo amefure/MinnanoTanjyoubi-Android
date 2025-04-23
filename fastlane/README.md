@@ -31,13 +31,13 @@ Runs all the tests
 
 リリースAPKファイルを生成
 
-### android build_aab
+### android upload_aab
 
 ```sh
-[bundle exec] fastlane android build_aab
+[bundle exec] fastlane android upload_aab
 ```
 
-リリースAABファイルを生成
+認証済みリリースAABファイルを生成してGoogle Play Consoleへアップロード
 
 ----
 
