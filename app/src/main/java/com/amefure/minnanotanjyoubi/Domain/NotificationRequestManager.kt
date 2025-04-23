@@ -60,7 +60,10 @@ class NotificationRequestManager(private var context: Context) {
             // 今月以前
             year += 1
         } else if (nowMonth == month && day < nowDay) {
-            // 今月の日付が今日より古い
+            // 月が同じかつ日付が今日より古い
+            year += 1
+        } else if (nowMonth == month && day == nowDay && hour < nowHour) {
+            // 月が同じかつ日付が同じかつ時間が現在時刻より前
             year += 1
         } else if (nowMonth == month && day == nowDay && hour == nowHour && minutes == nowMinute ) {
             // 現在時刻と同じ
@@ -81,7 +84,7 @@ class NotificationRequestManager(private var context: Context) {
         notificationIntent.putExtra(INTENT_KEY_NOTIFY_ID, id)
         notificationIntent.putExtra(INTENT_KEY_NOTIFY_TIME, triggerTime)
         val pendingIntent = PendingIntent.getBroadcast(context, id, notificationIntent, PendingIntent.FLAG_IMMUTABLE)
-        Log.d("通知送信日", "${year}/${month} ${hour}：${minutes}")
+        Log.d("通知送信日", "${year}/${month}/${day} ${hour}：${minutes}")
 
         // 正確な時間で通知をセット
         alarmManager.setExact(
