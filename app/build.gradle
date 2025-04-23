@@ -1,18 +1,18 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
-    id 'kotlin-kapt'
+    id 'com.google.devtools.ksp'
     id "com.google.gms.google-services"
 }
 
 android {
     namespace 'com.amefure.minnanotanjyoubi'
-    compileSdk 34
+    compileSdk 36
 
     defaultConfig {
         applicationId "com.amefure.minnanotanjyoubi"
         minSdk 26
-        targetSdk 34
+        targetSdk 36
         versionCode 6
         versionName "1.4.0"
 
@@ -62,7 +62,8 @@ dependencies {
 
     implementation "androidx.room:room-runtime:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
-    kapt "androidx.room:room-compiler:$room_version"
+    // kapt "androidx.room:room-compiler:$room_version"
+    ksp "androidx.room:room-compiler:$room_version"
 
     implementation 'androidx.room:room-rxjava2:2.3.0'
     // Room > RxKotlin
