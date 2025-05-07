@@ -50,12 +50,12 @@ class SettingFragment : Fragment() {
         val adRequest = AdRequest.Builder().build()
         RewardedAd.load(this.requireContext(),this.getString(R.string.admob_reward_id), adRequest, object : RewardedAdLoadCallback() {
             override fun onAdFailedToLoad(adError: LoadAdError) {
-                Log.d("", "ロード失敗")
+                Log.d("Admob", "ロード失敗")
                 rewardedAd = null
                 updateAdsButtonState()
             }
             override fun onAdLoaded(ad: RewardedAd) {
-                Log.d("", "ロード完了")
+                Log.d("Admob", "ロード完了")
                 rewardedAd = ad
                 updateAdsButtonState()
             }
@@ -83,8 +83,8 @@ class SettingFragment : Fragment() {
         }
 
         binding.notifySettingTimeButton.setOnClickListener {
-            var hour = 0
-            var minute = 0
+            val hour: Int
+            val minute: Int
             if (notifyTime != null) {
                 // 日付を選択済みの場合は初期値を変更
                 val parts = notifyTime!!.split(":")
@@ -140,9 +140,7 @@ class SettingFragment : Fragment() {
                 AlertDialog.Builder(this.requireContext())
                     .setTitle("お知らせ")
                     .setMessage("広告を視聴できるのは1日に1回までです。")
-                    .setPositiveButton("OK", { dialog, which ->
-                        // ボタンクリック時の処理
-                    })
+                    .setPositiveButton("OK", { _, _ -> })
                     .show()
             }
         }
