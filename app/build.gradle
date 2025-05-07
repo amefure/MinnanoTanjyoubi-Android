@@ -86,4 +86,7 @@ dependencies {
     // Firebase
     implementation(platform("com.google.firebase:firebase-bom:33.13.0"))
     implementation("com.google.firebase:firebase-analytics-ktx")
+
+    // Google Play Billing Library 7系
+    implementation 'com.android.billingclient:billing:7.1.1'
 }
