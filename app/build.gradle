@@ -60,7 +60,8 @@ dependencies {
     implementation 'androidx.fragment:fragment-ktx:1.8.6'
 
     // DataStore
-    implementation("androidx.datastore:datastore-preferences:1.1.5")
+    // 1.1.5では未参照になる
+    implementation("androidx.datastore:datastore-preferences:1.1.4")
 
     // Room
     def room_version = "2.7.1"
