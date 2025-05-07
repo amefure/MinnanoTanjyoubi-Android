@@ -1,5 +1,6 @@
 package com.amefure.minnanotanjyoubi.View.Adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,13 +32,15 @@ class PersonGridLayoutAdapter (personList: List<Person>) :RecyclerView.Adapter<P
         fun onItemClick(person: Person)
     }
 
-    // セレクトモード活性
+    /** セレクトモード活性 */
+    @SuppressLint("NotifyDataSetChanged")
     public fun activeSelectMode() {
         isSelectableMode = true
         notifyDataSetChanged()
     }
 
-    // セレクトモード非活性
+    /** セレクトモード非活性 */
+    @SuppressLint("NotifyDataSetChanged")
     public fun inactiveSelectMode() {
         selectedPersonIds.removeAll(selectedPersonIds)
         isSelectableMode = false
@@ -58,6 +61,7 @@ class PersonGridLayoutAdapter (personList: List<Person>) :RecyclerView.Adapter<P
         return MainViewHolder(binding)
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
         val person = _personList[position]
 

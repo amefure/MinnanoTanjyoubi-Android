@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import java.io.IOException
 
+/** アプリ内ローカル保存データ管理クラス */
 class DataStoreManager(private val context: Context) {
 
     companion object {
@@ -26,6 +27,7 @@ class DataStoreManager(private val context: Context) {
         val LAST_ACQUISITION_DATE = stringPreferencesKey("last_acquisition_date")
     }
 
+    /** 保存；通知時間 */
     suspend fun saveNotifyTime(notifyTime: String) {
         try {
             context.dataStore.edit { preferences ->
@@ -36,6 +38,7 @@ class DataStoreManager(private val context: Context) {
         }
     }
 
+    /** 観測：通知時間 */
     public fun observeNotifyTime(): Flow<String?> {
         return context.dataStore.data.catch { exception ->
             if (exception is IOException) {
@@ -48,6 +51,7 @@ class DataStoreManager(private val context: Context) {
         }
     }
 
+    /** 保存；通知日 */
     suspend fun saveNotifyDay(notifyDay: String) {
         try {
             context.dataStore.edit { preferences ->
@@ -58,6 +62,7 @@ class DataStoreManager(private val context: Context) {
         }
     }
 
+    /** 観測；通知日 */
     public fun observeNotifyDay(): Flow<String?> {
         return context.dataStore.data.catch { exception ->
             if (exception is IOException) {
@@ -70,6 +75,7 @@ class DataStoreManager(private val context: Context) {
         }
     }
 
+    /** 保存；通知メッセージ */
     suspend fun saveNotifyMsg(notifyMsg: String) {
         try {
             context.dataStore.edit { preferences ->
@@ -80,6 +86,7 @@ class DataStoreManager(private val context: Context) {
         }
     }
 
+    /** 観測；通知メッセージ */
     public fun observeNotifyMsg(): Flow<String?> {
         return context.dataStore.data.catch { exception ->
             if (exception is IOException) {
@@ -92,6 +99,7 @@ class DataStoreManager(private val context: Context) {
         }
     }
 
+    /** 保存；容量 */
     suspend fun saveLimitCapacity(capacity: Int) {
         try {
             context.dataStore.edit { preferences ->
@@ -102,6 +110,7 @@ class DataStoreManager(private val context: Context) {
         }
     }
 
+    /** 観測；容量 */
     public fun observeLimitCapacity(): Flow<Int?> {
         return context.dataStore.data.catch { exception ->
             if (exception is IOException) {
@@ -114,6 +123,7 @@ class DataStoreManager(private val context: Context) {
         }
     }
 
+    /** 保存；最終視聴日 */
     suspend fun saveLastAcquisitionDate(date: String) {
         try {
             context.dataStore.edit { preferences ->
@@ -124,6 +134,7 @@ class DataStoreManager(private val context: Context) {
         }
     }
 
+    /** 観測；最終視聴日 */
     public fun observeLastAcquisitionDate(): Flow<String?> {
         return context.dataStore.data.catch { exception ->
             if (exception is IOException) {

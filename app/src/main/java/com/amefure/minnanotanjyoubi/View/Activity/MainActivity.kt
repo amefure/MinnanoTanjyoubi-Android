@@ -4,7 +4,9 @@ import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import android.Manifest
+import android.os.Build
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
@@ -49,19 +51,24 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // 初期化
+        // AdMob 初期化
         MobileAds.initialize(this)
         // 広告の読み込み
         binding.adView.loadAd(AdRequest.Builder().build())
 
+        // ローカルデータ管理クラス
         dataStoreManager = DataStoreManager(this)
         observeLocalData()
 
+        // 誕生日情報を全て取得
         viewModel.fetchAllPerson()
 
-        // 許可ダイアログを表示
-        launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        // 通知許可ダイアログを表示(Android13以降から許可要求が必要のため)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
 
+        // 誕生日情報を観測
         observedPersonData()
 
         binding.registerButton.setOnClickListener {
@@ -72,12 +79,10 @@ class MainActivity : AppCompatActivity() {
                     commit()
                 }
             } else {
-                android.app.AlertDialog.Builder(this)
+                AlertDialog.Builder(this)
                     .setTitle("保存容量が上限に達しました...")
                     .setMessage("設定から広告を視聴すると\n保存容量を増やすことができます。")
-                    .setPositiveButton("OK", { dialog, which ->
-                        // ボタンクリック時の処理
-                    })
+                    .setPositiveButton("OK", { _, _ -> })
                     .show()
             }
         }
@@ -95,7 +100,7 @@ class MainActivity : AppCompatActivity() {
                 binding.filterButton.imageTintList = ContextCompat.getColorStateList(this,R.color.white)
             } else {
                 val list = mutableListOf<String>()
-                Relation.values().forEach {
+                Relation.entries.forEach {
                     list += it.value()
                 }
                 AlertDialog
@@ -117,23 +122,22 @@ class MainActivity : AppCompatActivity() {
 
                 val idSet = adapter.getSelectedPersonIds()
 
-                if (idSet.count() == 0) {
+                if (idSet.isEmpty()) {
                     adapter.inactiveSelectMode()
                     isSelectMode = false
                 } else {
                     AlertDialog
                         .Builder(this)
                         .setMessage("選択された人物を削除しますか？")
-                        .setPositiveButton("OK", { dialog, id ->
-
-                            for(id in idSet) {
+                        .setPositiveButton("OK", { _, _ ->
+                            // 削除
+                            for (id in idSet) {
                                 viewModel.deletePerson(id)
                             }
-
                             adapter.inactiveSelectMode()
                             isSelectMode = false
                         })
-                        .setNegativeButton("キャンセル", { dialog, id ->
+                        .setNegativeButton("キャンセル", { dialog, _ ->
                             dialog.dismiss()
                             adapter.inactiveSelectMode()
                             isSelectMode = false
@@ -157,7 +161,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // DBの観測とリサイクルビューへの紐付け
+    /** RoomDBの観測とリサイクルビューへの紐付け */
     private fun observedPersonData() {
         binding.mainList.layoutManager = GridLayoutManager(this, 3, RecyclerView.VERTICAL, false)
         binding.mainList.addItemDecoration(
@@ -191,10 +195,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /** ローカルデータ観測 */
     private fun observeLocalData() {
         lifecycleScope.launch {
             dataStoreManager.observeLimitCapacity().collect {
                 if (it != null) {
+                    // アプリ容量を取得
                     limitCapacity = it
                 } else {
                     // 初期値格納
@@ -204,16 +210,17 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /** 許可申請ランチャー */
     private val launcher =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { result ->
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { _ ->
             // ダイアログの結果で処理を分岐
-            if (result) {
+//            if (result) {
 //                Toast.makeText(this, "許可されました", Toast.LENGTH_SHORT)
 //                    .show()
-            } else {
+//            } else {
 //                Toast.makeText(this, "否認されました", Toast.LENGTH_SHORT)
 //                    .show()
-            }
+//            }
         }
 
     override fun onDestroy() {

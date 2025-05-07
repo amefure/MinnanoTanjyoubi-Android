@@ -3,15 +3,10 @@ package com.amefure.minnanotanjyoubi.ViewModel
 import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.amefure.minnanotanjyoubi.Domain.CalcDateInfoManager
-import com.amefure.minnanotanjyoubi.Model.Database.Person
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.time.ZoneId
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
 
 class InputPersonViewModel(app: Application): RootViewModel(app) {
 
