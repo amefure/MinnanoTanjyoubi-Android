@@ -7,11 +7,14 @@ plugins {
 
 android {
     namespace 'com.amefure.minnanotanjyoubi'
+    // Android16
     compileSdk 36
 
     defaultConfig {
         applicationId "com.amefure.minnanotanjyoubi"
-        minSdk 26
+        // Android11(30)を最小とする
+        minSdk 30
+        // Android16
         targetSdk 36
         versionCode 11
         versionName "1.4.1"
