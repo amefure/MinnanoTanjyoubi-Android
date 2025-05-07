@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
@@ -33,7 +35,7 @@ android {
         targetCompatibility JavaVersion.VERSION_17
     }
 
-    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
+    tasks.withType(KotlinCompile).configureEach {
         kotlinOptions {
             jvmTarget = JavaVersion.VERSION_17.toString()
         }
@@ -58,19 +60,21 @@ dependencies {
     implementation 'androidx.fragment:fragment-ktx:1.8.6'
 
     // DataStore
-    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    implementation("androidx.datastore:datastore-preferences:1.1.5")
 
     // Room
-    def room_version = "2.5.0"
+    def room_version = "2.7.1"
 
+    //noinspection GradleDependency(警告無視)
     implementation "androidx.room:room-runtime:$room_version"
+    //noinspection GradleDependency(警告無視)
     implementation "androidx.room:room-ktx:$room_version"
     // kapt "androidx.room:room-compiler:$room_version"
     ksp "androidx.room:room-compiler:$room_version"
 
-    implementation 'androidx.room:room-rxjava2:2.3.0'
+    implementation 'androidx.room:room-rxjava2:2.7.1'
     // Room > RxKotlin
-    implementation 'io.reactivex.rxjava2:rxjava:2.2.4'
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.9'
     implementation 'io.reactivex.rxjava2:rxkotlin:2.3.0'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
     // Room
