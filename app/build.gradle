@@ -88,5 +88,7 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics-ktx")
 
     // Google Play Billing Library 7系
-    implementation 'com.android.billingclient:billing:7.1.1'
+    def billing_version = "7.1.1"
+    implementation "com.android.billingclient:billing:$billing_version"
+    implementation "com.android.billingclient:billing-ktx:$billing_version"
 }
