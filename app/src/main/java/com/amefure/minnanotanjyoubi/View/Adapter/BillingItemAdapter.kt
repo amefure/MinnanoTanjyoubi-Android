@@ -24,9 +24,9 @@ class BillingItemAdapter(productItems: List<ProductDetails>): RecyclerView.Adapt
 
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
         val product = _productItems[position]
-        holder.title.text = product.title
+        holder.title.text = product.name
         holder.desc.text = product.description
-        holder.amount.text = product.name
+        holder.amount.text = product.oneTimePurchaseOfferDetails?.formattedPrice ?: "￥0"
     }
 
     class MainViewHolder(binding: ComponentBillingItemRowBinding): RecyclerView.ViewHolder(binding.root) {

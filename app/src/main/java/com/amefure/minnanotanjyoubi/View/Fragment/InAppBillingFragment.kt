@@ -15,6 +15,9 @@ import kotlinx.coroutines.launch
 
 class InAppBillingFragment : Fragment() {
 
+    /** アプリ内課金管理クラス */
+    private lateinit var billingManager: BillingManager
+
     private var _binding: FragmentInAppBillingBinding? = null
     private val binding get() = _binding!!
 
@@ -29,12 +32,12 @@ class InAppBillingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        billingManager = BillingManager(this.requireContext())
+
         // 戻るボタン
         binding.backButton.setOnClickListener {
             parentFragmentManager.popBackStack()
         }
-
-        val billingManager = BillingManager(this.requireContext())
 
         lifecycleScope.launch {
             try {
@@ -43,17 +46,22 @@ class InAppBillingFragment : Fragment() {
                 binding.noItemView.visibility = View.VISIBLE
                 binding.itemRecyclerView.visibility = View.GONE
             }
-        }
 
-        // 商品アイテムリストをセットアップ
-        binding.itemRecyclerView.layoutManager = LinearLayoutManager(this.requireContext())
-        binding.itemRecyclerView.addItemDecoration(
-            DividerItemDecoration(this.requireContext(), DividerItemDecoration.VERTICAL)
-        )
-        binding.itemRecyclerView.adapter = BillingItemAdapter(emptyList())
+            // 商品情報が取得できたらリストをセットアップ
+            billingManager.productDetailsList
+                .collect { list ->
+                    // 商品アイテムリストをセットアップ
+                    binding.itemRecyclerView.layoutManager = LinearLayoutManager(this@InAppBillingFragment.requireContext())
+                    binding.itemRecyclerView.addItemDecoration(
+                        DividerItemDecoration(this@InAppBillingFragment.requireContext(), DividerItemDecoration.VERTICAL)
+                    )
+                    binding.itemRecyclerView.adapter = BillingItemAdapter(list)
+                }
+        }
     }
 
     override fun onDestroy() {
+        billingManager.destroy()
         _binding = null
         super.onDestroy()
     }

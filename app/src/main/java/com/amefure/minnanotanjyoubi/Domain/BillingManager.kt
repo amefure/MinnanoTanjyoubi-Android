@@ -5,6 +5,9 @@ import com.android.billingclient.api.*
 import com.android.billingclient.api.BillingClient.ProductType
 import com.android.billingclient.api.QueryProductDetailsParams.Product
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 /**
  * エミュレーターでは商品情報を取得できない
@@ -17,7 +20,8 @@ class BillingManager(context: Context) : PurchasesUpdatedListener {
         .build()
 
     /** 課金対象の商品情報 */
-    public var productDetailsList: List<ProductDetails> = emptyList()
+    private val _productDetailsList = MutableStateFlow(emptyList<ProductDetails>())
+    val productDetailsList: StateFlow<List<ProductDetails>> = _productDetailsList.asStateFlow()
     /** 購入処理の結果 */
     private var purchaseResult: CompletableDeferred<Result<Purchase>>? = null
 
@@ -47,7 +51,8 @@ class BillingManager(context: Context) : PurchasesUpdatedListener {
         })
         // 接続処理の結果を待機
         connectionDeferred.await()
-        productDetailsList = queryProductDetailsList()
+        val productDetailsList = queryProductDetailsList()
+        _productDetailsList.emit(productDetailsList)
     }
 
     /** 商品情報リスト取得処理 */
@@ -58,7 +63,8 @@ class BillingManager(context: Context) : PurchasesUpdatedListener {
         val params = QueryProductDetailsParams.newBuilder()
             .setProductList(
                 listOf(
-                    createProduct(PRODUCT_ITEM_ID, ProductType.INAPP)
+                    createProduct(REMOVE_ADS_ID, ProductType.INAPP),
+                    createProduct(UNLOCK_STORAGE_ID, ProductType.INAPP)
                 )
             ).build()
 
@@ -71,6 +77,7 @@ class BillingManager(context: Context) : PurchasesUpdatedListener {
                 // 取得できた商品情報(ProductDetails)リストを通知
                 queryDeferred.complete(productList)
             } else {
+                Log.d("InAPP" , "商品情報取得失敗${billingResult.debugMessage}")
                 // 取得失敗
                 queryDeferred.completeExceptionally(
                     IllegalStateException("ProductDetails fetch failed: ${billingResult.debugMessage}")
@@ -126,7 +133,7 @@ class BillingManager(context: Context) : PurchasesUpdatedListener {
         }
     }
 
-    fun destroy() {
+    public fun destroy() {
         billingClient.endConnection()
     }
 
