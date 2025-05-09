@@ -52,9 +52,6 @@ class InAppBillingFragment : Fragment() {
                 .collect { list ->
                     // 商品アイテムリストをセットアップ
                     binding.itemRecyclerView.layoutManager = LinearLayoutManager(this@InAppBillingFragment.requireContext())
-                    binding.itemRecyclerView.addItemDecoration(
-                        DividerItemDecoration(this@InAppBillingFragment.requireContext(), DividerItemDecoration.VERTICAL)
-                    )
                     binding.itemRecyclerView.adapter = BillingItemAdapter(list)
                 }
         }
