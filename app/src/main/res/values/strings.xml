@@ -4,14 +4,27 @@
     <string name="notify_default_day">当日</string>
     <string name="notify_default_message">明日は{userName}の誕生日！お祝いしてあげよう！</string>
 
+    <!-- Setting -->
+    <string name="notify_setting_title">通知設定</string>
     <string name="notify_setting_label">通知時間</string>
     <string name="notify_setting_label2">通知日</string>
     <string name="notify_desc_label1">・通知設定を変更以降にONにした通知が設定されます。</string>
     <string name="notify_desc_label2">・通知メッセージは{userName}部分が名前に自動で置き換わります。</string>
+    <string name="notify_setting_msg_edit">編集</string>
+    <string name="ads_setting_title">広告</string>
     <string name="ads_setting_show_label">広告を視聴して容量を増やす</string>
+    <string name="ads_setting_loading">loading…</string>
     <string name="ads_setting_capacity_label">現在の容量：%1$d人</string>
     <string name="ads_setting_desc_label1">・追加される容量は5個です。</string>
     <string name="ads_setting_desc_label2">・容量の追加は1日に1回までです。</string>
+
+    <!-- アプリ内課金画面 -->
+    <string name="in_app_billing_title">広告削除 &amp; 容量解放</string>
+    <string name="in_app_billing_msg">購入後のキャンセルは致しかねますのでご了承ください。</string>
+    <string name="in_app_billing_purchase"> 購入する</string>
+
+    <!-- contentDescription用テキスト -->
+    <string name="icon_back">戻る</string>
 
     <!-- Dev -->
     <string name="admob_app_id">ca-app-pub-3940256099942544~3347511713</string>

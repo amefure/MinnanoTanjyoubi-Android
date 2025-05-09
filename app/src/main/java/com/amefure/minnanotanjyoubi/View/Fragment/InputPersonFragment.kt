@@ -25,9 +25,7 @@ import com.amefure.minnanotanjyoubi.ViewModel.InputPersonViewModel
 import com.google.android.material.snackbar.Snackbar
 import java.util.Calendar
 import com.amefure.minnanotanjyoubi.Model.Keys.*
-import com.amefure.minnanotanjyoubi.databinding.FragmentDetailPersonBinding
 import com.amefure.minnanotanjyoubi.databinding.FragmentInputPersonBinding
-import com.amefure.minnanotanjyoubi.databinding.FragmentSettingBinding
 import kotlinx.coroutines.launch
 
 class InputPersonFragment : Fragment() {
@@ -107,7 +105,7 @@ class InputPersonFragment : Fragment() {
             val notify = binding.notifyEditButton.isChecked
             val memo = binding.memoEdit.text.toString()
 
-            if (!name.isEmpty()) {
+            if (name.isNotEmpty()) {
 
                 if (receiveId == null) {
                     viewModel.insertPerson(name,ruby,date,relation,memo,notify) {
@@ -184,7 +182,7 @@ class InputPersonFragment : Fragment() {
         // スピナーセット
         val spinnerAdapter = ArrayAdapter<String>(this.requireContext(), android.R.layout.simple_spinner_item)
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        Relation.values().forEach {
+        Relation.entries.forEach {
             spinnerAdapter.add(it.value())
         }
         binding.relationSpinner.adapter = spinnerAdapter
