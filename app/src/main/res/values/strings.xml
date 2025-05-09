@@ -21,7 +21,8 @@
     <!-- アプリ内課金画面 -->
     <string name="in_app_billing_title">広告削除 &amp; 容量解放</string>
     <string name="in_app_billing_msg">購入後のキャンセルは致しかねますのでご了承ください。</string>
-    <string name="in_app_billing_purchase"> 購入する</string>
+    <string name="in_app_billing_purchase">購入する</string>
+    <string name="in_app_billing_no_item_view">商品情報を取得できませんでした。\nネットワーク環境の良い場所で再度お試しください。</string>
 
     <!-- contentDescription用テキスト -->
     <string name="icon_back">戻る</string>

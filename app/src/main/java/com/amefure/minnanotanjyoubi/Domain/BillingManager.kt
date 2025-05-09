@@ -6,6 +6,9 @@ import com.android.billingclient.api.BillingClient.ProductType
 import com.android.billingclient.api.QueryProductDetailsParams.Product
 import kotlinx.coroutines.CompletableDeferred
 
+/**
+ * エミュレーターでは商品情報を取得できない
+ */
 class BillingManager(context: Context) : PurchasesUpdatedListener {
 
     private val billingClient = BillingClient.newBuilder(context)

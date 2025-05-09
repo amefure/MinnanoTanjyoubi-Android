@@ -110,4 +110,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/msg" />
 
+    <TextView
+        android:id="@+id/no_item_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/in_app_billing_no_item_view"
+        android:textColor="@color/white"
+        android:paddingTop="6dp"
+        android:paddingBottom="15dp"
+        android:textSize="13sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/msg" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

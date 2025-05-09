@@ -29,12 +29,23 @@ class InAppBillingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val billingManager = BillingManager(this.requireContext())
-        lifecycleScope.launch {
-            billingManager.initialize()
+        // 戻るボタン
+        binding.backButton.setOnClickListener {
+            parentFragmentManager.popBackStack()
         }
 
+        val billingManager = BillingManager(this.requireContext())
 
+        lifecycleScope.launch {
+            try {
+                billingManager.initialize()
+            } catch (e: Exception) {
+                binding.noItemView.visibility = View.VISIBLE
+                binding.itemRecyclerView.visibility = View.GONE
+            }
+        }
+
+        // 商品アイテムリストをセットアップ
         binding.itemRecyclerView.layoutManager = LinearLayoutManager(this.requireContext())
         binding.itemRecyclerView.addItemDecoration(
             DividerItemDecoration(this.requireContext(), DividerItemDecoration.VERTICAL)
