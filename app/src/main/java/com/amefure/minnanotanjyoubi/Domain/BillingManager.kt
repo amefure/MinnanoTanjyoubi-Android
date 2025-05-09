@@ -1,13 +1,12 @@
 import android.app.Activity
 import android.content.Context
+import android.util.Log
 import com.android.billingclient.api.*
 import com.android.billingclient.api.BillingClient.ProductType
 import com.android.billingclient.api.QueryProductDetailsParams.Product
 import kotlinx.coroutines.CompletableDeferred
 
-class BillingManager(
-    private val context: Context
-) : PurchasesUpdatedListener {
+class BillingManager(context: Context) : PurchasesUpdatedListener {
 
     private val billingClient = BillingClient.newBuilder(context)
         .setListener(this)
@@ -27,6 +26,7 @@ class BillingManager(
         billingClient.startConnection(object : BillingClientStateListener {
             override fun onBillingSetupFinished(result: BillingResult) {
                 if (result.responseCode == BillingClient.BillingResponseCode.OK) {
+                    Log.d("InAPP" , "課金サービスへ接続成功")
                     // 成功を通知
                     connectionDeferred.complete(true)
                 } else {
@@ -64,6 +64,7 @@ class BillingManager(
             // billingResult => 問い合わせ結果のステータス
             // productList => 成功すれば商品情報リスト
             if (billingResult.responseCode == BillingClient.BillingResponseCode.OK && productList.isNotEmpty()) {
+                Log.d("InAPP" , "商品情報取得成功$productList")
                 // 取得できた商品情報(ProductDetails)リストを通知
                 queryDeferred.complete(productList)
             } else {

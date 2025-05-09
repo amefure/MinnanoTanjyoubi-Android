@@ -125,7 +125,7 @@ class SettingFragment : Fragment() {
         binding.adsRewardPlayButton.setOnClickListener {
             if (!calcDateInfoManager.isToday(lastDate)) {
                 rewardedAd?.let { ad ->
-                    ad.show(this.requireActivity(), OnUserEarnedRewardListener { rewardItem ->
+                    ad.show(this.requireActivity(), { _ ->
                         lifecycleScope.launch{
                             // 広告を視聴し終えたら容量の追加と視聴日を保存
                             val newCapacity = limitCapacity + Capacity.addCapacity
@@ -144,6 +144,16 @@ class SettingFragment : Fragment() {
                     .show()
             }
         }
+
+        binding.inAppBillingLayout.setOnClickListener {
+            // input画面にレコードの情報を渡して生成
+            val nextFragment = InAppBillingFragment()
+            parentFragmentManager.beginTransaction().apply {
+                add(R.id.main_frame, nextFragment)
+                addToBackStack(null)
+                commit()
+            }
+        }
     }
 
     private fun updateAdsButtonState() {
@@ -157,13 +167,13 @@ class SettingFragment : Fragment() {
     }
 
 
-    // 日付ピッカーから選択された時に呼ばれるリスナー
+    /** 日付ピッカーから選択された時に呼ばれるリスナー */
     private var timeListener = TimePickerDialog.OnTimeSetListener { view, hour , minutes ->
         var minutesStr = minutes.toString()
         if (minutesStr.length == 1) {
-            minutesStr = "0" + minutesStr
+            minutesStr = "0$minutesStr"
         }
-        val time = hour.toString() + ":" + minutesStr
+        val time = "$hour:$minutesStr"
         lifecycleScope.launch{
             dataStoreManager.saveNotifyTime(time)
         }
