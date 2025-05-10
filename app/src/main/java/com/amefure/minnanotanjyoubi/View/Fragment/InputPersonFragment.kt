@@ -1,5 +1,6 @@
 package com.amefure.minnanotanjyoubi.View.Fragment
 
+import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.content.Context
 import android.content.res.Resources
@@ -126,9 +127,7 @@ class InputPersonFragment : Fragment() {
                             notificationRequestManager.setBroadcast(it.toInt(),month,day,time[0].toInt(),time[1].toInt(),msg)
                         }
                     }
-                    Snackbar.make(view,"追加しました。", Snackbar.LENGTH_SHORT)
-                        .setBackgroundTint(ContextCompat.getColor(view.context,R.color.positive_color))
-                        .show()
+
                     showOffKeyboard()
                     parentFragmentManager.apply {
                         popBackStack()
@@ -138,21 +137,18 @@ class InputPersonFragment : Fragment() {
                     // 編集モード
                     viewModel.updatePerson(receiveId!!,name,ruby,date,relation,memo,notify)
                     showOffKeyboard()
-                    Snackbar.make(view,"更新しました。", Snackbar.LENGTH_SHORT)
-                        .setBackgroundTint(ContextCompat.getColor(view.context,R.color.positive_color))
-                        .show()
                     parentFragmentManager.apply {
                         // トップまで戻す
                         popBackStack()
                         popBackStack()
                     }
-
                 }
 
             } else {
-                Snackbar.make(view,"名前を入力してください。", Snackbar.LENGTH_SHORT)
-                    .setBackgroundTint(ContextCompat.getColor(view.context,R.color.negative_color))
-                    .show()
+                AlertDialog.Builder(this.requireContext())
+                    .setTitle("ERROR")
+                    .setMessage("名前を入力してください。")
+                    .setPositiveButton("OK", { _, _ -> }).show()
             }
         }
 

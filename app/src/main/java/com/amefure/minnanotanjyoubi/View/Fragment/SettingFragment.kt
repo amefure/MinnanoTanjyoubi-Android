@@ -115,22 +115,24 @@ class SettingFragment : Fragment() {
 
         binding.notifySettingDayButton.setOnClickListener {
             if (binding.notifySettingDayButton.text == "当日") {
-                binding.notifySettingDayButton.text = "前日"
-                binding.notifySettingDayButton.setBackgroundColor(ContextCompat.getColor(this.requireContext(),R.color.thema_blue))
+                setUpNotifyDayAfter()
                 lifecycleScope.launch{
                     dataStoreManager.saveNotifyDay("前日")
                 }
             } else {
-                binding.notifySettingDayButton.text = "当日"
-                binding.notifySettingDayButton.setBackgroundColor(ContextCompat.getColor(this.requireContext(),R.color.thema_red))
+                setUpNotifyDay()
                 lifecycleScope.launch{
                     dataStoreManager.saveNotifyDay("当日")
                 }
             }
         }
         binding.notifySettingMsgButton.setOnClickListener {
-            val dialog = InputNotifyMsgDialogFragment()
-            dialog.show(parentFragmentManager, "通知メッセージダイアログ")
+            val nextFragment = InputNotifyMsgFragment()
+            parentFragmentManager.beginTransaction().apply {
+                add(R.id.main_frame, nextFragment)
+                addToBackStack(null)
+                commit()
+            }
         }
 
         binding.adsRewardPlayButton.setOnClickListener {
@@ -157,7 +159,6 @@ class SettingFragment : Fragment() {
         }
 
         binding.inAppBillingLayout.setOnClickListener {
-            // input画面にレコードの情報を渡して生成
             val nextFragment = InAppBillingFragment()
             parentFragmentManager.beginTransaction().apply {
                 add(R.id.main_frame, nextFragment)
@@ -170,11 +171,25 @@ class SettingFragment : Fragment() {
     private fun updateAdsButtonState() {
         if (rewardedAd != null) {
             binding.adsRewardPlayButton.text = "追加"
-            binding.adsRewardPlayButton.setBackgroundColor(ContextCompat.getColor(this.requireContext(),R.color.thema_yelow))
+            val colorValue = ContextCompat.getColorStateList(this.requireContext(), R.color.thema_yelow)
+            binding.adsRewardPlayButton.backgroundTintList = colorValue
         } else {
-            binding.adsRewardPlayButton.text = "読み込み中"
-            binding.adsRewardPlayButton.setBackgroundColor(ContextCompat.getColor(this.requireContext(),R.color.thema_gray_dark))
+            binding.adsRewardPlayButton.text = getString(R.string.ads_setting_loading)
+            val colorValue = ContextCompat.getColorStateList(this.requireContext(), R.color.thema_gray_dark)
+            binding.adsRewardPlayButton.backgroundTintList = colorValue
         }
+    }
+
+    private fun setUpNotifyDay() {
+        binding.notifySettingDayButton.text = "当日"
+        val colorValue = ContextCompat.getColorStateList(this.requireContext(), R.color.thema_red)
+        binding.notifySettingDayButton.backgroundTintList = colorValue
+    }
+
+    private fun setUpNotifyDayAfter() {
+        binding.notifySettingDayButton.text = "前日"
+        val colorValue = ContextCompat.getColorStateList(this.requireContext(), R.color.thema_blue)
+        binding.notifySettingDayButton.backgroundTintList = colorValue
     }
 
 
@@ -190,7 +205,7 @@ class SettingFragment : Fragment() {
         }
     }
 
-    // ローカルの情報を観測
+    /** ローカルの情報を観測 */
     private fun observeLocalData() {
 
         // lifecycleScope.launchはまとめると動作しないので分割
@@ -210,22 +225,17 @@ class SettingFragment : Fragment() {
             dataStoreManager.observeNotifyDay().collect {
                 if (it != null) {
                     binding.notifySettingDayButton.text = it
+                    if (it == getString(R.string.notify_default_day)) {
+                        setUpNotifyDay()
+                    } else {
+                        setUpNotifyDayAfter()
+                    }
                 } else {
                     // 初期値格納
                     dataStoreManager.saveNotifyDay(getString(R.string.notify_default_day))
                 }
             }
 
-        }
-        lifecycleScope.launch {
-            dataStoreManager.observeNotifyMsg().collect {
-                if (it != null) {
-                    binding.notifySettingEditMsg.text = it
-                } else {
-                    // 初期値格納
-                    dataStoreManager.saveNotifyMsg(getString(R.string.notify_default_message))
-                }
-            }
         }
 
         lifecycleScope.launch {

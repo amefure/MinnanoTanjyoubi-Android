@@ -130,8 +130,7 @@ class MainActivity : AppCompatActivity() {
                     adapter.inactiveSelectMode()
                     isSelectMode = false
                 } else {
-                    AlertDialog
-                        .Builder(this)
+                    AlertDialog.Builder(this)
                         .setMessage("選択された人物を削除しますか？")
                         .setPositiveButton("OK", { _, _ ->
                             // 削除
@@ -145,8 +144,7 @@ class MainActivity : AppCompatActivity() {
                             dialog.dismiss()
                             adapter.inactiveSelectMode()
                             isSelectMode = false
-                        })
-                        .show()
+                        }).show()
 
                 }
             } else {

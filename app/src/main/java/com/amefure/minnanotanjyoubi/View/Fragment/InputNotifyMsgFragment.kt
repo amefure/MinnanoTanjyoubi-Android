@@ -1,39 +1,57 @@
 package com.amefure.minnanotanjyoubi.View.Fragment
 
-import android.app.AlertDialog
-import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import androidx.fragment.app.DialogFragment
+import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.amefure.minnanotanjyoubi.Model.DataStore.DataStoreManager
 import com.amefure.minnanotanjyoubi.databinding.FragmentInputNotifyMsgBinding
 import kotlinx.coroutines.launch
 
-class InputNotifyMsgDialogFragment : DialogFragment() {
+class InputNotifyMsgFragment : Fragment() {
 
     private lateinit var dataStoreManager: DataStoreManager
 
     private var _binding: FragmentInputNotifyMsgBinding? = null
     private val binding get() = _binding!!
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        dataStoreManager = DataStoreManager(this.requireContext())
-        _binding = FragmentInputNotifyMsgBinding.inflate(LayoutInflater.from(requireContext()))
-        val builder = AlertDialog.Builder(requireContext())
-        builder.setView(binding.root)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentInputNotifyMsgBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        dataStoreManager = DataStoreManager(this.requireContext())
         observeNotifyMsg()
+
+        // 戻るボタン
+        binding.componentBackUpperContainer.backButton.setOnClickListener {
+            showOffKeyboard()
+            parentFragmentManager.popBackStack()
+        }
+
         binding.registerMsgButton.setOnClickListener {
             lifecycleScope.launch{
                 dataStoreManager.saveNotifyMsg(binding.notifyMsgEdit.text.toString())
-                showOffKeyboard()
-                dismiss()
+
+                AlertDialog.Builder(this@InputNotifyMsgFragment.requireContext())
+                    .setTitle("Success")
+                    .setMessage("通知メッセージを変更しました。")
+                    .setPositiveButton("OK", { _, _ ->
+                        showOffKeyboard()
+                        parentFragmentManager.popBackStack()
+                    }).show()
             }
         }
-        return builder.create()
     }
 
     private fun observeNotifyMsg() {
