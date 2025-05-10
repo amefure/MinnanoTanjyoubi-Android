@@ -6,13 +6,13 @@ import androidx.appcompat.app.AppCompatActivity
 import android.Manifest
 import android.os.Build
 import androidx.activity.viewModels
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.amefure.minnanotanjyoubi.BuildConfig
 import com.amefure.minnanotanjyoubi.Domain.CalcDateInfoManager
 import com.amefure.minnanotanjyoubi.Domain.NotificationRequestManager
 import com.amefure.minnanotanjyoubi.Model.Capacity
@@ -53,6 +53,12 @@ class MainActivity : AppCompatActivity() {
 
         // AdMob 初期化
         MobileAds.initialize(this)
+
+        if (BuildConfig.DEBUG) {
+            binding.adView.adUnitId = BuildConfig.ADMOB_BANNER_ID_TEST
+        } else {
+            binding.adView.adUnitId = BuildConfig.ADMOB_BANNER_ID_PROD
+        }
         // 広告の読み込み
         binding.adView.loadAd(AdRequest.Builder().build())
 

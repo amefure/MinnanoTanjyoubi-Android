@@ -1,6 +1,7 @@
 import android.app.Activity
 import android.content.Context
 import android.util.Log
+import com.amefure.minnanotanjyoubi.BuildConfig
 import com.android.billingclient.api.*
 import com.android.billingclient.api.BillingClient.ProductType
 import com.android.billingclient.api.QueryProductDetailsParams.Product
@@ -138,6 +139,7 @@ class BillingManager(context: Context) : PurchasesUpdatedListener {
     }
 
     companion object {
-        private const val PRODUCT_ITEM_ID = "PRODUCT_ITEM_ID"
+        private const val REMOVE_ADS_ID = BuildConfig.IN_APP_REMOVE_ADS_ID
+        private const val UNLOCK_STORAGE_ID = BuildConfig.IN_APP_UNLOCK_STORAGE_ID
     }
 }

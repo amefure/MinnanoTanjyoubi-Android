@@ -7,6 +7,10 @@ plugins {
     id "com.google.gms.google-services"
 }
 
+def secretPropertiesFile = rootProject.file("secret.properties")
+def secretProperties = new Properties()
+secretProperties.load(new FileInputStream(secretPropertiesFile))
+
 android {
     namespace 'com.amefure.minnanotanjyoubi'
     // Android16
@@ -22,10 +26,32 @@ android {
         versionName "1.4.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        // AdMob App Id
+        buildConfigField("String", "ADMOB_APP_ID_TEST", "\"${secretProperties['ADMOB_APP_ID_TEST']}\"")
+        buildConfigField("String", "ADMOB_APP_ID_PROD", "\"${secretProperties['ADMOB_APP_ID_PROD']}\"")
+        // AdMob Banner Id
+        buildConfigField("String", "ADMOB_BANNER_ID_TEST", "\"${secretProperties['ADMOB_BANNER_ID_TEST']}\"")
+        buildConfigField("String", "ADMOB_BANNER_ID_PROD", "\"${secretProperties['ADMOB_BANNER_ID_PROD']}\"")
+        // AdMob Reward Id
+        buildConfigField("String", "ADMOB_REWARD_ID_TEST", "\"${secretProperties['ADMOB_REWARD_ID_TEST']}\"")
+        buildConfigField("String", "ADMOB_REWARD_ID_PROD", "\"${secretProperties['ADMOB_REWARD_ID_PROD']}\"")
+
+        // In App Product Id
+        buildConfigField("String", "IN_APP_REMOVE_ADS_ID", "\"${secretProperties['IN_APP_REMOVE_ADS_ID']}\"")
+        buildConfigField("String", "IN_APP_UNLOCK_STORAGE_ID", "\"${secretProperties['IN_APP_UNLOCK_STORAGE_ID']}\"")
     }
 
     buildTypes {
+        debug {
+            manifestPlaceholders = [
+                    admobAppId: secretProperties["ADMOB_APP_ID_TEST"]
+            ]
+        }
         release {
+            manifestPlaceholders = [
+                    admobAppId: secretProperties["ADMOB_APP_ID_PROD"]
+            ]
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -43,6 +69,7 @@ android {
 
     buildFeatures {
         viewBinding true
+        buildConfig true
     }
 }
 

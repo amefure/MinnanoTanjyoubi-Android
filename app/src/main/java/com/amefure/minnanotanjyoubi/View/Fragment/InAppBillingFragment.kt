@@ -35,7 +35,7 @@ class InAppBillingFragment : Fragment() {
         billingManager = BillingManager(this.requireContext())
 
         // 戻るボタン
-        binding.backButton.setOnClickListener {
+        binding.componentBackUpperContainer.backButton.setOnClickListener {
             parentFragmentManager.popBackStack()
         }
 

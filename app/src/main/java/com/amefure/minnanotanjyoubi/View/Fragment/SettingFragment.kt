@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
+import com.amefure.minnanotanjyoubi.BuildConfig
 import com.amefure.minnanotanjyoubi.Domain.CalcDateInfoManager
 import com.amefure.minnanotanjyoubi.Model.Capacity
 import com.amefure.minnanotanjyoubi.Model.DataStore.DataStoreManager
@@ -19,7 +20,6 @@ import com.amefure.minnanotanjyoubi.R
 import com.amefure.minnanotanjyoubi.databinding.FragmentSettingBinding
 import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.LoadAdError
-import com.google.android.gms.ads.OnUserEarnedRewardListener
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import kotlinx.coroutines.launch
@@ -47,19 +47,25 @@ class SettingFragment : Fragment() {
     ): View {
         _binding = FragmentSettingBinding.inflate(inflater, container, false)
 
+        val rewardId = if (BuildConfig.DEBUG) BuildConfig.ADMOB_REWARD_ID_TEST else BuildConfig.ADMOB_REWARD_ID_PROD
         val adRequest = AdRequest.Builder().build()
-        RewardedAd.load(this.requireContext(),this.getString(R.string.admob_reward_id), adRequest, object : RewardedAdLoadCallback() {
-            override fun onAdFailedToLoad(adError: LoadAdError) {
-                Log.d("Admob", "ロード失敗")
-                rewardedAd = null
-                updateAdsButtonState()
+        RewardedAd.load(
+            this.requireContext(),
+            rewardId,
+            adRequest,
+            object : RewardedAdLoadCallback() {
+                override fun onAdFailedToLoad(adError: LoadAdError) {
+                    Log.d("Admob", "ロード失敗")
+                    rewardedAd = null
+                    updateAdsButtonState()
+                }
+                override fun onAdLoaded(ad: RewardedAd) {
+                    Log.d("Admob", "ロード完了")
+                    rewardedAd = ad
+                    updateAdsButtonState()
+                }
             }
-            override fun onAdLoaded(ad: RewardedAd) {
-                Log.d("Admob", "ロード完了")
-                rewardedAd = ad
-                updateAdsButtonState()
-            }
-        })
+        )
 
         // これがないと視聴できない？
         rewardedAd?.fullScreenContentCallback = object: FullScreenContentCallback() {}
@@ -71,6 +77,11 @@ class SettingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        if (BuildConfig.DEBUG) {
+            binding.adView.adUnitId = BuildConfig.ADMOB_BANNER_ID_TEST
+        } else {
+            binding.adView.adUnitId = BuildConfig.ADMOB_BANNER_ID_PROD
+        }
         binding.adView.loadAd(AdRequest.Builder().build())
 
         // ローカルに保存している情報を取得
