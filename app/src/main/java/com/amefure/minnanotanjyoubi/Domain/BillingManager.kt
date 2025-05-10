@@ -23,6 +23,10 @@ class BillingManager(context: Context) : PurchasesUpdatedListener {
     /** 課金対象の商品情報 */
     private val _productDetailsList = MutableStateFlow(emptyList<ProductDetails>())
     val productDetailsList: StateFlow<List<ProductDetails>> = _productDetailsList.asStateFlow()
+
+    /** 購入済みのアイテム */
+    private var purchasedItems: MutableList<Purchase> = mutableListOf()
+
     /** 購入処理の結果 */
     private var purchaseResult: CompletableDeferred<Result<Purchase>>? = null
 
@@ -52,12 +56,16 @@ class BillingManager(context: Context) : PurchasesUpdatedListener {
         })
         // 接続処理の結果を待機
         connectionDeferred.await()
-        val productDetailsList = queryProductDetailsList()
+
+        // 購入済みアイテムを取得
+        purchasedItems = fetchPurchasesProducts().toMutableList()
+        // 商品情報リスト取得
+        val productDetailsList = fetchProductDetailsList()
         _productDetailsList.emit(productDetailsList)
     }
 
     /** 商品情報リスト取得処理 */
-    private suspend fun queryProductDetailsList(): List<ProductDetails> {
+    private suspend fun fetchProductDetailsList(): List<ProductDetails> {
         // 商品取得処理が完了するまで待機させるためのCompletableDeferred
         val queryDeferred = CompletableDeferred<List<ProductDetails>>()
         // 取得対象の商品情報を構築
@@ -132,6 +140,31 @@ class BillingManager(context: Context) : PurchasesUpdatedListener {
         } else {
             deferred.complete(Result.failure(Exception("Purchase failed: ${result.debugMessage}")))
         }
+    }
+
+    /** 購入済みのアイテムを取得 */
+    private suspend fun fetchPurchasesProducts(): List<Purchase> {
+        // 商品取得処理が完了するまで待機させるためのCompletableDeferred
+        val queryDeferred = CompletableDeferred<List<Purchase>>()
+        val queryPurchasesParams = QueryPurchasesParams.newBuilder()
+            .setProductType(ProductType.INAPP)
+            .build()
+        // 購入済みアイテムを取得
+        billingClient.queryPurchasesAsync(queryPurchasesParams) { result, purchasesList ->
+            if (result.responseCode == BillingClient.BillingResponseCode.OK) {
+                queryDeferred.complete(purchasesList)
+            } else {
+                Log.d("InApp", "購入済みアイテム取得失敗")
+                // 成功で流す
+                queryDeferred.complete(emptyList())
+            }
+        }
+        return queryDeferred.await()
+    }
+
+    /** アイテムが購入済みかどうか */
+    public fun isPurchased(id: String): Boolean {
+        return purchasedItems.firstOrNull { it.products.contains(id) } != null
     }
 
     public fun destroy() {

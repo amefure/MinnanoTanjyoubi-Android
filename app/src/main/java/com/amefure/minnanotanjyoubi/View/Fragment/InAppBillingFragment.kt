@@ -7,10 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.amefure.minnanotanjyoubi.View.Adapter.BillingItemAdapter
 import com.amefure.minnanotanjyoubi.databinding.FragmentInAppBillingBinding
+import com.android.billingclient.api.ProductDetails
 import kotlinx.coroutines.launch
 
 class InAppBillingFragment : Fragment() {
@@ -52,7 +52,23 @@ class InAppBillingFragment : Fragment() {
                 .collect { list ->
                     // 商品アイテムリストをセットアップ
                     binding.itemRecyclerView.layoutManager = LinearLayoutManager(this@InAppBillingFragment.requireContext())
-                    binding.itemRecyclerView.adapter = BillingItemAdapter(list)
+                    val adapter = BillingItemAdapter(this@InAppBillingFragment.requireContext(), list)
+                    adapter.setUpListener(
+                        object: BillingItemAdapter.OnBillingListener {
+                            override fun onPurchaseButtonClick(product: ProductDetails) {
+                                val activity = activity ?: return
+                                lifecycleScope.launch {
+                                    billingManager.launchPurchaseFlow(activity, product)
+                                }
+                            }
+
+                            override fun isPurchased(product: ProductDetails): Boolean {
+                               return billingManager.isPurchased(product.productId)
+                            }
+                        }
+
+                    )
+                    binding.itemRecyclerView.adapter = adapter
                 }
         }
     }
