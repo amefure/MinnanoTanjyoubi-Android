@@ -1,12 +1,15 @@
 package com.amefure.minnanotanjyoubi.Model.DataStore
 
 import android.content.Context
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.android.billingclient.api.Purchase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import java.io.IOException
 
@@ -25,6 +28,11 @@ class DataStoreManager(private val context: Context) {
         val LIMIT_CAPACITY = intPreferencesKey("limit_capacity")
         // 最終広告視聴日
         val LAST_ACQUISITION_DATE = stringPreferencesKey("last_acquisition_date")
+
+        /** アプリ内課金購入フラグ：広告削除 */
+        val IN_APP_REMOVE_ADS = booleanPreferencesKey("IN_APP_REMOVE_ADS")
+        /** アプリ内課金購入フラグ：容量解放 */
+        val IN_APP_UNLOCK_STORAGE = booleanPreferencesKey("IN_APP_UNLOCK_STORAGE")
     }
 
     /** 保存；通知時間 */
@@ -145,5 +153,41 @@ class DataStoreManager(private val context: Context) {
         }.map { preferences ->
             preferences[LAST_ACQUISITION_DATE]
         }
+    }
+
+    /** 保存；広告削除購入フラグ */
+    suspend fun saveInAppRemoveAdsFlag(purchased: Boolean) {
+        try {
+            context.dataStore.edit { preferences ->
+                preferences[IN_APP_REMOVE_ADS] = purchased
+            }
+        } catch (e: IOException) {
+            // Handle the exception here if needed
+        }
+    }
+
+    /** 取得；広告削除購入フラグ */
+    suspend fun getInAppRemoveAds(): Boolean {
+        return context.dataStore.data
+            .firstOrNull()  // 最初の値を1回だけ取得
+            ?.get(IN_APP_REMOVE_ADS) ?: false
+    }
+
+    /** 保存；容量解放購入フラグ */
+    suspend fun saveInAppUnlockStorage(purchased: Boolean) {
+        try {
+            context.dataStore.edit { preferences ->
+                preferences[IN_APP_UNLOCK_STORAGE] = purchased
+            }
+        } catch (e: IOException) {
+            // Handle the exception here if needed
+        }
+    }
+
+    /** 取得；容量解放購入フラグ */
+    suspend fun getInAppUnlockStorage(): Boolean {
+        return context.dataStore.data
+            .firstOrNull()  // 最初の値を1回だけ取得
+            ?.get(IN_APP_UNLOCK_STORAGE) ?: false
     }
 }

@@ -57,12 +57,14 @@ class MainActivity : AppCompatActivity() {
 
         // AdMob 初期化
         MobileAds.initialize(this)
-        // バナーの追加と読み込み
-        addAdBannerView()
 
         // ローカルデータ管理クラス
         dataStoreManager = DataStoreManager(this)
         observeLocalData()
+
+        // バナーの追加と読み込み
+        addAdBannerView()
+
 
         // 誕生日情報を全て取得
         viewModel.fetchAllPerson()
@@ -227,30 +229,36 @@ class MainActivity : AppCompatActivity() {
      *  adUnitIdを動的に変更するためにはViewをコードで追加する必要がある
      */
     private fun addAdBannerView() {
-        // AdViewを生成して設定
-        val adView = AdView(this).apply {
-            setAdSize(AdSize.BANNER)
-            adUnitId = if (BuildConfig.DEBUG) {
-                BuildConfig.ADMOB_BANNER_ID_TEST
-            } else {
-                BuildConfig.ADMOB_BANNER_ID_PROD
+        lifecycleScope.launch {
+            // 広告削除購入済みなら追加しない
+            val flag = dataStoreManager.getInAppRemoveAds()
+            if (!flag) {
+                // AdViewを生成して設定
+                val adView = AdView(this@MainActivity).apply {
+                    setAdSize(AdSize.BANNER)
+                    adUnitId = if (BuildConfig.DEBUG) {
+                        BuildConfig.ADMOB_BANNER_ID_TEST
+                    } else {
+                        BuildConfig.ADMOB_BANNER_ID_PROD
+                    }
+                    // 広告の読み込み
+                    loadAd(AdRequest.Builder().build())
+                }
+
+                // レイアウトパラメータを指定（横幅 match_parent、高さ wrap_content）
+                val layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    gravity = Gravity.CENTER_HORIZONTAL
+                }
+
+                adView.layoutParams = layoutParams
+
+                // adViewLayout に AdView を追加
+                binding.adViewLayout.addView(adView)
             }
-            // 広告の読み込み
-            loadAd(AdRequest.Builder().build())
         }
-
-        // レイアウトパラメータを指定（横幅 match_parent、高さ wrap_content）
-        val layoutParams = LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
-        ).apply {
-            gravity = Gravity.CENTER_HORIZONTAL
-        }
-
-        adView.layoutParams = layoutParams
-
-        // adViewLayout に AdView を追加
-        binding.adViewLayout.addView(adView)
     }
 
     override fun onDestroy() {

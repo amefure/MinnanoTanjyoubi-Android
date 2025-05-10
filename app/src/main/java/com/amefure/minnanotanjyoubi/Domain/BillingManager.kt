@@ -137,6 +137,7 @@ class BillingManager(context: Context) : PurchasesUpdatedListener {
         val deferred = purchaseResult ?: return
 
         if (result.responseCode == BillingClient.BillingResponseCode.OK && !purchases.isNullOrEmpty()) {
+            Log.d("InApp", "購入成功 ：${purchases[0].products}")
             deferred.complete(Result.success(purchases[0]))
         } else {
             deferred.complete(Result.failure(Exception("Purchase failed: ${result.debugMessage}")))

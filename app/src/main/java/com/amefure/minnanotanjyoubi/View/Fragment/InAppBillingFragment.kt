@@ -1,13 +1,17 @@
 package com.amefure.minnanotanjyoubi.View.Fragment
 
 import BillingManager
+import android.app.AlertDialog
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.amefure.minnanotanjyoubi.BuildConfig
+import com.amefure.minnanotanjyoubi.Model.DataStore.DataStoreManager
 import com.amefure.minnanotanjyoubi.View.Adapter.BillingItemAdapter
 import com.amefure.minnanotanjyoubi.databinding.FragmentInAppBillingBinding
 import com.android.billingclient.api.ProductDetails
@@ -17,6 +21,7 @@ class InAppBillingFragment : Fragment() {
 
     /** アプリ内課金管理クラス */
     private lateinit var billingManager: BillingManager
+    private lateinit var dataStoreManager: DataStoreManager
 
     private var _binding: FragmentInAppBillingBinding? = null
     private val binding get() = _binding!!
@@ -33,6 +38,7 @@ class InAppBillingFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         billingManager = BillingManager(this.requireContext())
+        dataStoreManager = DataStoreManager(this.requireContext())
 
         // 戻るボタン
         binding.componentBackUpperContainer.backButton.setOnClickListener {
@@ -58,7 +64,30 @@ class InAppBillingFragment : Fragment() {
                             override fun onPurchaseButtonClick(product: ProductDetails) {
                                 val activity = activity ?: return
                                 lifecycleScope.launch {
-                                    billingManager.launchPurchaseFlow(activity, product)
+                                    val result = billingManager.launchPurchaseFlow(activity, product)
+                                    result.onSuccess { id ->
+                                        if (id.products.firstOrNull() == BuildConfig.IN_APP_REMOVE_ADS_ID) {
+                                            Log.d("InApp", "購入成功：広告削除")
+                                            dataStoreManager.saveInAppRemoveAdsFlag(true)
+                                        } else if (id.products.firstOrNull() == BuildConfig.IN_APP_UNLOCK_STORAGE_ID) {
+                                            Log.d("InApp", "購入成功：容量解放")
+                                            dataStoreManager.saveInAppUnlockStorage(true)
+                                        } else {
+                                            AlertDialog.Builder(this@InAppBillingFragment.requireContext())
+                                                .setTitle("ERROR")
+                                                .setMessage("予期せぬエラーが発生し、購入に失敗しました。時間をあけてから再度お試してください。")
+                                                .setPositiveButton("OK", { _, _ -> })
+                                                .show()
+                                        }
+
+                                    }.onFailure { error ->
+                                        Log.d("InApp", "購入失敗")
+                                        AlertDialog.Builder(this@InAppBillingFragment.requireContext())
+                                            .setTitle("ERROR")
+                                            .setMessage("予期せぬエラーが発生し、購入に失敗しました。時間をあけてから再度お試してください。")
+                                            .setPositiveButton("OK", { _, _ -> })
+                                            .show()
+                                    }
                                 }
                             }
 
