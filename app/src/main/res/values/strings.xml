@@ -28,4 +28,12 @@
     <!-- contentDescription用テキスト -->
     <string name="icon_back">戻る</string>
 
+    <!-- 誕生日情報グリッドレイアウト   -->
+
+    <string name="person_row_age_unit">歳</string>
+    <string name="person_row_later">あと</string>
+    <string name="person_row_day_unit">日</string>
+    <string name="person_row_happy_birthday">HAPPY BIRTHDAY</string>
+
+
 </resources>

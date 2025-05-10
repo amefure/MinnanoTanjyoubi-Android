@@ -168,9 +168,6 @@ class MainActivity : AppCompatActivity() {
     /** RoomDBの観測とリサイクルビューへの紐付け */
     private fun observedPersonData() {
         binding.mainList.layoutManager = GridLayoutManager(this, 3, RecyclerView.VERTICAL, false)
-        binding.mainList.addItemDecoration(
-            DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
-        )
         viewModel.personList.observe(this) {
             adapter = PersonGridLayoutAdapter(it.sortedBy { calcPersonInfoManager.daysLater(it.date) })
 //            adapter = PersonGridLayoutAdapter(Person.getDemoData())

@@ -11,16 +11,6 @@
     tools:context=".View.Fragment.DetailPersonFragment">
 
     <include
-        android:id="@+id/header_logo_layout"
-        layout="@layout/component_header"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <include
         android:id="@+id/component_back_upper_container"
         layout="@layout/component_back_upper_container"
         android:layout_width="match_parent"
@@ -30,7 +20,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/header_logo_layout"/>
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <LinearLayout
         android:id="@+id/info_layout"
@@ -50,7 +40,8 @@
             android:layout_weight="1"
             android:background="@drawable/detail_radius_label_background"
             android:padding="5dp"
-            android:text="友達"
+            android:textSize="14sp"
+            tools:text="友達"
             android:textAlignment="center"
             android:textColor="@color/white" />
 
@@ -63,11 +54,12 @@
             android:id="@+id/days_later_text"
             android:layout_width="40dp"
             android:layout_height="wrap_content"
-            android:layout_marginRight="20dp"
+            android:layout_marginEnd="20dp"
             android:layout_weight="1"
             android:background="@drawable/detail_radius_label_background"
             android:padding="5dp"
-            android:text="あとXX日"
+            android:textSize="14sp"
+            tools:text="あとXX日"
             android:textAlignment="center"
             android:textColor="@color/white" />
     </LinearLayout>
@@ -76,11 +68,11 @@
         android:id="@+id/ruby_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="よしだ　まひろ"
+        tools:text="よしだ　まひろ"
         android:textAlignment="center"
         android:textSize="12sp"
         android:textColor="@color/white"
-        app:layout_constraintEnd_toStartOf="@+id/header_logo_layout"
+        app:layout_constraintEnd_toStartOf="@+id/component_back_upper_container"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/info_layout" />
 
@@ -88,11 +80,11 @@
         android:id="@+id/name_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="吉田　真紘"
+        tools:text="吉田　真紘"
         android:textAlignment="center"
-        android:textSize="34sp"
+        android:textSize="20sp"
         android:textColor="@color/white"
-        app:layout_constraintEnd_toStartOf="@+id/header_logo_layout"
+        app:layout_constraintEnd_toStartOf="@+id/component_back_upper_container"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ruby_text" />
 
@@ -100,11 +92,11 @@
         android:id="@+id/date_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="1995年12月1日(平成7年)"
+        tools:text="1995年12月1日(平成7年)"
         android:textAlignment="center"
         android:textColor="@color/white"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toStartOf="@+id/header_logo_layout"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toStartOf="@+id/component_back_upper_container"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/name_text" />
 
@@ -131,16 +123,15 @@
             android:background="@drawable/footer_delete_button_background"
             android:elevation="20dp"
             android:gravity="center"
-            android:text="27歳"
+            tools:text="27歳"
             android:textAlignment="center"
             android:textColor="@color/white"
             android:textSize="12sp" />
 
 
         <Space
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_width="20dp"
+            android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/sign_of_zodiac_text"
@@ -149,15 +140,14 @@
             android:background="@drawable/footer_sort_button_background"
             android:elevation="20dp"
             android:gravity="center"
-            android:text="みずがめ座"
+            tools:text="みずがめ座"
             android:textAlignment="center"
             android:textColor="@color/white"
             android:textSize="11sp" />
 
         <Space
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_width="20dp"
+            android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/zodiac_text"
@@ -167,7 +157,7 @@
             android:elevation="20dp"
             android:gravity="center"
             android:lines="2"
-            android:text="いのしし年"
+            tools:text="いのしし年"
             android:textAlignment="center"
             android:textColor="@color/white"
             android:textSize="11sp" />
@@ -182,16 +172,15 @@
         android:id="@+id/memo_text"
         android:layout_width="match_parent"
         android:layout_height="120dp"
-        android:layout_marginLeft="30dp"
-        android:layout_marginTop="30dp"
-        android:layout_marginRight="30dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginHorizontal="20dp"
         android:background="@drawable/input_memo_layer_stroke"
         android:padding="8dp"
-        android:text="1995年12月1日(平成7年)"
+        tools:text="MEMO"
         android:textAlignment="center"
         android:textColor="@color/white"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toStartOf="@+id/header_logo_layout"
+        android:textSize="17sp"
+        app:layout_constraintEnd_toStartOf="@+id/component_back_upper_container"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/age_info_layout" />
 
@@ -211,7 +200,7 @@
             android:id="@+id/notify_label"
             android:layout_width="12dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
             android:layout_weight="1"
             android:text="通知"
             android:textAlignment="viewStart"
@@ -229,7 +218,8 @@
             android:layout_marginEnd="20dp"
             android:layout_weight="1"
             android:buttonTint="@color/thema_orange"
-            android:foregroundTint="@color/thema_orange" />
+            android:foregroundTint="@color/thema_orange"
+            tools:ignore="UseSwitchCompatOrMaterialXml" />
 
 
     </LinearLayout>
@@ -245,8 +235,7 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <View
-            android:id="@+id/view2"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_weight="1"
             android:background="@drawable/input_left_radius_bar" />
