@@ -5,6 +5,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import android.Manifest
 import android.os.Build
+import android.view.Gravity
+import android.widget.LinearLayout
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
@@ -27,6 +29,8 @@ import com.amefure.minnanotanjyoubi.View.Fragment.SettingFragment
 import com.amefure.minnanotanjyoubi.ViewModel.MainViewModel
 import com.amefure.minnanotanjyoubi.databinding.ActivityMainBinding
 import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdSize
+import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.MobileAds
 import kotlinx.coroutines.launch
 
@@ -53,14 +57,8 @@ class MainActivity : AppCompatActivity() {
 
         // AdMob 初期化
         MobileAds.initialize(this)
-
-        if (BuildConfig.DEBUG) {
-            binding.adView.adUnitId = BuildConfig.ADMOB_BANNER_ID_TEST
-        } else {
-            binding.adView.adUnitId = BuildConfig.ADMOB_BANNER_ID_PROD
-        }
-        // 広告の読み込み
-        binding.adView.loadAd(AdRequest.Builder().build())
+        // バナーの追加と読み込み
+        addAdBannerView()
 
         // ローカルデータ管理クラス
         dataStoreManager = DataStoreManager(this)
@@ -228,6 +226,37 @@ class MainActivity : AppCompatActivity() {
 //                    .show()
 //            }
         }
+
+    /**
+     *  AdMob バナー広告の追加と読み込み
+     *  adUnitIdを動的に変更するためにはViewをコードで追加する必要がある
+     */
+    private fun addAdBannerView() {
+        // AdViewを生成して設定
+        val adView = AdView(this).apply {
+            setAdSize(AdSize.BANNER)
+            adUnitId = if (BuildConfig.DEBUG) {
+                BuildConfig.ADMOB_BANNER_ID_TEST
+            } else {
+                BuildConfig.ADMOB_BANNER_ID_PROD
+            }
+            // 広告の読み込み
+            loadAd(AdRequest.Builder().build())
+        }
+
+        // レイアウトパラメータを指定（横幅 match_parent、高さ wrap_content）
+        val layoutParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        ).apply {
+            gravity = Gravity.CENTER_HORIZONTAL
+        }
+
+        adView.layoutParams = layoutParams
+
+        // adViewLayout に AdView を追加
+        binding.adViewLayout.addView(adView)
+    }
 
     override fun onDestroy() {
         binding.mainList.adapter = null

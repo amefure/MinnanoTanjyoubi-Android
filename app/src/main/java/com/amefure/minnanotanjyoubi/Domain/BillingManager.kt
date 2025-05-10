@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.asStateFlow
 
 /**
  * エミュレーターでは商品情報を取得できない
+ * テストはライセンステストに登録したアカウントのみ
  */
 class BillingManager(context: Context) : PurchasesUpdatedListener {
 

@@ -5,11 +5,13 @@ import android.app.TimePickerDialog
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.amefure.minnanotanjyoubi.BuildConfig
@@ -25,6 +27,8 @@ import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdSize
+import com.google.android.gms.ads.AdView
 
 class SettingFragment : Fragment() {
 
@@ -77,12 +81,8 @@ class SettingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (BuildConfig.DEBUG) {
-            binding.adView.adUnitId = BuildConfig.ADMOB_BANNER_ID_TEST
-        } else {
-            binding.adView.adUnitId = BuildConfig.ADMOB_BANNER_ID_PROD
-        }
-        binding.adView.loadAd(AdRequest.Builder().build())
+        // バナーの追加と読み込み
+        addAdBannerView()
 
         // ローカルに保存している情報を取得
         observeLocalData()
@@ -250,6 +250,37 @@ class SettingFragment : Fragment() {
                 }
             }
         }
+    }
+
+    /**
+     *  AdMob バナー広告の追加と読み込み
+     *  adUnitIdを動的に変更するためにはViewをコードで追加する必要がある
+     */
+    private fun addAdBannerView() {
+        // AdViewを生成して設定
+        val adView = AdView(this.requireContext()).apply {
+            setAdSize(AdSize.BANNER)
+            adUnitId = if (BuildConfig.DEBUG) {
+                BuildConfig.ADMOB_BANNER_ID_TEST
+            } else {
+                BuildConfig.ADMOB_BANNER_ID_PROD
+            }
+            // 広告の読み込み
+            loadAd(AdRequest.Builder().build())
+        }
+
+        // レイアウトパラメータを指定（横幅 match_parent、高さ wrap_content）
+        val layoutParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        ).apply {
+            gravity = Gravity.CENTER_HORIZONTAL
+        }
+
+        adView.layoutParams = layoutParams
+
+        // adViewLayout に AdView を追加
+        binding.adViewLayout.addView(adView)
     }
 
     private fun showOffKeyboard() {
