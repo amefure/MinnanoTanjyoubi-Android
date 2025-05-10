@@ -9,19 +9,19 @@ import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
 import com.amefure.minnanotanjyoubi.Model.DataStore.DataStoreManager
-import com.amefure.minnanotanjyoubi.databinding.FragmentInputNotifyMsgDialogBinding
+import com.amefure.minnanotanjyoubi.databinding.FragmentInputNotifyMsgBinding
 import kotlinx.coroutines.launch
 
 class InputNotifyMsgDialogFragment : DialogFragment() {
 
     private lateinit var dataStoreManager: DataStoreManager
 
-    private var _binding: FragmentInputNotifyMsgDialogBinding? = null
+    private var _binding: FragmentInputNotifyMsgBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         dataStoreManager = DataStoreManager(this.requireContext())
-        _binding = FragmentInputNotifyMsgDialogBinding.inflate(LayoutInflater.from(requireContext()))
+        _binding = FragmentInputNotifyMsgBinding.inflate(LayoutInflater.from(requireContext()))
         val builder = AlertDialog.Builder(requireContext())
         builder.setView(binding.root)
 

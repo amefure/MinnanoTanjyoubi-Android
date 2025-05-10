@@ -74,7 +74,7 @@ class DetailPersonFragment : Fragment() {
         observeNotifyInfo()
 
         // 戻るボタン
-        binding.backButton.setOnClickListener {
+        binding.componentBackUpperContainer.backButton.setOnClickListener {
             parentFragmentManager.popBackStack()
         }
 

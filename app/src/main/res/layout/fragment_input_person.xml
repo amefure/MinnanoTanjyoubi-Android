@@ -10,35 +10,18 @@
     android:orientation="vertical"
     tools:context=".View.Fragment.InputPersonFragment">
 
-
-    <LinearLayout
-        android:id="@+id/header_layout"
+    <include
+        android:id="@+id/component_back_upper_container"
+        layout="@layout/component_back_upper_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_marginTop="30dp"
         android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@+id/name_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0">
-
-        <ImageButton
-            android:id="@+id/back_button"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:background="@drawable/input_circle_background"
-            android:src="?attr/homeAsUpIndicator"
-            app:tint="@color/white" />
-
-        <View
-            android:id="@+id/view"
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:background="@drawable/input_right_radius_bar" />
-    </LinearLayout>
+        app:layout_constraintVertical_bias="0.0"/>
 
     <LinearLayout
         android:id="@+id/name_layout"
@@ -49,7 +32,7 @@
         app:layout_constraintBottom_toTopOf="@+id/ruby_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/header_layout">
+        app:layout_constraintTop_toBottomOf="@+id/component_back_upper_container">
 
         <TextView
             android:id="@+id/name_label"

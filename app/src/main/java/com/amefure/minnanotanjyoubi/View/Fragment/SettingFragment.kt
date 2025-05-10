@@ -77,7 +77,7 @@ class SettingFragment : Fragment() {
         observeLocalData()
 
         // 戻るボタン
-        binding.backButton.setOnClickListener {
+        binding.componentBackUpperContainer.backButton.setOnClickListener {
             showOffKeyboard()
             parentFragmentManager.popBackStack()
         }
