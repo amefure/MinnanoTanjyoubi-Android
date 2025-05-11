@@ -262,10 +262,11 @@ class SettingFragment : Fragment() {
         }
 
         lifecycleScope.launch {
-            val isUnlockStorage = dataStoreManager.getInAppUnlockStorage()
-            if (isUnlockStorage) {
-                binding.adsSettingShowReward.visibility = View.GONE
-                binding.adsSettingCapacityLabel.text = "現在の容量：容量解放済み"
+            dataStoreManager.observeInAppUnlockStorage().collect {
+                if (it) {
+                    binding.adsSettingShowReward.visibility = View.GONE
+                    binding.adsSettingCapacityLabel.text = "現在の容量：容量解放済み"
+                }
             }
         }
     }
@@ -279,6 +280,9 @@ class SettingFragment : Fragment() {
             // 広告削除購入済みなら追加しない
             dataStoreManager.observeInAppRemoveAds().collect {
                 if (!it) {
+                    // 全てのビューをリセット
+                    // アプリ初回インストール時のみ、通知許可ダイアログがらみ?で2回呼ばれるため
+                    binding.adViewLayout.removeAllViewsInLayout()
                     // AdViewを生成して設定
                     val adView = AdView(this@SettingFragment.requireContext()).apply {
                         setAdSize(AdSize.BANNER)
@@ -303,6 +307,9 @@ class SettingFragment : Fragment() {
 
                     // adViewLayout に AdView を追加
                     binding.adViewLayout.addView(adView)
+                } else {
+                    // 広告削除フラグがONなら既に表示している場合もあるので削除
+                    binding.adViewLayout.removeAllViewsInLayout()
                 }
             }
         }

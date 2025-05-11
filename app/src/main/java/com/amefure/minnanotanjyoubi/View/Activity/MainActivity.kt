@@ -50,12 +50,6 @@ class MainActivity : AppCompatActivity() {
     private var isFilter = false
     private var isSelectMode = false
 
-    /**
-     * 広告バナービューを追加したかどうか
-     * アプリ初回インストール時のみ、通知許可ダイアログがらみ?で2回呼ばれるため
-     */
-    private var isAddedAdsView = false
-
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -248,7 +242,11 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             // 広告削除購入済みなら追加しない
             dataStoreManager.observeInAppRemoveAds().collect {
-                if (!it && !isAddedAdsView) {
+                if (!it) {
+                    // 全てのビューをリセット
+                    // アプリ初回インストール時のみ、通知許可ダイアログがらみ?で2回呼ばれるため
+                    binding.adViewLayout.removeAllViewsInLayout()
+
                     // AdViewを生成して設定
                     val adView = AdView(this@MainActivity).apply {
                         setAdSize(AdSize.BANNER)
@@ -272,8 +270,9 @@ class MainActivity : AppCompatActivity() {
                     adView.layoutParams = layoutParams
                     // adViewLayout に AdView を追加
                     binding.adViewLayout.addView(adView)
-                    // 追加済みフラグを更新
-                    isAddedAdsView = true
+                } else {
+                    // 広告削除フラグがONなら既に表示している場合もあるので削除
+                    binding.adViewLayout.removeAllViewsInLayout()
                 }
             }
         }
