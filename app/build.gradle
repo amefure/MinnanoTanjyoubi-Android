@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
@@ -5,22 +7,51 @@ plugins {
     id "com.google.gms.google-services"
 }
 
+def secretPropertiesFile = rootProject.file("secret.properties")
+def secretProperties = new Properties()
+secretProperties.load(new FileInputStream(secretPropertiesFile))
+
 android {
     namespace 'com.amefure.minnanotanjyoubi'
+    // Android16
     compileSdk 36
 
     defaultConfig {
         applicationId "com.amefure.minnanotanjyoubi"
-        minSdk 26
+        // Android11(30)を最小とする
+        minSdk 30
+        // Android16
         targetSdk 36
-        versionCode 11
-        versionName "1.4.1"
+        versionCode 14
+        versionName "1.5.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        // AdMob App Id
+        buildConfigField("String", "ADMOB_APP_ID_TEST", "\"${secretProperties['ADMOB_APP_ID_TEST']}\"")
+        buildConfigField("String", "ADMOB_APP_ID_PROD", "\"${secretProperties['ADMOB_APP_ID_PROD']}\"")
+        // AdMob Banner Id
+        buildConfigField("String", "ADMOB_BANNER_ID_TEST", "\"${secretProperties['ADMOB_BANNER_ID_TEST']}\"")
+        buildConfigField("String", "ADMOB_BANNER_ID_PROD", "\"${secretProperties['ADMOB_BANNER_ID_PROD']}\"")
+        // AdMob Reward Id
+        buildConfigField("String", "ADMOB_REWARD_ID_TEST", "\"${secretProperties['ADMOB_REWARD_ID_TEST']}\"")
+        buildConfigField("String", "ADMOB_REWARD_ID_PROD", "\"${secretProperties['ADMOB_REWARD_ID_PROD']}\"")
+
+        // In App Product Id
+        buildConfigField("String", "IN_APP_REMOVE_ADS_ID", "\"${secretProperties['IN_APP_REMOVE_ADS_ID']}\"")
+        buildConfigField("String", "IN_APP_UNLOCK_STORAGE_ID", "\"${secretProperties['IN_APP_UNLOCK_STORAGE_ID']}\"")
     }
 
     buildTypes {
+        debug {
+            manifestPlaceholders = [
+                    admobAppId: secretProperties["ADMOB_APP_ID_TEST"]
+            ]
+        }
         release {
+            manifestPlaceholders = [
+                    admobAppId: secretProperties["ADMOB_APP_ID_PROD"]
+            ]
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -30,7 +61,7 @@ android {
         targetCompatibility JavaVersion.VERSION_17
     }
 
-    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
+    tasks.withType(KotlinCompile).configureEach {
         kotlinOptions {
             jvmTarget = JavaVersion.VERSION_17.toString()
         }
@@ -38,44 +69,53 @@ android {
 
     buildFeatures {
         viewBinding true
+        buildConfig true
     }
 }
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.8.0'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.5.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.core:core-ktx:1.16.0'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
 
     // viewmodelsのために追加
-    implementation 'androidx.fragment:fragment-ktx:1.2.2'
+    implementation 'androidx.fragment:fragment-ktx:1.8.6'
 
     // DataStore
-    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    // 1.1.5では未参照になる
+    implementation("androidx.datastore:datastore-preferences:1.1.4")
 
     // Room
-    def room_version = "2.5.0"
+    def room_version = "2.7.1"
 
+    //noinspection GradleDependency(警告無視)
     implementation "androidx.room:room-runtime:$room_version"
+    //noinspection GradleDependency(警告無視)
     implementation "androidx.room:room-ktx:$room_version"
     // kapt "androidx.room:room-compiler:$room_version"
     ksp "androidx.room:room-compiler:$room_version"
 
-    implementation 'androidx.room:room-rxjava2:2.3.0'
+    implementation 'androidx.room:room-rxjava2:2.7.1'
     // Room > RxKotlin
-    implementation 'io.reactivex.rxjava2:rxjava:2.2.4'
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.9'
     implementation 'io.reactivex.rxjava2:rxkotlin:2.3.0'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
     // Room
 
     // AdMob
-    implementation("com.google.android.gms:play-services-ads:22.4.0")
+    implementation("com.google.android.gms:play-services-ads:24.2.0")
 
     // Firebase
-    implementation(platform("com.google.firebase:firebase-bom:32.3.1"))
+    implementation(platform("com.google.firebase:firebase-bom:33.13.0"))
     implementation("com.google.firebase:firebase-analytics-ktx")
+
+    // Google Play Billing Library 7系
+    def billing_version = "7.1.1"
+    implementation "com.android.billingclient:billing:$billing_version"
+    implementation "com.android.billingclient:billing-ktx:$billing_version"
 }

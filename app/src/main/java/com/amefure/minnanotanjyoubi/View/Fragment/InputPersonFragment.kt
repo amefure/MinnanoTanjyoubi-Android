@@ -1,5 +1,6 @@
 package com.amefure.minnanotanjyoubi.View.Fragment
 
+import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.content.Context
 import android.content.res.Resources
@@ -12,7 +13,6 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ImageButton
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
@@ -22,12 +22,9 @@ import com.amefure.minnanotanjyoubi.Model.DataStore.DataStoreManager
 import com.amefure.minnanotanjyoubi.Model.Relation
 import com.amefure.minnanotanjyoubi.R
 import com.amefure.minnanotanjyoubi.ViewModel.InputPersonViewModel
-import com.google.android.material.snackbar.Snackbar
 import java.util.Calendar
 import com.amefure.minnanotanjyoubi.Model.Keys.*
-import com.amefure.minnanotanjyoubi.databinding.FragmentDetailPersonBinding
 import com.amefure.minnanotanjyoubi.databinding.FragmentInputPersonBinding
-import com.amefure.minnanotanjyoubi.databinding.FragmentSettingBinding
 import kotlinx.coroutines.launch
 
 class InputPersonFragment : Fragment() {
@@ -107,7 +104,7 @@ class InputPersonFragment : Fragment() {
             val notify = binding.notifyEditButton.isChecked
             val memo = binding.memoEdit.text.toString()
 
-            if (!name.isEmpty()) {
+            if (name.isNotEmpty()) {
 
                 if (receiveId == null) {
                     viewModel.insertPerson(name,ruby,date,relation,memo,notify) {
@@ -128,9 +125,7 @@ class InputPersonFragment : Fragment() {
                             notificationRequestManager.setBroadcast(it.toInt(),month,day,time[0].toInt(),time[1].toInt(),msg)
                         }
                     }
-                    Snackbar.make(view,"追加しました。", Snackbar.LENGTH_SHORT)
-                        .setBackgroundTint(ContextCompat.getColor(view.context,R.color.positive_color))
-                        .show()
+
                     showOffKeyboard()
                     parentFragmentManager.apply {
                         popBackStack()
@@ -140,21 +135,18 @@ class InputPersonFragment : Fragment() {
                     // 編集モード
                     viewModel.updatePerson(receiveId!!,name,ruby,date,relation,memo,notify)
                     showOffKeyboard()
-                    Snackbar.make(view,"更新しました。", Snackbar.LENGTH_SHORT)
-                        .setBackgroundTint(ContextCompat.getColor(view.context,R.color.positive_color))
-                        .show()
                     parentFragmentManager.apply {
                         // トップまで戻す
                         popBackStack()
                         popBackStack()
                     }
-
                 }
 
             } else {
-                Snackbar.make(view,"名前を入力してください。", Snackbar.LENGTH_SHORT)
-                    .setBackgroundTint(ContextCompat.getColor(view.context,R.color.negative_color))
-                    .show()
+                AlertDialog.Builder(this.requireContext())
+                    .setTitle("ERROR")
+                    .setMessage("名前を入力してください。")
+                    .setPositiveButton("OK", { _, _ -> }).show()
             }
         }
 
@@ -184,7 +176,7 @@ class InputPersonFragment : Fragment() {
         // スピナーセット
         val spinnerAdapter = ArrayAdapter<String>(this.requireContext(), android.R.layout.simple_spinner_item)
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        Relation.values().forEach {
+        Relation.entries.forEach {
             spinnerAdapter.add(it.value())
         }
         binding.relationSpinner.adapter = spinnerAdapter

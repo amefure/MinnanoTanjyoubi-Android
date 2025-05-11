@@ -1,5 +1,6 @@
 package com.amefure.minnanotanjyoubi.View.Adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.amefure.minnanotanjyoubi.Domain.CalcDateInfoManager
 import com.amefure.minnanotanjyoubi.Model.Database.Person
 import com.amefure.minnanotanjyoubi.R
-import com.amefure.minnanotanjyoubi.databinding.FragmentPersonCardBinding
+import com.amefure.minnanotanjyoubi.databinding.ComponentPersonCardBinding
 
 class PersonGridLayoutAdapter (personList: List<Person>) :RecyclerView.Adapter<PersonGridLayoutAdapter.MainViewHolder>() {
 
@@ -31,13 +32,15 @@ class PersonGridLayoutAdapter (personList: List<Person>) :RecyclerView.Adapter<P
         fun onItemClick(person: Person)
     }
 
-    // セレクトモード活性
+    /** セレクトモード活性 */
+    @SuppressLint("NotifyDataSetChanged")
     public fun activeSelectMode() {
         isSelectableMode = true
         notifyDataSetChanged()
     }
 
-    // セレクトモード非活性
+    /** セレクトモード非活性 */
+    @SuppressLint("NotifyDataSetChanged")
     public fun inactiveSelectMode() {
         selectedPersonIds.removeAll(selectedPersonIds)
         isSelectableMode = false
@@ -50,14 +53,15 @@ class PersonGridLayoutAdapter (personList: List<Person>) :RecyclerView.Adapter<P
         this.listener = listener
     }
 
-    private var _binding: FragmentPersonCardBinding? = null
+    private var _binding: ComponentPersonCardBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainViewHolder {
-        _binding = FragmentPersonCardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        _binding = ComponentPersonCardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return MainViewHolder(binding)
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
         val person = _personList[position]
 
@@ -109,7 +113,7 @@ class PersonGridLayoutAdapter (personList: List<Person>) :RecyclerView.Adapter<P
         return selectedPersonIds.toSet()
     }
 
-    class MainViewHolder(binding: FragmentPersonCardBinding) : RecyclerView.ViewHolder(binding.root) {
+    class MainViewHolder(binding: ComponentPersonCardBinding) : RecyclerView.ViewHolder(binding.root) {
         val name: TextView = binding.personName
         val date: TextView = binding.personDate
         val age: TextView = binding.personAge

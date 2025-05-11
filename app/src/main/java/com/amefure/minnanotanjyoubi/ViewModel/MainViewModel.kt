@@ -9,7 +9,6 @@ import com.amefure.minnanotanjyoubi.Model.Database.Person
 import com.amefure.minnanotanjyoubi.Model.Relation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.logging.Filter
 
 class MainViewModel(app: Application): RootViewModel(app)  {
 
