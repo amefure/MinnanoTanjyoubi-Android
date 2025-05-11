@@ -6,7 +6,6 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.android.billingclient.api.Purchase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.firstOrNull
@@ -173,6 +172,19 @@ class DataStoreManager(private val context: Context) {
             ?.get(IN_APP_REMOVE_ADS) ?: false
     }
 
+    /** 観測；容量解放購入フラグ */
+    public fun observeInAppRemoveAds(): Flow<Boolean> {
+        return context.dataStore.data.catch { exception ->
+            if (exception is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw exception
+            }
+        }.map { preferences ->
+            preferences[IN_APP_REMOVE_ADS] ?: false
+        }
+    }
+
     /** 保存；容量解放購入フラグ */
     suspend fun saveInAppUnlockStorage(purchased: Boolean) {
         try {
@@ -189,5 +201,18 @@ class DataStoreManager(private val context: Context) {
         return context.dataStore.data
             .firstOrNull()  // 最初の値を1回だけ取得
             ?.get(IN_APP_UNLOCK_STORAGE) ?: false
+    }
+
+    /** 観測；容量解放購入フラグ */
+    public fun observeInAppUnlockStorage(): Flow<Boolean> {
+        return context.dataStore.data.catch { exception ->
+            if (exception is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw exception
+            }
+        }.map { preferences ->
+            preferences[IN_APP_UNLOCK_STORAGE] ?: false
+        }
     }
 }

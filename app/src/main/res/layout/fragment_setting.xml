@@ -206,7 +206,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/ads_setting_1"
+                android:id="@+id/ads_setting_show_reward"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:background="@color/thema_gray_dark"

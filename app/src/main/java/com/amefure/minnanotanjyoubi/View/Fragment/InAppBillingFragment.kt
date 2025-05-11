@@ -1,6 +1,7 @@
 package com.amefure.minnanotanjyoubi.View.Fragment
 
 import BillingManager
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
@@ -22,6 +23,7 @@ class InAppBillingFragment : Fragment() {
     /** アプリ内課金管理クラス */
     private lateinit var billingManager: BillingManager
     private lateinit var dataStoreManager: DataStoreManager
+    private var billingItemAdapter: BillingItemAdapter? = null
 
     private var _binding: FragmentInAppBillingBinding? = null
     private val binding get() = _binding!!
@@ -34,6 +36,7 @@ class InAppBillingFragment : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -58,8 +61,8 @@ class InAppBillingFragment : Fragment() {
                 .collect { list ->
                     // 商品アイテムリストをセットアップ
                     binding.itemRecyclerView.layoutManager = LinearLayoutManager(this@InAppBillingFragment.requireContext())
-                    val adapter = BillingItemAdapter(this@InAppBillingFragment.requireContext(), list)
-                    adapter.setUpListener(
+                    billingItemAdapter = BillingItemAdapter(this@InAppBillingFragment.requireContext(), list)
+                    billingItemAdapter?.setUpListener(
                         object: BillingItemAdapter.OnBillingListener {
                             override fun onPurchaseButtonClick(product: ProductDetails) {
                                 val activity = activity ?: return
@@ -69,9 +72,11 @@ class InAppBillingFragment : Fragment() {
                                         if (id.products.firstOrNull() == BuildConfig.IN_APP_REMOVE_ADS_ID) {
                                             Log.d("InApp", "購入成功：広告削除")
                                             dataStoreManager.saveInAppRemoveAdsFlag(true)
+                                            binding.itemRecyclerView.adapter?.notifyDataSetChanged()
                                         } else if (id.products.firstOrNull() == BuildConfig.IN_APP_UNLOCK_STORAGE_ID) {
                                             Log.d("InApp", "購入成功：容量解放")
                                             dataStoreManager.saveInAppUnlockStorage(true)
+                                            binding.itemRecyclerView.adapter?.notifyDataSetChanged()
                                         } else {
                                             AlertDialog.Builder(this@InAppBillingFragment.requireContext())
                                                 .setTitle("ERROR")
@@ -97,13 +102,15 @@ class InAppBillingFragment : Fragment() {
                         }
 
                     )
-                    binding.itemRecyclerView.adapter = adapter
+                    binding.itemRecyclerView.adapter = billingItemAdapter
                 }
         }
     }
 
     override fun onDestroy() {
         billingManager.destroy()
+        billingItemAdapter = null
+        binding.itemRecyclerView.adapter = null
         _binding = null
         super.onDestroy()
     }

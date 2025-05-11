@@ -45,6 +45,7 @@ class MainActivity : AppCompatActivity() {
     private val calcPersonInfoManager = CalcDateInfoManager()
 
     private var limitCapacity: Int = Capacity.initialCapacity
+    private var isUnlockStorage: Boolean = false
     private var isFilter = false
     private var isSelectMode = false
 
@@ -78,7 +79,8 @@ class MainActivity : AppCompatActivity() {
         observedPersonData()
 
         binding.registerButton.setOnClickListener {
-            if (limitCapacity > viewModel.personList.value!!.count()) {
+            // 容量解放ずみ または 容量上限に達していないなら
+            if (isUnlockStorage || limitCapacity > viewModel.personList.value!!.count()) {
                 supportFragmentManager.beginTransaction().apply {
                     add(R.id.main_frame, InputPersonFragment())
                     addToBackStack(null)
@@ -209,6 +211,13 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
+        lifecycleScope.launch {
+            // 容量解放購入済みかどうか
+            dataStoreManager.observeInAppUnlockStorage().collect {
+                isUnlockStorage = it
+            }
+        }
     }
 
     /** 許可申請ランチャー */
@@ -231,32 +240,33 @@ class MainActivity : AppCompatActivity() {
     private fun addAdBannerView() {
         lifecycleScope.launch {
             // 広告削除購入済みなら追加しない
-            val flag = dataStoreManager.getInAppRemoveAds()
-            if (!flag) {
-                // AdViewを生成して設定
-                val adView = AdView(this@MainActivity).apply {
-                    setAdSize(AdSize.BANNER)
-                    adUnitId = if (BuildConfig.DEBUG) {
-                        BuildConfig.ADMOB_BANNER_ID_TEST
-                    } else {
-                        BuildConfig.ADMOB_BANNER_ID_PROD
+            dataStoreManager.observeInAppRemoveAds().collect {
+                if (!it) {
+                    // AdViewを生成して設定
+                    val adView = AdView(this@MainActivity).apply {
+                        setAdSize(AdSize.BANNER)
+                        adUnitId = if (BuildConfig.DEBUG) {
+                            BuildConfig.ADMOB_BANNER_ID_TEST
+                        } else {
+                            BuildConfig.ADMOB_BANNER_ID_PROD
+                        }
+                        // 広告の読み込み
+                        loadAd(AdRequest.Builder().build())
                     }
-                    // 広告の読み込み
-                    loadAd(AdRequest.Builder().build())
+
+                    // レイアウトパラメータを指定（横幅 match_parent、高さ wrap_content）
+                    val layoutParams = LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                    ).apply {
+                        gravity = Gravity.CENTER_HORIZONTAL
+                    }
+
+                    adView.layoutParams = layoutParams
+
+                    // adViewLayout に AdView を追加
+                    binding.adViewLayout.addView(adView)
                 }
-
-                // レイアウトパラメータを指定（横幅 match_parent、高さ wrap_content）
-                val layoutParams = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-                ).apply {
-                    gravity = Gravity.CENTER_HORIZONTAL
-                }
-
-                adView.layoutParams = layoutParams
-
-                // adViewLayout に AdView を追加
-                binding.adViewLayout.addView(adView)
             }
         }
     }

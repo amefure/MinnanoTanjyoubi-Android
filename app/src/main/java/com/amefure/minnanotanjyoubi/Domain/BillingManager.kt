@@ -138,6 +138,8 @@ class BillingManager(context: Context) : PurchasesUpdatedListener {
 
         if (result.responseCode == BillingClient.BillingResponseCode.OK && !purchases.isNullOrEmpty()) {
             Log.d("InApp", "購入成功 ：${purchases[0].products}")
+            // 購入済みアイテムに追加する
+            purchasedItems.add(purchases[0])
             deferred.complete(Result.success(purchases[0]))
         } else {
             deferred.complete(Result.failure(Exception("Purchase failed: ${result.debugMessage}")))
