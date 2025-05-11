@@ -5,6 +5,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import android.Manifest
 import android.os.Build
+import android.util.Log
 import android.view.Gravity
 import android.widget.LinearLayout
 import androidx.activity.viewModels
@@ -48,6 +49,12 @@ class MainActivity : AppCompatActivity() {
     private var isUnlockStorage: Boolean = false
     private var isFilter = false
     private var isSelectMode = false
+
+    /**
+     * 広告バナービューを追加したかどうか
+     * アプリ初回インストール時のみ、通知許可ダイアログがらみ?で2回呼ばれるため
+     */
+    private var isAddedAdsView = false
 
     private lateinit var binding: ActivityMainBinding
 
@@ -241,7 +248,7 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             // 広告削除購入済みなら追加しない
             dataStoreManager.observeInAppRemoveAds().collect {
-                if (!it) {
+                if (!it && !isAddedAdsView) {
                     // AdViewを生成して設定
                     val adView = AdView(this@MainActivity).apply {
                         setAdSize(AdSize.BANNER)
@@ -263,9 +270,10 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     adView.layoutParams = layoutParams
-
                     // adViewLayout に AdView を追加
                     binding.adViewLayout.addView(adView)
+                    // 追加済みフラグを更新
+                    isAddedAdsView = true
                 }
             }
         }
