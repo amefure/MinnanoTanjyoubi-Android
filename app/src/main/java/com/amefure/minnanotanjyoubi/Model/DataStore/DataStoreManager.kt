@@ -168,6 +168,13 @@ class DataStoreManager(private val context: Context) {
     /** 取得；広告削除購入フラグ */
     suspend fun getInAppRemoveAds(): Boolean {
         return context.dataStore.data
+            .catch { exception ->
+                if (exception is IOException) {
+                    emit(emptyPreferences())
+                } else {
+                    throw exception
+                }
+            }
             .firstOrNull()  // 最初の値を1回だけ取得
             ?.get(IN_APP_REMOVE_ADS) ?: false
     }
@@ -199,6 +206,13 @@ class DataStoreManager(private val context: Context) {
     /** 取得；容量解放購入フラグ */
     suspend fun getInAppUnlockStorage(): Boolean {
         return context.dataStore.data
+            .catch { exception ->
+                if (exception is IOException) {
+                    emit(emptyPreferences())
+                } else {
+                    throw exception
+                }
+            }
             .firstOrNull()  // 最初の値を1回だけ取得
             ?.get(IN_APP_UNLOCK_STORAGE) ?: false
     }
