@@ -6,13 +6,13 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.amefure.minnanotanjyoubi.BuildConfig
 import com.amefure.minnanotanjyoubi.Domain.CalcDateInfoManager
@@ -20,18 +20,17 @@ import com.amefure.minnanotanjyoubi.Model.Capacity
 import com.amefure.minnanotanjyoubi.Model.DataStore.DataStoreManager
 import com.amefure.minnanotanjyoubi.R
 import com.amefure.minnanotanjyoubi.databinding.FragmentSettingBinding
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdSize
+import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import kotlinx.coroutines.launch
 import java.util.Calendar
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.AdSize
-import com.google.android.gms.ads.AdView
 
 class SettingFragment : Fragment() {
-
     private lateinit var dataStoreManager: DataStoreManager
     private val calcDateInfoManager = CalcDateInfoManager()
 
@@ -46,8 +45,9 @@ class SettingFragment : Fragment() {
     private val binding get() = _binding!!
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentSettingBinding.inflate(inflater, container, false)
 
@@ -63,22 +63,26 @@ class SettingFragment : Fragment() {
                     rewardedAd = null
                     updateAdsButtonState()
                 }
+
                 override fun onAdLoaded(ad: RewardedAd) {
                     Log.d("Admob", "ロード完了")
                     rewardedAd = ad
                     updateAdsButtonState()
                 }
-            }
+            },
         )
 
         // これがないと視聴できない？
-        rewardedAd?.fullScreenContentCallback = object: FullScreenContentCallback() {}
+        rewardedAd?.fullScreenContentCallback = object : FullScreenContentCallback() {}
 
         dataStoreManager = DataStoreManager(this.requireContext())
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
 
         // バナーの追加と読み込み
@@ -109,19 +113,19 @@ class SettingFragment : Fragment() {
                 minute = c.get(Calendar.MINUTE)
             }
             // 取得した日付情報を元にダイアログを生成
-            val dialog = TimePickerDialog(requireContext(), android.R.style.Theme_Holo_Dialog, timeListener, hour, minute,false)
+            val dialog = TimePickerDialog(requireContext(), android.R.style.Theme_Holo_Dialog, timeListener, hour, minute, false)
             dialog.show()
         }
 
         binding.notifySettingDayButton.setOnClickListener {
             if (binding.notifySettingDayButton.text == "当日") {
                 setUpNotifyDayAfter()
-                lifecycleScope.launch{
+                lifecycleScope.launch {
                     dataStoreManager.saveNotifyDay("前日")
                 }
             } else {
                 setUpNotifyDay()
-                lifecycleScope.launch{
+                lifecycleScope.launch {
                     dataStoreManager.saveNotifyDay("当日")
                 }
             }
@@ -139,7 +143,7 @@ class SettingFragment : Fragment() {
             if (!calcDateInfoManager.isToday(lastDate)) {
                 rewardedAd?.let { ad ->
                     ad.show(this.requireActivity(), { _ ->
-                        lifecycleScope.launch{
+                        lifecycleScope.launch {
                             // 広告を視聴し終えたら容量の追加と視聴日を保存
                             val newCapacity = limitCapacity + Capacity.addCapacity
                             dataStoreManager.saveLimitCapacity(newCapacity)
@@ -150,7 +154,8 @@ class SettingFragment : Fragment() {
                     Log.d("TAG", "リワード広告がまだセットされていません。")
                 }
             } else {
-                AlertDialog.Builder(this.requireContext())
+                AlertDialog
+                    .Builder(this.requireContext())
                     .setTitle("お知らせ")
                     .setMessage("広告を視聴できるのは1日に1回までです。")
                     .setPositiveButton("OK", { _, _ -> })
@@ -192,22 +197,21 @@ class SettingFragment : Fragment() {
         binding.notifySettingDayButton.backgroundTintList = colorValue
     }
 
-
     /** 日付ピッカーから選択された時に呼ばれるリスナー */
-    private var timeListener = TimePickerDialog.OnTimeSetListener { view, hour , minutes ->
-        var minutesStr = minutes.toString()
-        if (minutesStr.length == 1) {
-            minutesStr = "0$minutesStr"
+    private var timeListener =
+        TimePickerDialog.OnTimeSetListener { view, hour, minutes ->
+            var minutesStr = minutes.toString()
+            if (minutesStr.length == 1) {
+                minutesStr = "0$minutesStr"
+            }
+            val time = "$hour:$minutesStr"
+            lifecycleScope.launch {
+                dataStoreManager.saveNotifyTime(time)
+            }
         }
-        val time = "$hour:$minutesStr"
-        lifecycleScope.launch{
-            dataStoreManager.saveNotifyTime(time)
-        }
-    }
 
     /** ローカルの情報を観測 */
     private fun observeLocalData() {
-
         // lifecycleScope.launchはまとめると動作しないので分割
         lifecycleScope.launch {
             dataStoreManager.observeNotifyTime().collect {
@@ -219,7 +223,6 @@ class SettingFragment : Fragment() {
                     dataStoreManager.saveNotifyTime(getString(R.string.notify_default_time))
                 }
             }
-
         }
         lifecycleScope.launch {
             dataStoreManager.observeNotifyDay().collect {
@@ -235,14 +238,13 @@ class SettingFragment : Fragment() {
                     dataStoreManager.saveNotifyDay(getString(R.string.notify_default_day))
                 }
             }
-
         }
 
         lifecycleScope.launch {
             dataStoreManager.observeLimitCapacity().collect {
                 if (it != null) {
                     limitCapacity = it
-                    binding.adsSettingCapacityLabel.text = requireContext().getString(R.string.ads_setting_capacity_label,it)
+                    binding.adsSettingCapacityLabel.text = requireContext().getString(R.string.ads_setting_capacity_label, it)
                 } else {
                     // 初期値格納
                     dataStoreManager.saveLimitCapacity(Capacity.initialCapacity)
@@ -284,24 +286,28 @@ class SettingFragment : Fragment() {
                     // アプリ初回インストール時のみ、通知許可ダイアログがらみ?で2回呼ばれるため
                     binding.adViewLayout.removeAllViewsInLayout()
                     // AdViewを生成して設定
-                    val adView = AdView(this@SettingFragment.requireContext()).apply {
-                        setAdSize(AdSize.BANNER)
-                        adUnitId = if (BuildConfig.DEBUG) {
-                            BuildConfig.ADMOB_BANNER_ID_TEST
-                        } else {
-                            BuildConfig.ADMOB_BANNER_ID_PROD
+                    val adView =
+                        AdView(this@SettingFragment.requireContext()).apply {
+                            setAdSize(AdSize.BANNER)
+                            adUnitId =
+                                if (BuildConfig.DEBUG) {
+                                    BuildConfig.ADMOB_BANNER_ID_TEST
+                                } else {
+                                    BuildConfig.ADMOB_BANNER_ID_PROD
+                                }
+                            // 広告の読み込み
+                            loadAd(AdRequest.Builder().build())
                         }
-                        // 広告の読み込み
-                        loadAd(AdRequest.Builder().build())
-                    }
 
                     // レイアウトパラメータを指定（横幅 match_parent、高さ wrap_content）
-                    val layoutParams = LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT
-                    ).apply {
-                        gravity = Gravity.CENTER_HORIZONTAL
-                    }
+                    val layoutParams =
+                        LinearLayout
+                            .LayoutParams(
+                                LinearLayout.LayoutParams.MATCH_PARENT,
+                                LinearLayout.LayoutParams.WRAP_CONTENT,
+                            ).apply {
+                                gravity = Gravity.CENTER_HORIZONTAL
+                            }
 
                     adView.layoutParams = layoutParams
 

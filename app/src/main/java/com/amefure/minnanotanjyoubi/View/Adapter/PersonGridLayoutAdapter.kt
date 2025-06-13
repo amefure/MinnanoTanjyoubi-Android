@@ -14,14 +14,17 @@ import com.amefure.minnanotanjyoubi.Model.Database.Person
 import com.amefure.minnanotanjyoubi.R
 import com.amefure.minnanotanjyoubi.databinding.ComponentPersonCardBinding
 
-class PersonGridLayoutAdapter (personList: List<Person>) :RecyclerView.Adapter<PersonGridLayoutAdapter.MainViewHolder>() {
-
+class PersonGridLayoutAdapter(
+    personList: List<Person>,
+) : RecyclerView.Adapter<PersonGridLayoutAdapter.MainViewHolder>() {
     private val _personList: MutableList<Person> = personList.toMutableList()
+
     override fun getItemCount(): Int = _personList.size
 
     private val calcPersonInfoManager = CalcDateInfoManager()
 
     private var isSelectableMode = false
+
     // 削除対象のIDを保持
     private val selectedPersonIds = mutableSetOf<Int>()
 
@@ -56,13 +59,19 @@ class PersonGridLayoutAdapter (personList: List<Person>) :RecyclerView.Adapter<P
     private var _binding: ComponentPersonCardBinding? = null
     private val binding get() = _binding!!
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainViewHolder {
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int,
+    ): MainViewHolder {
         _binding = ComponentPersonCardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return MainViewHolder(binding)
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
+    override fun onBindViewHolder(
+        holder: MainViewHolder,
+        position: Int,
+    ) {
         val person = _personList[position]
 
         if (isSelectableMode) {
@@ -92,7 +101,6 @@ class PersonGridLayoutAdapter (personList: List<Person>) :RecyclerView.Adapter<P
             holder.selectButton.setImageResource(R.drawable.ic_card_check_dis_select)
         }
 
-
         val age = calcPersonInfoManager.currentAge(person.date)
         val daysLater = calcPersonInfoManager.daysLater(person.date)
         holder.name.text = person.name
@@ -109,11 +117,11 @@ class PersonGridLayoutAdapter (personList: List<Person>) :RecyclerView.Adapter<P
         }
     }
 
-    fun getSelectedPersonIds() : Set<Int> {
-        return selectedPersonIds.toSet()
-    }
+    fun getSelectedPersonIds(): Set<Int> = selectedPersonIds.toSet()
 
-    class MainViewHolder(binding: ComponentPersonCardBinding) : RecyclerView.ViewHolder(binding.root) {
+    class MainViewHolder(
+        binding: ComponentPersonCardBinding,
+    ) : RecyclerView.ViewHolder(binding.root) {
         val name: TextView = binding.personName
         val date: TextView = binding.personDate
         val age: TextView = binding.personAge

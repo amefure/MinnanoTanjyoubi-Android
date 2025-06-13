@@ -5,7 +5,6 @@ import android.app.DatePickerDialog
 import android.content.Context
 import android.content.res.Resources
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,23 +12,23 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ImageButton
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.amefure.minnanotanjyoubi.Domain.CalcDateInfoManager
 import com.amefure.minnanotanjyoubi.Domain.NotificationRequestManager
 import com.amefure.minnanotanjyoubi.Model.DataStore.DataStoreManager
+import com.amefure.minnanotanjyoubi.Model.Keys.*
 import com.amefure.minnanotanjyoubi.Model.Relation
 import com.amefure.minnanotanjyoubi.R
 import com.amefure.minnanotanjyoubi.ViewModel.InputPersonViewModel
-import java.util.Calendar
-import com.amefure.minnanotanjyoubi.Model.Keys.*
 import com.amefure.minnanotanjyoubi.databinding.FragmentInputPersonBinding
 import kotlinx.coroutines.launch
+import java.util.Calendar
 
 class InputPersonFragment : Fragment() {
-
-    private val viewModel:InputPersonViewModel by viewModels()
+    private val viewModel: InputPersonViewModel by viewModels()
     private lateinit var dataStoreManager: DataStoreManager
     private lateinit var notificationRequestManager: NotificationRequestManager
     private val calcDateInfoManager = CalcDateInfoManager()
@@ -52,11 +51,12 @@ class InputPersonFragment : Fragment() {
     private var receiveDate: String = ""
     private var receiveRelation: String = ""
     private var receiveNotify: Boolean = false
-    private var receiveMemo:String = ""
+    private var receiveMemo: String = ""
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentInputPersonBinding.inflate(inflater, container, false)
 
@@ -70,22 +70,25 @@ class InputPersonFragment : Fragment() {
         notifyDay = res.getString(R.string.notify_default_day)
 
         arguments?.let {
-            receiveId = it.getInt(ARG_ID_KEY,0)
-            receiveName = it.getString(ARG_NAME_KEY,"")
-            receiveRuby = it.getString(ARG_RUBY_KEY,"")
-            receiveDate = it.getString(ARG_DATE_KEY,"2023/10/1")
-            receiveRelation = it.getString(ARG_RELATION_KEY,"2023/10/1")
-            receiveNotify = it.getBoolean(ARG_NOTIFY_KEY,true)
-            receiveMemo = it.getString(ARG_MEMO_KEY,"")
+            receiveId = it.getInt(ARG_ID_KEY, 0)
+            receiveName = it.getString(ARG_NAME_KEY, "")
+            receiveRuby = it.getString(ARG_RUBY_KEY, "")
+            receiveDate = it.getString(ARG_DATE_KEY, "2023/10/1")
+            receiveRelation = it.getString(ARG_RELATION_KEY, "2023/10/1")
+            receiveNotify = it.getBoolean(ARG_NOTIFY_KEY, true)
+            receiveMemo = it.getString(ARG_MEMO_KEY, "")
         }
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
         // Button
-        val backButton: ImageButton= view.findViewById(R.id.back_button)
-        val registerButton:ImageButton = view.findViewById(R.id.register_button)
+        val backButton: ImageButton = view.findViewById(R.id.back_button)
+        val registerButton: ImageButton = view.findViewById(R.id.register_button)
 
         observeNotifyInfo()
 
@@ -105,9 +108,8 @@ class InputPersonFragment : Fragment() {
             val memo = binding.memoEdit.text.toString()
 
             if (name.isNotEmpty()) {
-
                 if (receiveId == null) {
-                    viewModel.insertPerson(name,ruby,date,relation,memo,notify) {
+                    viewModel.insertPerson(name, ruby, date, relation, memo, notify) {
                         if (notify) {
                             val time = notifyTime.split(":")
                             var thisDate = date
@@ -120,9 +122,9 @@ class InputPersonFragment : Fragment() {
                             val month = parts[1].toInt()
                             val day = parts[2].toInt()
 
-                            val msg = notifyMsg.replace("{userName}",name)
+                            val msg = notifyMsg.replace("{userName}", name)
 
-                            notificationRequestManager.setBroadcast(it.toInt(),month,day,time[0].toInt(),time[1].toInt(),msg)
+                            notificationRequestManager.setBroadcast(it.toInt(), month, day, time[0].toInt(), time[1].toInt(), msg)
                         }
                     }
 
@@ -130,10 +132,9 @@ class InputPersonFragment : Fragment() {
                     parentFragmentManager.apply {
                         popBackStack()
                     }
-
                 } else {
                     // 編集モード
-                    viewModel.updatePerson(receiveId!!,name,ruby,date,relation,memo,notify)
+                    viewModel.updatePerson(receiveId!!, name, ruby, date, relation, memo, notify)
                     showOffKeyboard()
                     parentFragmentManager.apply {
                         // トップまで戻す
@@ -141,12 +142,13 @@ class InputPersonFragment : Fragment() {
                         popBackStack()
                     }
                 }
-
             } else {
-                AlertDialog.Builder(this.requireContext())
+                AlertDialog
+                    .Builder(this.requireContext())
                     .setTitle("ERROR")
                     .setMessage("名前を入力してください。")
-                    .setPositiveButton("OK", { _, _ -> }).show()
+                    .setPositiveButton("OK", { _, _ -> })
+                    .show()
             }
         }
 
@@ -169,7 +171,7 @@ class InputPersonFragment : Fragment() {
                 month = c.get(Calendar.MONTH)
                 day = c.get(Calendar.DAY_OF_MONTH)
             }
-            val dialog = DatePickerDialog(requireContext(), android.R.style.Theme_Holo_Dialog,dateListener, year, month, day)
+            val dialog = DatePickerDialog(requireContext(), android.R.style.Theme_Holo_Dialog, dateListener, year, month, day)
             dialog.show()
         }
 
@@ -183,39 +185,52 @@ class InputPersonFragment : Fragment() {
         binding.relationSpinner.onItemSelectedListener = spinnerAdapterListener
 
         // 選択される日付を観測
-        viewModel.selectDate.observe(this.requireActivity(), Observer {
-            binding.dateEditButton.text = it
-        })
+        viewModel.selectDate.observe(
+            this.requireActivity(),
+            Observer {
+                binding.dateEditButton.text = it
+            },
+        )
 
         // 詳細画面からの遷移の場合は情報をセット
         // 全ての初期化の最後に実装
         if (receiveId != null) {
             setReceiveUIText()
         }
-
     }
 
     // DatePickerFragmentから選択された日付を反映させる
-    private fun updateDate(year: Int, month: Int, day: Int) {
+    private fun updateDate(
+        year: Int,
+        month: Int,
+        day: Int,
+    ) {
         val formattedDate = String.format("%04d年%02d月%02d日", year, month + 1, day)
         viewModel.setSelectDate(formattedDate)
     }
 
     // 日付ピッカーから選択された時に呼ばれるリスナー
-    private var dateListener =  DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
-        updateDate(year, month, dayOfMonth)
-    }
-
-    private val spinnerAdapterListener = object : AdapterView.OnItemSelectedListener {
-        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-            // 選択された時に実行したい処理
-            selectRelation = parent!!.getItemAtPosition(position).toString()
+    private var dateListener =
+        DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
+            updateDate(year, month, dayOfMonth)
         }
 
-        override fun onNothingSelected(parent: AdapterView<*>?) {
-            // 選択されなかった時に実行したい処理
+    private val spinnerAdapterListener =
+        object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long,
+            ) {
+                // 選択された時に実行したい処理
+                selectRelation = parent!!.getItemAtPosition(position).toString()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                // 選択されなかった時に実行したい処理
+            }
         }
-    }
 
     private fun showOffKeyboard() {
         val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -245,7 +260,6 @@ class InputPersonFragment : Fragment() {
                     notifyDay = it
                 }
             }
-
         }
         lifecycleScope.launch {
             dataStoreManager.observeNotifyMsg().collect {
@@ -263,19 +277,25 @@ class InputPersonFragment : Fragment() {
 
     companion object {
         @JvmStatic
-        fun editInstance(id: Int, name: String, ruby: String, date: String, relation: String, notify: Boolean, memo: String) =
-            InputPersonFragment().apply {
-                arguments = Bundle().apply {
+        fun editInstance(
+            id: Int,
+            name: String,
+            ruby: String,
+            date: String,
+            relation: String,
+            notify: Boolean,
+            memo: String,
+        ) = InputPersonFragment().apply {
+            arguments =
+                Bundle().apply {
                     putInt(ARG_ID_KEY, id)
                     putString(ARG_NAME_KEY, name)
                     putString(ARG_RUBY_KEY, ruby)
                     putString(ARG_DATE_KEY, date)
                     putString(ARG_RELATION_KEY, relation)
                     putBoolean(ARG_NOTIFY_KEY, notify)
-                    putString(ARG_MEMO_KEY,memo)
+                    putString(ARG_MEMO_KEY, memo)
                 }
-            }
+        }
     }
 }
-
-

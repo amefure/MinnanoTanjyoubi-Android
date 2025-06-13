@@ -2,10 +2,10 @@ package com.amefure.minnanotanjyoubi.View.Fragment
 
 import android.content.res.Resources
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.amefure.minnanotanjyoubi.Domain.CalcDateInfoManager
@@ -17,16 +17,14 @@ import com.amefure.minnanotanjyoubi.ViewModel.DetailPersonViewModel
 import com.amefure.minnanotanjyoubi.databinding.FragmentDetailPersonBinding
 import kotlinx.coroutines.launch
 
-
 class DetailPersonFragment : Fragment() {
-
     private var id: Int = 0
     private var name: String = ""
     private var ruby: String = ""
     private var date: String = ""
     private var relation: String = ""
     private var notify: Boolean = false
-    private var memo:String = ""
+    private var memo: String = ""
 
     private val viewModel: DetailPersonViewModel by viewModels()
     private lateinit var dataStoreManager: DataStoreManager
@@ -43,8 +41,9 @@ class DetailPersonFragment : Fragment() {
     private val binding get() = _binding!!
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentDetailPersonBinding.inflate(inflater, container, false)
 
@@ -57,18 +56,21 @@ class DetailPersonFragment : Fragment() {
         notifyDay = res.getString(R.string.notify_default_day)
 
         arguments?.let {
-            id = it.getInt(ARG_ID_KEY,0)
-            name = it.getString(ARG_NAME_KEY,"")
-            ruby = it.getString(ARG_RUBY_KEY,"")
-            date = it.getString(ARG_DATE_KEY,"2023/10/1")
-            relation = it.getString(ARG_RELATION_KEY,"2023/10/1")
-            notify = it.getBoolean(ARG_NOTIFY_KEY,true)
-            memo = it.getString(ARG_MEMO_KEY,"")
+            id = it.getInt(ARG_ID_KEY, 0)
+            name = it.getString(ARG_NAME_KEY, "")
+            ruby = it.getString(ARG_RUBY_KEY, "")
+            date = it.getString(ARG_DATE_KEY, "2023/10/1")
+            relation = it.getString(ARG_RELATION_KEY, "2023/10/1")
+            notify = it.getBoolean(ARG_NOTIFY_KEY, true)
+            memo = it.getString(ARG_MEMO_KEY, "")
         }
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
 
         observeNotifyInfo()
@@ -117,18 +119,18 @@ class DetailPersonFragment : Fragment() {
                 val month = parts[1].toInt()
                 val day = parts[2].toInt()
 
-                val msg = notifyMsg.replace("{userName}",name)
+                val msg = notifyMsg.replace("{userName}", name)
 
                 // 通知をセット
-                notificationRequestManager.setBroadcast(id,month,day,time[0].toInt(),time[1].toInt(),msg)
+                notificationRequestManager.setBroadcast(id, month, day, time[0].toInt(), time[1].toInt(), msg)
 
                 // ローカルデータを更新
-                viewModel.updatePerson(id,name,ruby,date,relation,memo,isChecked)
+                viewModel.updatePerson(id, name, ruby, date, relation, memo, isChecked)
             } else {
                 // 通知をリセット
                 notificationRequestManager.deleteBroadcast(id)
                 // ローカルデータを更新
-                viewModel.updatePerson(id,name,ruby,date,relation,memo,isChecked)
+                viewModel.updatePerson(id, name, ruby, date, relation, memo, isChecked)
             }
         }
     }
@@ -147,7 +149,6 @@ class DetailPersonFragment : Fragment() {
                     notifyDay = it
                 }
             }
-
         }
         lifecycleScope.launch {
             dataStoreManager.observeNotifyMsg().collect {
@@ -163,19 +164,27 @@ class DetailPersonFragment : Fragment() {
         super.onDestroyView()
     }
 
-    companion object{
+    companion object {
         @JvmStatic
-        fun newInstance(id: Int, name: String, ruby: String, date: String, relation: String, notify: Boolean, memo: String) =
-            DetailPersonFragment().apply {
-                arguments = Bundle().apply {
+        fun newInstance(
+            id: Int,
+            name: String,
+            ruby: String,
+            date: String,
+            relation: String,
+            notify: Boolean,
+            memo: String,
+        ) = DetailPersonFragment().apply {
+            arguments =
+                Bundle().apply {
                     putInt(ARG_ID_KEY, id)
                     putString(ARG_NAME_KEY, name)
                     putString(ARG_RUBY_KEY, ruby)
                     putString(ARG_DATE_KEY, date)
                     putString(ARG_RELATION_KEY, relation)
                     putBoolean(ARG_NOTIFY_KEY, notify)
-                    putString(ARG_MEMO_KEY,memo)
+                    putString(ARG_MEMO_KEY, memo)
                 }
-            }
+        }
     }
 }

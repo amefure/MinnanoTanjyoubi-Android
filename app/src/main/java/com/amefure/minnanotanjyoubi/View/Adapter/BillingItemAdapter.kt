@@ -14,11 +14,11 @@ import com.android.billingclient.api.ProductDetails
 /** 課金アイテムリサイクルビュー用Adapter */
 class BillingItemAdapter(
     private var context: Context,
-    productItems: List<ProductDetails>
-): RecyclerView.Adapter<BillingItemAdapter.MainViewHolder>() {
-
+    productItems: List<ProductDetails>,
+) : RecyclerView.Adapter<BillingItemAdapter.MainViewHolder>() {
     /** 課金アイテムリスト */
     private val _productItems: MutableList<ProductDetails> = productItems.toMutableList()
+
     /** アイテム数 */
     override fun getItemCount(): Int = _productItems.size
 
@@ -27,7 +27,10 @@ class BillingItemAdapter(
 
     private lateinit var listener: OnBillingListener
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainViewHolder {
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int,
+    ): MainViewHolder {
         _binding = ComponentBillingItemRowBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return MainViewHolder(binding)
     }
@@ -35,6 +38,7 @@ class BillingItemAdapter(
     /** アイテムタップ用クリックリスナー */
     interface OnBillingListener {
         fun onPurchaseButtonClick(product: ProductDetails)
+
         fun isPurchased(product: ProductDetails): Boolean
     }
 
@@ -43,7 +47,10 @@ class BillingItemAdapter(
         this.listener = listener
     }
 
-    override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
+    override fun onBindViewHolder(
+        holder: MainViewHolder,
+        position: Int,
+    ) {
         val product = _productItems[position]
         holder.title.text = product.name
         holder.desc.text = product.description
@@ -60,7 +67,9 @@ class BillingItemAdapter(
         }
     }
 
-    class MainViewHolder(binding: ComponentBillingItemRowBinding): RecyclerView.ViewHolder(binding.root) {
+    class MainViewHolder(
+        binding: ComponentBillingItemRowBinding,
+    ) : RecyclerView.ViewHolder(binding.root) {
         val title: TextView = binding.itemTitle
         val desc: TextView = binding.itemDesc
         val amount: TextView = binding.itemAmount

@@ -13,23 +13,28 @@ import kotlinx.coroutines.flow.map
 import java.io.IOException
 
 /** アプリ内ローカル保存データ管理クラス */
-class DataStoreManager(private val context: Context) {
-
+class DataStoreManager(
+    private val context: Context,
+) {
     companion object {
         // 「7:00」形式で保存
         val NOTIFY_TIME = stringPreferencesKey("notify_time")
+
         // 「当日」or「前日」
         val NOTIFY_DAY = stringPreferencesKey("notify_day")
+
         // 「通知に発行したいメッセージ」
         val NOTIFY_MESSAGE = stringPreferencesKey("notify_message")
 
         // 保存容量
         val LIMIT_CAPACITY = intPreferencesKey("limit_capacity")
+
         // 最終広告視聴日
         val LAST_ACQUISITION_DATE = stringPreferencesKey("last_acquisition_date")
 
         /** アプリ内課金購入フラグ：広告削除 */
         val IN_APP_REMOVE_ADS = booleanPreferencesKey("IN_APP_REMOVE_ADS")
+
         /** アプリ内課金購入フラグ：容量解放 */
         val IN_APP_UNLOCK_STORAGE = booleanPreferencesKey("IN_APP_UNLOCK_STORAGE")
     }
@@ -46,17 +51,17 @@ class DataStoreManager(private val context: Context) {
     }
 
     /** 観測：通知時間 */
-    public fun observeNotifyTime(): Flow<String?> {
-        return context.dataStore.data.catch { exception ->
-            if (exception is IOException) {
-                emit(emptyPreferences())
-            } else {
-                throw exception
+    public fun observeNotifyTime(): Flow<String?> =
+        context.dataStore.data
+            .catch { exception ->
+                if (exception is IOException) {
+                    emit(emptyPreferences())
+                } else {
+                    throw exception
+                }
+            }.map { preferences ->
+                preferences[NOTIFY_TIME]
             }
-        }.map { preferences ->
-            preferences[NOTIFY_TIME]
-        }
-    }
 
     /** 保存；通知日 */
     suspend fun saveNotifyDay(notifyDay: String) {
@@ -70,17 +75,17 @@ class DataStoreManager(private val context: Context) {
     }
 
     /** 観測；通知日 */
-    public fun observeNotifyDay(): Flow<String?> {
-        return context.dataStore.data.catch { exception ->
-            if (exception is IOException) {
-                emit(emptyPreferences())
-            } else {
-                throw exception
+    public fun observeNotifyDay(): Flow<String?> =
+        context.dataStore.data
+            .catch { exception ->
+                if (exception is IOException) {
+                    emit(emptyPreferences())
+                } else {
+                    throw exception
+                }
+            }.map { preferences ->
+                preferences[NOTIFY_DAY]
             }
-        }.map { preferences ->
-            preferences[NOTIFY_DAY]
-        }
-    }
 
     /** 保存；通知メッセージ */
     suspend fun saveNotifyMsg(notifyMsg: String) {
@@ -94,17 +99,17 @@ class DataStoreManager(private val context: Context) {
     }
 
     /** 観測；通知メッセージ */
-    public fun observeNotifyMsg(): Flow<String?> {
-        return context.dataStore.data.catch { exception ->
-            if (exception is IOException) {
-                emit(emptyPreferences())
-            } else {
-                throw exception
+    public fun observeNotifyMsg(): Flow<String?> =
+        context.dataStore.data
+            .catch { exception ->
+                if (exception is IOException) {
+                    emit(emptyPreferences())
+                } else {
+                    throw exception
+                }
+            }.map { preferences ->
+                preferences[NOTIFY_MESSAGE]
             }
-        }.map { preferences ->
-            preferences[NOTIFY_MESSAGE]
-        }
-    }
 
     /** 保存；容量 */
     suspend fun saveLimitCapacity(capacity: Int) {
@@ -118,17 +123,17 @@ class DataStoreManager(private val context: Context) {
     }
 
     /** 観測；容量 */
-    public fun observeLimitCapacity(): Flow<Int?> {
-        return context.dataStore.data.catch { exception ->
-            if (exception is IOException) {
-                emit(emptyPreferences())
-            } else {
-                throw exception
+    public fun observeLimitCapacity(): Flow<Int?> =
+        context.dataStore.data
+            .catch { exception ->
+                if (exception is IOException) {
+                    emit(emptyPreferences())
+                } else {
+                    throw exception
+                }
+            }.map { preferences ->
+                preferences[LIMIT_CAPACITY]
             }
-        }.map { preferences ->
-            preferences[LIMIT_CAPACITY]
-        }
-    }
 
     /** 保存；最終視聴日 */
     suspend fun saveLastAcquisitionDate(date: String) {
@@ -142,17 +147,17 @@ class DataStoreManager(private val context: Context) {
     }
 
     /** 観測；最終視聴日 */
-    public fun observeLastAcquisitionDate(): Flow<String?> {
-        return context.dataStore.data.catch { exception ->
-            if (exception is IOException) {
-                emit(emptyPreferences())
-            } else {
-                throw exception
+    public fun observeLastAcquisitionDate(): Flow<String?> =
+        context.dataStore.data
+            .catch { exception ->
+                if (exception is IOException) {
+                    emit(emptyPreferences())
+                } else {
+                    throw exception
+                }
+            }.map { preferences ->
+                preferences[LAST_ACQUISITION_DATE]
             }
-        }.map { preferences ->
-            preferences[LAST_ACQUISITION_DATE]
-        }
-    }
 
     /** 保存；広告削除購入フラグ */
     suspend fun saveInAppRemoveAdsFlag(purchased: Boolean) {
@@ -166,31 +171,29 @@ class DataStoreManager(private val context: Context) {
     }
 
     /** 取得；広告削除購入フラグ */
-    suspend fun getInAppRemoveAds(): Boolean {
-        return context.dataStore.data
+    suspend fun getInAppRemoveAds(): Boolean =
+        context.dataStore.data
             .catch { exception ->
                 if (exception is IOException) {
                     emit(emptyPreferences())
                 } else {
                     throw exception
                 }
-            }
-            .firstOrNull()  // 最初の値を1回だけ取得
+            }.firstOrNull() // 最初の値を1回だけ取得
             ?.get(IN_APP_REMOVE_ADS) ?: false
-    }
 
     /** 観測；容量解放購入フラグ */
-    public fun observeInAppRemoveAds(): Flow<Boolean> {
-        return context.dataStore.data.catch { exception ->
-            if (exception is IOException) {
-                emit(emptyPreferences())
-            } else {
-                throw exception
+    public fun observeInAppRemoveAds(): Flow<Boolean> =
+        context.dataStore.data
+            .catch { exception ->
+                if (exception is IOException) {
+                    emit(emptyPreferences())
+                } else {
+                    throw exception
+                }
+            }.map { preferences ->
+                preferences[IN_APP_REMOVE_ADS] ?: false
             }
-        }.map { preferences ->
-            preferences[IN_APP_REMOVE_ADS] ?: false
-        }
-    }
 
     /** 保存；容量解放購入フラグ */
     suspend fun saveInAppUnlockStorage(purchased: Boolean) {
@@ -204,29 +207,27 @@ class DataStoreManager(private val context: Context) {
     }
 
     /** 取得；容量解放購入フラグ */
-    suspend fun getInAppUnlockStorage(): Boolean {
-        return context.dataStore.data
+    suspend fun getInAppUnlockStorage(): Boolean =
+        context.dataStore.data
             .catch { exception ->
                 if (exception is IOException) {
                     emit(emptyPreferences())
                 } else {
                     throw exception
                 }
-            }
-            .firstOrNull()  // 最初の値を1回だけ取得
+            }.firstOrNull() // 最初の値を1回だけ取得
             ?.get(IN_APP_UNLOCK_STORAGE) ?: false
-    }
 
     /** 観測；容量解放購入フラグ */
-    public fun observeInAppUnlockStorage(): Flow<Boolean> {
-        return context.dataStore.data.catch { exception ->
-            if (exception is IOException) {
-                emit(emptyPreferences())
-            } else {
-                throw exception
+    public fun observeInAppUnlockStorage(): Flow<Boolean> =
+        context.dataStore.data
+            .catch { exception ->
+                if (exception is IOException) {
+                    emit(emptyPreferences())
+                } else {
+                    throw exception
+                }
+            }.map { preferences ->
+                preferences[IN_APP_UNLOCK_STORAGE] ?: false
             }
-        }.map { preferences ->
-            preferences[IN_APP_UNLOCK_STORAGE] ?: false
-        }
-    }
 }

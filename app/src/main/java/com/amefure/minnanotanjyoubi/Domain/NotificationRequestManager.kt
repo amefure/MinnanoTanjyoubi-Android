@@ -18,8 +18,9 @@ import com.amefure.minnanotanjyoubi.R
 import java.util.Calendar
 import java.util.TimeZone
 
-class NotificationRequestManager(private var context: Context) {
-
+class NotificationRequestManager(
+    private var context: Context,
+) {
     private val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
     private val timeZone = TimeZone.getTimeZone("Asia/Tokyo")
 
@@ -34,9 +35,10 @@ class NotificationRequestManager(private var context: Context) {
             val name = CHANNEL_NAME
             val descriptionText = CHANNEL_DESC
             val importance = NotificationManager.IMPORTANCE_HIGH
-            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
-                description = descriptionText
-            }
+            val channel =
+                NotificationChannel(CHANNEL_ID, name, importance).apply {
+                    description = descriptionText
+                }
             // チャンネルをシステムに登録
             val notificationManager: NotificationManager =
                 context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -45,7 +47,14 @@ class NotificationRequestManager(private var context: Context) {
     }
 
     /** 通知リクエストを送信 */
-    public fun setBroadcast(id: Int, month: Int, day: Int, hour: Int, minutes: Int, msg: String) {
+    public fun setBroadcast(
+        id: Int,
+        month: Int,
+        day: Int,
+        hour: Int,
+        minutes: Int,
+        msg: String,
+    ) {
         val c = Calendar.getInstance(timeZone)
         var year = c.get(Calendar.YEAR)
 
@@ -53,7 +62,7 @@ class NotificationRequestManager(private var context: Context) {
         val nowMonth = c.get(Calendar.MONTH) + 1
         val nowDay = c.get(Calendar.DAY_OF_MONTH)
         val nowHour = c.get(Calendar.HOUR_OF_DAY)
-        val nowMinute= c.get(Calendar.MINUTE)
+        val nowMinute = c.get(Calendar.MINUTE)
 
         // 以下の条件を満たすなら翌年にする
         if (month < nowMonth) {
@@ -65,18 +74,18 @@ class NotificationRequestManager(private var context: Context) {
         } else if (nowMonth == month && day == nowDay && hour < nowHour) {
             // 月が同じかつ日付が同じかつ時間が現在時刻より前
             year += 1
-        } else if (nowMonth == month && day == nowDay && hour == nowHour && minutes == nowMinute ) {
+        } else if (nowMonth == month && day == nowDay && hour == nowHour && minutes == nowMinute) {
             // 現在時刻と同じ
             year += 1
         }
         c.timeInMillis = 0
-        c.set(Calendar.YEAR, year)                 // 当年or来年の年を設定
-        c.set(Calendar.MONTH, month - 1)           // 誕生月を設定
-        c.set(Calendar.DAY_OF_MONTH, day)          // 誕生月日を設定
-        c.set(Calendar.HOUR_OF_DAY, hour)          // 設定時間を設定
-        c.set(Calendar.MINUTE, minutes)            // 設定分数を設定
-        c.set(Calendar.SECOND, 0)                  // 固定値の秒数を設定(正確ではないため無意味)
-        val triggerTime = c.timeInMillis           // 指定した日時のミリ秒表現を取得
+        c.set(Calendar.YEAR, year) // 当年or来年の年を設定
+        c.set(Calendar.MONTH, month - 1) // 誕生月を設定
+        c.set(Calendar.DAY_OF_MONTH, day) // 誕生月日を設定
+        c.set(Calendar.HOUR_OF_DAY, hour) // 設定時間を設定
+        c.set(Calendar.MINUTE, minutes) // 設定分数を設定
+        c.set(Calendar.SECOND, 0) // 固定値の秒数を設定(正確ではないため無意味)
+        val triggerTime = c.timeInMillis // 指定した日時のミリ秒表現を取得
 
         val notificationIntent = Intent(context, ReceivedActivity::class.java)
         notificationIntent.setType("NotifyIntent：" + id.toString())
@@ -84,13 +93,13 @@ class NotificationRequestManager(private var context: Context) {
         notificationIntent.putExtra(INTENT_KEY_NOTIFY_ID, id)
         notificationIntent.putExtra(INTENT_KEY_NOTIFY_TIME, triggerTime)
         val pendingIntent = PendingIntent.getBroadcast(context, id, notificationIntent, PendingIntent.FLAG_IMMUTABLE)
-        Log.d("通知送信日", "${year}/${month}/${day} ${hour}：${minutes}")
+        Log.d("通知送信日", "$year/$month/$day $hour：$minutes")
 
         // 正確な時間で通知をセット
         alarmManager.setExact(
             AlarmManager.RTC_WAKEUP,
             triggerTime,
-            pendingIntent
+            pendingIntent,
         )
         // リピートさせると閏年の考慮ができないので通知到着時に翌年の通知をセットする
 //        alarmManager.setRepeating(
@@ -107,29 +116,34 @@ class NotificationRequestManager(private var context: Context) {
         notificationIntent.setType("NotifyIntent：" + id.toString())
         val pendingIntent = PendingIntent.getBroadcast(context, id, notificationIntent, PendingIntent.FLAG_IMMUTABLE)
 
-        pendingIntent.cancel();
+        pendingIntent.cancel()
         alarmManager.cancel(pendingIntent)
     }
-
 
     /**
      * 通知を送信(レシーバーから呼ばれる)
      * 通知を発火後に来年の通知をセットする
      */
     @SuppressLint("MissingPermission")
-    public fun sendNotificationRequest(msg: String, notifyId: Int, notifyTime: Long) {
+    public fun sendNotificationRequest(
+        msg: String,
+        notifyId: Int,
+        notifyTime: Long,
+    ) {
         val notificationIntent = Intent(context, ReceivedActivity::class.java)
-        val pendingIntent: PendingIntent = PendingIntent.getActivity(context, notifyId, notificationIntent,  PendingIntent.FLAG_IMMUTABLE)
+        val pendingIntent: PendingIntent = PendingIntent.getActivity(context, notifyId, notificationIntent, PendingIntent.FLAG_IMMUTABLE)
         val res = context.resources
         // 通知オブジェクトの作成
-        val builder = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_notify_icon)
-            .setColor(res.getColor(R.color.thema_gray_dark))
-            .setContentTitle(res.getString(R.string.app_name))
-            .setContentText(msg)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setContentIntent(pendingIntent)
-            .setAutoCancel(true)
+        val builder =
+            NotificationCompat
+                .Builder(context, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_notify_icon)
+                .setColor(res.getColor(R.color.thema_gray_dark))
+                .setContentTitle(res.getString(R.string.app_name))
+                .setContentText(msg)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true)
 
         // 通知の発行
         with(NotificationManagerCompat.from(context)) {
@@ -142,7 +156,7 @@ class NotificationRequestManager(private var context: Context) {
         val month = c.get(Calendar.MONTH) + 1
         val day = c.get(Calendar.DAY_OF_MONTH)
         val hour = c.get(Calendar.HOUR_OF_DAY)
-        val minute= c.get(Calendar.MINUTE)
+        val minute = c.get(Calendar.MINUTE)
         setBroadcast(notifyId, month, day, hour, minute, msg)
     }
 }

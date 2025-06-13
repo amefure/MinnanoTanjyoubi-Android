@@ -10,8 +10,9 @@ import com.amefure.minnanotanjyoubi.Model.Relation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class MainViewModel(app: Application): RootViewModel(app)  {
-
+class MainViewModel(
+    app: Application,
+) : RootViewModel(app) {
     private var _personList = MutableLiveData<List<Person>>()
     var personList: LiveData<List<Person>> = _personList
 
@@ -29,17 +30,15 @@ class MainViewModel(app: Application): RootViewModel(app)  {
                 when (relation) {
                     Relation.FRIEND -> {
                         _personList.postValue(it.filter { it.relation == Relation.FRIEND.value() })
-                        Log.e("================",it.filter { it.relation == Relation.FRIEND.value() }.toString())
+                        Log.e("================", it.filter { it.relation == Relation.FRIEND.value() }.toString())
                     }
                     Relation.FAMILY -> {
                         _personList.postValue(it.filter { it.relation == Relation.FAMILY.value() })
-                        Log.e("================",it.filter { it.relation == Relation.FAMILY.value() }.toString())
-
+                        Log.e("================", it.filter { it.relation == Relation.FAMILY.value() }.toString())
                     }
                     Relation.SCHOOL -> {
                         _personList.postValue(it.filter { it.relation == Relation.SCHOOL.value() })
-                        Log.e("================",it.filter { it.relation == Relation.SCHOOL.value() }.toString())
-
+                        Log.e("================", it.filter { it.relation == Relation.SCHOOL.value() }.toString())
                     }
                     Relation.WORK -> {
                         _personList.postValue(it.filter { it.relation == Relation.WORK.value() })

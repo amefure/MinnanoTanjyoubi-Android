@@ -14,21 +14,24 @@ import com.amefure.minnanotanjyoubi.databinding.FragmentInputNotifyMsgBinding
 import kotlinx.coroutines.launch
 
 class InputNotifyMsgFragment : Fragment() {
-
     private lateinit var dataStoreManager: DataStoreManager
 
     private var _binding: FragmentInputNotifyMsgBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentInputNotifyMsgBinding.inflate(inflater, container, false)
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
         dataStoreManager = DataStoreManager(this.requireContext())
         observeNotifyMsg()
@@ -40,22 +43,24 @@ class InputNotifyMsgFragment : Fragment() {
         }
 
         binding.registerMsgButton.setOnClickListener {
-            lifecycleScope.launch{
+            lifecycleScope.launch {
                 dataStoreManager.saveNotifyMsg(binding.notifyMsgEdit.text.toString())
 
-                AlertDialog.Builder(this@InputNotifyMsgFragment.requireContext())
+                AlertDialog
+                    .Builder(this@InputNotifyMsgFragment.requireContext())
                     .setTitle("Success")
                     .setMessage("通知メッセージを変更しました。")
                     .setPositiveButton("OK", { _, _ ->
                         showOffKeyboard()
                         parentFragmentManager.popBackStack()
-                    }).show()
+                    })
+                    .show()
             }
         }
     }
 
     private fun observeNotifyMsg() {
-        lifecycleScope.launch{
+        lifecycleScope.launch {
             dataStoreManager.observeNotifyMsg().collect {
                 if (it != null && _binding != null) {
                     binding.notifyMsgEdit.setText(it)

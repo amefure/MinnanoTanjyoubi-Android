@@ -1,18 +1,16 @@
 package com.amefure.minnanotanjyoubi.View.Activity
 
-import android.os.Bundle
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
 import android.Manifest
 import android.os.Build
-import android.util.Log
+import android.os.Bundle
 import android.view.Gravity
 import android.widget.LinearLayout
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.amefure.minnanotanjyoubi.BuildConfig
@@ -36,7 +34,6 @@ import com.google.android.gms.ads.MobileAds
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
-
     private val viewModel: MainViewModel by viewModels()
     private lateinit var notificationRequestManager: NotificationRequestManager
     private lateinit var dataStoreManager: DataStoreManager
@@ -67,7 +64,6 @@ class MainActivity : AppCompatActivity() {
         // バナーの追加と読み込み
         addAdBannerView()
 
-
         // 誕生日情報を全て取得
         viewModel.fetchAllPerson()
 
@@ -88,7 +84,8 @@ class MainActivity : AppCompatActivity() {
                     commit()
                 }
             } else {
-                AlertDialog.Builder(this)
+                AlertDialog
+                    .Builder(this)
                     .setTitle("保存容量が上限に達しました...")
                     .setMessage("設定から広告を視聴すると\n保存容量を増やすことができます。")
                     .setPositiveButton("OK", { _, _ -> })
@@ -101,12 +98,11 @@ class MainActivity : AppCompatActivity() {
         // チャンネルの生成
         notificationRequestManager.createNotificationChannel()
 
-
         binding.filterButton.setOnClickListener {
             if (isFilter) {
                 viewModel.fetchAllPerson()
                 isFilter = false
-                binding.filterButton.imageTintList = ContextCompat.getColorStateList(this,R.color.white)
+                binding.filterButton.imageTintList = ContextCompat.getColorStateList(this, R.color.white)
             } else {
                 val list = mutableListOf<String>()
                 Relation.entries.forEach {
@@ -117,7 +113,7 @@ class MainActivity : AppCompatActivity() {
                     .setTitle("フィルターカテゴリ")
                     .setSingleChoiceItems(list.toTypedArray(), 0, { dialog, which ->
                         viewModel.fetchFilterPerson(Relation.getRelation(which.toString()))
-                        binding.filterButton.imageTintList = ContextCompat.getColorStateList(this,R.color.thema_red)
+                        binding.filterButton.imageTintList = ContextCompat.getColorStateList(this, R.color.thema_red)
                         isFilter = true
                         dialog.dismiss()
                     })
@@ -125,17 +121,16 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-
         binding.deleteButton.setOnClickListener {
             if (isSelectMode) {
-
                 val idSet = adapter.getSelectedPersonIds()
 
                 if (idSet.isEmpty()) {
                     adapter.inactiveSelectMode()
                     isSelectMode = false
                 } else {
-                    AlertDialog.Builder(this)
+                    AlertDialog
+                        .Builder(this)
                         .setMessage("選択された人物を削除しますか？")
                         .setPositiveButton("OK", { _, _ ->
                             // 削除
@@ -149,15 +144,14 @@ class MainActivity : AppCompatActivity() {
                             dialog.dismiss()
                             adapter.inactiveSelectMode()
                             isSelectMode = false
-                        }).show()
-
+                        })
+                        .show()
                 }
             } else {
                 adapter.activeSelectMode()
                 isSelectMode = true
             }
         }
-
 
         binding.settingButton.setOnClickListener {
             supportFragmentManager.beginTransaction().apply {
@@ -177,23 +171,23 @@ class MainActivity : AppCompatActivity() {
             adapter.setOnBookCellClickListener(
                 object : PersonGridLayoutAdapter.OnBookCellClickListener {
                     override fun onItemClick(person: Person) {
-
-                        val fragment = DetailPersonFragment.newInstance(
-                            id = person.id,
-                            name = person.name,
-                            ruby = person.ruby,
-                            date = person.date,
-                            relation = person.relation,
-                            notify = person.alert,
-                            memo = person.memo
-                        )
+                        val fragment =
+                            DetailPersonFragment.newInstance(
+                                id = person.id,
+                                name = person.name,
+                                ruby = person.ruby,
+                                date = person.date,
+                                relation = person.relation,
+                                notify = person.alert,
+                                memo = person.memo,
+                            )
                         supportFragmentManager
                             .beginTransaction()
                             .replace(R.id.main_frame, fragment)
                             .addToBackStack(null)
                             .commit()
                     }
-                }
+                },
             )
             binding.mainList.adapter = adapter
         }
@@ -248,24 +242,28 @@ class MainActivity : AppCompatActivity() {
                     binding.adViewLayout.removeAllViewsInLayout()
 
                     // AdViewを生成して設定
-                    val adView = AdView(this@MainActivity).apply {
-                        setAdSize(AdSize.BANNER)
-                        adUnitId = if (BuildConfig.DEBUG) {
-                            BuildConfig.ADMOB_BANNER_ID_TEST
-                        } else {
-                            BuildConfig.ADMOB_BANNER_ID_PROD
+                    val adView =
+                        AdView(this@MainActivity).apply {
+                            setAdSize(AdSize.BANNER)
+                            adUnitId =
+                                if (BuildConfig.DEBUG) {
+                                    BuildConfig.ADMOB_BANNER_ID_TEST
+                                } else {
+                                    BuildConfig.ADMOB_BANNER_ID_PROD
+                                }
+                            // 広告の読み込み
+                            loadAd(AdRequest.Builder().build())
                         }
-                        // 広告の読み込み
-                        loadAd(AdRequest.Builder().build())
-                    }
 
                     // レイアウトパラメータを指定（横幅 match_parent、高さ wrap_content）
-                    val layoutParams = LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT
-                    ).apply {
-                        gravity = Gravity.CENTER_HORIZONTAL
-                    }
+                    val layoutParams =
+                        LinearLayout
+                            .LayoutParams(
+                                LinearLayout.LayoutParams.MATCH_PARENT,
+                                LinearLayout.LayoutParams.WRAP_CONTENT,
+                            ).apply {
+                                gravity = Gravity.CENTER_HORIZONTAL
+                            }
 
                     adView.layoutParams = layoutParams
                     // adViewLayout に AdView を追加
@@ -284,3 +282,12 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
+fun helloWorld() {
+    println("Hello, World!")
+}
+
+// 不正なインデント（← ktlint: Unexpected indentation）
+fun sum(
+    a: Int,
+    b: Int,
+): Int = a + b

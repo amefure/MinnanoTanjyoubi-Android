@@ -1,18 +1,20 @@
 package com.amefure.minnanotanjyoubi.Domain
 
 import org.junit.Assert.*
-
 import org.junit.Test
 import java.time.LocalDate
 
 class CalcDateInfoManagerTest {
-
     private val manager = CalcDateInfoManager()
 
     @Test
     fun testGetTodayString() {
         val today = manager.getTodayString()
-        val expectedToday = LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy年MM月dd日"))
+        val expectedToday =
+            LocalDate.now().format(
+                java.time.format.DateTimeFormatter
+                    .ofPattern("yyyy年MM月dd日"),
+            )
         assertEquals(expectedToday, today, "本日の日付が正しく取得されているか確認")
     }
 
@@ -32,14 +34,22 @@ class CalcDateInfoManagerTest {
 
     @Test
     fun testCurrentAge() {
-        val birthday = LocalDate.now().minusYears(25).format(java.time.format.DateTimeFormatter.ofPattern("yyyy年MM月dd日"))
+        val birthday =
+            LocalDate.now().minusYears(25).format(
+                java.time.format.DateTimeFormatter
+                    .ofPattern("yyyy年MM月dd日"),
+            )
         assertEquals(25, manager.currentAge(birthday)) // "年齢が正しく計算されているか確認"
     }
 
     @Test
     fun testDaysLater() {
         val today = LocalDate.now()
-        val birthday = today.plusDays(10).format(java.time.format.DateTimeFormatter.ofPattern("yyyy年MM月dd日"))
+        val birthday =
+            today.plusDays(10).format(
+                java.time.format.DateTimeFormatter
+                    .ofPattern("yyyy年MM月dd日"),
+            )
         assertEquals(10, manager.daysLater(birthday)) // "誕生日までの日数が正しく計算されているか確認"
     }
 
