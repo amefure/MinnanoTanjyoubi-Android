@@ -15,7 +15,7 @@ class CalcDateInfoManagerTest {
                 java.time.format.DateTimeFormatter
                     .ofPattern("yyyy年MM月dd日"),
             )
-        assertEquals(expectedToday, today, "本日の日付が正しく取得されているか確認")
+        assertEquals("本日の日付が正しく取得されているか確認", expectedToday, today)
     }
 
     @Test
@@ -50,31 +50,31 @@ class CalcDateInfoManagerTest {
                 java.time.format.DateTimeFormatter
                     .ofPattern("yyyy年MM月dd日"),
             )
-        assertEquals(10, manager.daysLater(birthday)) // "誕生日までの日数が正しく計算されているか確認"
+        assertEquals("誕生日までの日数が正しく計算されているか確認",10, manager.daysLater(birthday))
     }
 
     @Test
     fun testGetBeforeOneDayString() {
         val date = "2024年01月01日"
         val expected = "2023年12月31日"
-        assertEquals(expected, manager.getBeforeOneDayString(date), "前日の日付が正しく取得されているか確認")
+        assertEquals("前日の日付が正しく取得されているか確認", expected, manager.getBeforeOneDayString(date))
     }
 
     @Test
     fun testJapaneseEraName() {
         val date = "2024年01月01日"
-        assertEquals("令和6年", manager.japaneseEraName(date), "和暦の形式が正しいか確認")
+        assertEquals("和暦の形式が正しいか確認", "令和6年", manager.japaneseEraName(date))
     }
 
     @Test
     fun testSignOfZodiac() {
         val date = "2024年03月21日"
-        assertEquals("おひつじ座", manager.signOfZodiac(date), "正しい星座が取得されるか確認")
+        assertEquals("正しい星座が取得されるか確認", manager.signOfZodiac(date), "おひつじ座")
     }
 
     @Test
     fun testZodiac() {
         val date = "2024年01月01日"
-        assertEquals("たつ年", manager.zodiac(date), "正しい干支が取得されるか確認")
+        assertEquals("正しい干支が取得されるか確認", manager.zodiac(date), "たつ年")
     }
 }

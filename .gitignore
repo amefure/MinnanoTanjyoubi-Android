@@ -13,6 +13,7 @@ secret.properties
 
 # Log/OS Files
 *.log
+htmlReport/*
 
 # Android Studio generated files and folders
 captures/

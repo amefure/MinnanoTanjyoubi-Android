@@ -47,6 +47,8 @@ android {
             manifestPlaceholders = [
                     admobAppId: secretProperties["ADMOB_APP_ID_TEST"]
             ]
+            // テストカバレッジを計測
+            testCoverageEnabled true
         }
         release {
             manifestPlaceholders = [
