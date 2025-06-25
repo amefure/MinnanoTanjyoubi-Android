@@ -5,6 +5,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'com.google.devtools.ksp'
     id "com.google.gms.google-services"
+    id 'com.google.dagger.hilt.android'
 }
 
 def secretPropertiesFile = rootProject.file("secret.properties")
@@ -120,4 +121,8 @@ dependencies {
     def billing_version = "7.1.1"
     implementation "com.android.billingclient:billing:$billing_version"
     implementation "com.android.billingclient:billing-ktx:$billing_version"
+
+    // Hilt
+    implementation "com.google.dagger:hilt-android:2.56.2"
+    ksp "com.google.dagger:hilt-compiler:2.56.2"
 }

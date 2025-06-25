@@ -15,7 +15,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.amefure.minnanotanjyoubi.BuildConfig
-import com.amefure.minnanotanjyoubi.Domain.CalcDateInfoManager
+import com.amefure.minnanotanjyoubi.Manager.CalcDateInfoManager
 import com.amefure.minnanotanjyoubi.Model.Capacity
 import com.amefure.minnanotanjyoubi.Model.DataStore.DataStoreManager
 import com.amefure.minnanotanjyoubi.R

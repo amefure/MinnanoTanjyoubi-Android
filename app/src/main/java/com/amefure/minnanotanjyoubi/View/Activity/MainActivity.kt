@@ -14,8 +14,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.amefure.minnanotanjyoubi.BuildConfig
-import com.amefure.minnanotanjyoubi.Domain.CalcDateInfoManager
-import com.amefure.minnanotanjyoubi.Domain.NotificationRequestManager
+import com.amefure.minnanotanjyoubi.Manager.CalcDateInfoManager
+import com.amefure.minnanotanjyoubi.Manager.NotificationRequestManager
 import com.amefure.minnanotanjyoubi.Model.Capacity
 import com.amefure.minnanotanjyoubi.Model.DataStore.DataStoreManager
 import com.amefure.minnanotanjyoubi.Model.Database.Person
@@ -31,8 +31,10 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.MobileAds
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private val viewModel: MainViewModel by viewModels()
     private lateinit var notificationRequestManager: NotificationRequestManager

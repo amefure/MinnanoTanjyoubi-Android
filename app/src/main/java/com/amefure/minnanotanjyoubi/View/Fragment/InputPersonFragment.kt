@@ -16,17 +16,19 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
-import com.amefure.minnanotanjyoubi.Domain.CalcDateInfoManager
-import com.amefure.minnanotanjyoubi.Domain.NotificationRequestManager
+import com.amefure.minnanotanjyoubi.Manager.CalcDateInfoManager
+import com.amefure.minnanotanjyoubi.Manager.NotificationRequestManager
 import com.amefure.minnanotanjyoubi.Model.DataStore.DataStoreManager
 import com.amefure.minnanotanjyoubi.Model.Keys.*
 import com.amefure.minnanotanjyoubi.Model.Relation
 import com.amefure.minnanotanjyoubi.R
 import com.amefure.minnanotanjyoubi.ViewModel.InputPersonViewModel
 import com.amefure.minnanotanjyoubi.databinding.FragmentInputPersonBinding
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
+@AndroidEntryPoint
 class InputPersonFragment : Fragment() {
     private val viewModel: InputPersonViewModel by viewModels()
     private lateinit var dataStoreManager: DataStoreManager

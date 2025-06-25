@@ -1,4 +1,4 @@
-package com.amefure.minnanotanjyoubi.Domain
+package com.amefure.minnanotanjyoubi.Manager
 
 import org.junit.Assert.*
 import org.junit.Test
