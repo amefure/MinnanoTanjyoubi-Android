@@ -1,4 +1,4 @@
-package com.amefure.minnanotanjyoubi.Domain
+package com.amefure.minnanotanjyoubi.Manager
 
 import android.content.BroadcastReceiver
 import android.content.Context

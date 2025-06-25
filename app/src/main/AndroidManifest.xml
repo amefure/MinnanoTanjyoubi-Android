@@ -40,7 +40,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <receiver android:name=".Domain.ReceivedActivity"
+        <receiver android:name=".Manager.ReceivedActivity"
             android:process=":remote"
             android:exported="true"/>
     </application>
