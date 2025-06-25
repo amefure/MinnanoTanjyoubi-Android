@@ -15,8 +15,10 @@ import com.amefure.minnanotanjyoubi.Model.Keys.*
 import com.amefure.minnanotanjyoubi.R
 import com.amefure.minnanotanjyoubi.ViewModel.DetailPersonViewModel
 import com.amefure.minnanotanjyoubi.databinding.FragmentDetailPersonBinding
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class DetailPersonFragment : Fragment() {
     private var id: Int = 0
     private var name: String = ""

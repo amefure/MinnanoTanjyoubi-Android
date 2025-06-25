@@ -1,13 +1,17 @@
 package com.amefure.minnanotanjyoubi.ViewModel
 
-import android.app.Application
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.amefure.minnanotanjyoubi.Model.Database.RootRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class DetailPersonViewModel(
-    app: Application,
-) : RootViewModel(app) {
+@HiltViewModel
+class DetailPersonViewModel @Inject constructor(
+    private val rootRepository: RootRepository
+) : ViewModel() {
     public fun updatePerson(
         id: Int,
         name: String,

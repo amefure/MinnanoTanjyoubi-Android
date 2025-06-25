@@ -1,18 +1,22 @@
 package com.amefure.minnanotanjyoubi.ViewModel
 
-import android.app.Application
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.amefure.minnanotanjyoubi.Model.Database.Person
+import com.amefure.minnanotanjyoubi.Model.Database.RootRepository
 import com.amefure.minnanotanjyoubi.Model.Relation
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
+import androidx.lifecycle.ViewModel
 
-class MainViewModel(
-    app: Application,
-) : RootViewModel(app) {
+@HiltViewModel
+class MainViewModel @Inject constructor(
+    private val rootRepository: RootRepository
+): ViewModel() {
     private var _personList = MutableLiveData<List<Person>>()
     var personList: LiveData<List<Person>> = _personList
 

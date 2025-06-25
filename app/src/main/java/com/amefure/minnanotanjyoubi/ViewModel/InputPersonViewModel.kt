@@ -1,16 +1,20 @@
 package com.amefure.minnanotanjyoubi.ViewModel
 
-import android.app.Application
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.amefure.minnanotanjyoubi.Domain.CalcDateInfoManager
+import com.amefure.minnanotanjyoubi.Model.Database.RootRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class InputPersonViewModel(
-    app: Application,
-) : RootViewModel(app) {
+@HiltViewModel
+class InputPersonViewModel @Inject constructor(
+    private val rootRepository: RootRepository
+) : ViewModel() {
     private val calcDateInfoManager = CalcDateInfoManager()
 
     // 日付ピッカーで選択された日付が格納される

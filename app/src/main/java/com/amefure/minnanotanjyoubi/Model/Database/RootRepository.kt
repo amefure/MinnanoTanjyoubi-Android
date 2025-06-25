@@ -1,12 +1,14 @@
 package com.amefure.minnanotanjyoubi.Model.Database
 
 import android.content.Context
+import dagger.hilt.android.qualifiers.ApplicationContext
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import javax.inject.Inject
 
-class RootRepository(
-    context: Context,
+class RootRepository @Inject constructor(
+    @ApplicationContext private val context: Context,
 ) {
     // Dao
     private val personDao = PersonDatabase.getDatabase(context).userDao()
