@@ -1,22 +1,25 @@
-package com.amefure.minnanotanjyoubi.Model.Database
+package com.amefure.minnanotanjyoubi.Repository
 
 import android.content.Context
+import com.amefure.minnanotanjyoubi.Model.Database.Person
+import com.amefure.minnanotanjyoubi.Model.Database.PersonDatabase
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-class RootRepository @Inject constructor(
+/** アプリ内で扱うPersonデータのRepository実態 */
+class RootRepositoryImpl @Inject constructor(
     @ApplicationContext private val context: Context,
-) {
+): RootRepository {
     // Dao
     private val personDao = PersonDatabase.getDatabase(context).userDao()
 
     // ゴミ箱
     private val compositeDisposable = CompositeDisposable()
 
-    public fun loadAllPerson(callback: (List<Person>) -> Unit) {
+    override fun loadAllPerson(callback: (List<Person>) -> Unit) {
         compositeDisposable.add(
             personDao
                 .getAllPerson()
@@ -31,7 +34,7 @@ class RootRepository @Inject constructor(
         )
     }
 
-    public fun insertPerson(
+    override fun insertPerson(
         name: String,
         ruby: String,
         date: String,
@@ -52,7 +55,7 @@ class RootRepository @Inject constructor(
         return personDao.insertPerson(person)
     }
 
-    public fun updatePerson(
+    override fun updatePerson(
         id: Int,
         name: String,
         ruby: String,
@@ -74,7 +77,7 @@ class RootRepository @Inject constructor(
         personDao.updatePerson(person)
     }
 
-    public fun deletePerson(id: Int) {
+    override fun deletePerson(id: Int) {
         personDao.deletePerson(id)
     }
 }

@@ -5,13 +5,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.amefure.minnanotanjyoubi.Model.Database.Person
-import com.amefure.minnanotanjyoubi.Model.Database.RootRepository
 import com.amefure.minnanotanjyoubi.Model.Relation
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import androidx.lifecycle.ViewModel
+import com.amefure.minnanotanjyoubi.Repository.RootRepository
 
 @HiltViewModel
 class MainViewModel @Inject constructor(

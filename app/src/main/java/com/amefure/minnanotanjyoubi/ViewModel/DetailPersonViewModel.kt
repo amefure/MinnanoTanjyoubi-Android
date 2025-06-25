@@ -2,7 +2,7 @@ package com.amefure.minnanotanjyoubi.ViewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.amefure.minnanotanjyoubi.Model.Database.RootRepository
+import com.amefure.minnanotanjyoubi.Repository.RootRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
