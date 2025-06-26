@@ -283,13 +283,3 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
     }
 }
-
-fun helloWorld() {
-    println("Hello, World!")
-}
-
-// 不正なインデント（← ktlint: Unexpected indentation）
-fun sum(
-    a: Int,
-    b: Int,
-): Int = a + b
