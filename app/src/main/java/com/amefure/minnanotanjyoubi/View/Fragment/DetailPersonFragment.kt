@@ -1,5 +1,6 @@
 package com.amefure.minnanotanjyoubi.View.Fragment
 
+import android.annotation.SuppressLint
 import android.content.res.Resources
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -29,11 +30,11 @@ class DetailPersonFragment : Fragment() {
     private var memo: String = ""
 
     private val viewModel: DetailPersonViewModel by viewModels()
-    private lateinit var dataStoreManager: DataStoreManager
-    private lateinit var notificationRequestManager: NotificationRequestManager
+    private var dataStoreManager: DataStoreManager = DataStoreManager(this.requireContext())
+    private var notificationRequestManager: NotificationRequestManager =  NotificationRequestManager(this.requireContext())
     private val calcDateInfoManager = CalcDateInfoManager()
 
-    private lateinit var res: Resources
+    private var res: Resources = this.requireContext().resources
 
     private var notifyTime: String = ""
     private var notifyMsg: String = ""
@@ -49,10 +50,6 @@ class DetailPersonFragment : Fragment() {
     ): View {
         _binding = FragmentDetailPersonBinding.inflate(inflater, container, false)
 
-        dataStoreManager = DataStoreManager(this.requireContext())
-        notificationRequestManager = NotificationRequestManager(this.requireContext())
-
-        res = this.requireContext().resources
         notifyTime = res.getString(R.string.notify_default_time)
         notifyMsg = res.getString(R.string.notify_default_message)
         notifyDay = res.getString(R.string.notify_default_day)
@@ -69,6 +66,7 @@ class DetailPersonFragment : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(
         view: View,
         savedInstanceState: Bundle?,
