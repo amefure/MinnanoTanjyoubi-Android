@@ -10,6 +10,8 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -58,6 +60,9 @@ class MainActivity : AppCompatActivity() {
 
         // AdMob 初期化
         MobileAds.initialize(this)
+
+        // Edge-to-edge対応
+        setUpSystemBarPadding()
 
         // ローカルデータ管理クラス
         dataStoreManager = DataStoreManager(this)
@@ -161,6 +166,16 @@ class MainActivity : AppCompatActivity() {
                 addToBackStack(null)
                 commit()
             }
+        }
+    }
+
+    private fun setUpSystemBarPadding() {
+        // システムバーの余白を適用
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            // パディングを追加（上:ステータスバー, 下:ナビゲーションバー）
+            view.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
         }
     }
 
