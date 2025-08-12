@@ -1,4 +1,4 @@
-package com.amefure.minnanotanjyoubi.View.Fragment
+package com.amefure.minnanotanjyoubi.View.Fragment.Setting
 
 import android.app.AlertDialog
 import android.app.TimePickerDialog

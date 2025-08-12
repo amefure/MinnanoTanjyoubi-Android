@@ -24,9 +24,9 @@ import com.amefure.minnanotanjyoubi.Model.Database.Person
 import com.amefure.minnanotanjyoubi.Model.Relation
 import com.amefure.minnanotanjyoubi.R
 import com.amefure.minnanotanjyoubi.View.Adapter.PersonGridLayoutAdapter
-import com.amefure.minnanotanjyoubi.View.Fragment.DetailPersonFragment
-import com.amefure.minnanotanjyoubi.View.Fragment.InputPersonFragment
-import com.amefure.minnanotanjyoubi.View.Fragment.SettingFragment
+import com.amefure.minnanotanjyoubi.View.Fragment.Domain.DetailPersonFragment
+import com.amefure.minnanotanjyoubi.View.Fragment.Domain.InputPersonFragment
+import com.amefure.minnanotanjyoubi.View.Fragment.Setting.SettingFragment
 import com.amefure.minnanotanjyoubi.ViewModel.MainViewModel
 import com.amefure.minnanotanjyoubi.databinding.ActivityMainBinding
 import com.google.android.gms.ads.AdRequest

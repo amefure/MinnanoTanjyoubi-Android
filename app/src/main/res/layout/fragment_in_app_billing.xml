@@ -8,7 +8,7 @@
     android:background="@color/thema_gray_light"
     android:clickable="true"
     android:orientation="vertical"
-    tools:context=".View.Fragment.InAppBillingFragment">
+    tools:context=".View.Fragment.Setting.InAppBillingFragment">
 
     <include
         android:id="@+id/component_back_upper_container"

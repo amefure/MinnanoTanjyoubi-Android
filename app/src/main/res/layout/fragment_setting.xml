@@ -8,7 +8,7 @@
     android:layout_height="match_parent"
     android:background="@color/thema_gray_light"
     android:clickable="true"
-    tools:context=".View.Fragment.SettingFragment">
+    tools:context=".View.Fragment.Setting.SettingFragment">
 
 
     <include

@@ -8,7 +8,7 @@
     android:background="@color/thema_gray_light"
     android:clickable="true"
     android:orientation="vertical"
-    tools:context=".View.Fragment.InputPersonFragment">
+    tools:context=".View.Fragment.Domain.InputPersonFragment">
 
     <include
         android:id="@+id/component_back_upper_container"

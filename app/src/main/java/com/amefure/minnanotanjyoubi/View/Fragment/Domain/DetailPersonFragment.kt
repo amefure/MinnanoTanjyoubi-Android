@@ -1,4 +1,4 @@
-package com.amefure.minnanotanjyoubi.View.Fragment
+package com.amefure.minnanotanjyoubi.View.Fragment.Domain
 
 import android.annotation.SuppressLint
 import android.content.res.Resources
@@ -82,7 +82,8 @@ class DetailPersonFragment : Fragment() {
 
         binding.editButton.setOnClickListener {
             // input画面にレコードの情報を渡して生成
-            val nextFragment = InputPersonFragment.editInstance(id, name, ruby, date, relation, notify, memo)
+            val nextFragment =
+                InputPersonFragment.editInstance(id, name, ruby, date, relation, notify, memo)
             parentFragmentManager.beginTransaction().apply {
                 add(R.id.main_frame, nextFragment)
                 addToBackStack(null)
