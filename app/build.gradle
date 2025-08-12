@@ -6,6 +6,7 @@ plugins {
     id 'com.google.devtools.ksp'
     id "com.google.gms.google-services"
     id 'com.google.dagger.hilt.android'
+    id "org.jetbrains.kotlin.plugin.compose"
 }
 
 def secretPropertiesFile = rootProject.file("secret.properties")
@@ -73,6 +74,10 @@ android {
     buildFeatures {
         viewBinding true
         buildConfig true
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.8.3"
     }
 }
 
@@ -85,6 +90,16 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.3.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.7.0'
+    // Composeの基本UIコンポーネント（ボタンやテキストなど）
+    implementation "androidx.compose.ui:ui:1.8.3"
+    // Material Design 3（M3）のCompose対応ライブラリ
+    implementation "androidx.compose.material3:material3:1.3.2"
+    // Composeのプレビュー表示やツール向けサポートライブラリ
+    implementation "androidx.compose.ui:ui-tooling-preview:1.8.3"
+    // ActivityでComposeを使うための統合サポートライブラリ
+    implementation "androidx.activity:activity-compose:1.10.1"
+    // Composeの状態管理やランタイムのコアライブラリ
+    implementation "androidx.compose.runtime:runtime:1.8.3"
 
     // viewmodelsのために追加
     implementation 'androidx.fragment:fragment-ktx:1.8.8'
