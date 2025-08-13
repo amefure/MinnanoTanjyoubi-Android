@@ -383,6 +383,63 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/app_issue_layout"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@color/thema_gray_dark"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="20dp"
+                    android:src="@drawable/ic_send"
+                    android:contentDescription="@string/other_setting_app_issue_label"/>
+
+                <TextView
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="20dp"
+                    android:text="@string/other_setting_app_issue_label"
+                    android:textColor="@color/white" />
+
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/privacy_policy_layout"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@color/thema_gray_dark"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="20dp"
+                    android:src="@drawable/ic_sticky_note"
+                    android:contentDescription="@string/other_setting_privacy_policy_label"/>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:layout_marginStart="20dp"
+                    android:text="@string/other_setting_privacy_policy_label"
+                    android:textColor="@color/white" />
+
+
+            </LinearLayout>
+
 
         </LinearLayout>
 

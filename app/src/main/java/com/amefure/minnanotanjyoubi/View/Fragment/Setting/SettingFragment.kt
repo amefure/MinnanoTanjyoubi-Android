@@ -3,6 +3,8 @@ package com.amefure.minnanotanjyoubi.View.Fragment.Setting
 import android.app.AlertDialog
 import android.app.TimePickerDialog
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -29,6 +31,7 @@ import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import kotlinx.coroutines.launch
 import java.util.Calendar
+import androidx.core.net.toUri
 
 class SettingFragment : Fragment() {
     private lateinit var dataStoreManager: DataStoreManager
@@ -179,6 +182,18 @@ class SettingFragment : Fragment() {
                 addToBackStack(null)
                 commit()
             }
+        }
+
+        binding.appIssueLayout.setOnClickListener {
+            val uri = "https://appdev-room.com/contact".toUri()
+            val intent = Intent(Intent.ACTION_VIEW,uri)
+            startActivity(intent)
+        }
+
+        binding.privacyPolicyLayout.setOnClickListener {
+            val uri = "https://appdev-room.com/app-terms-of-service".toUri()
+            val intent = Intent(Intent.ACTION_VIEW,uri)
+            startActivity(intent)
         }
     }
 

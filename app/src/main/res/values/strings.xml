@@ -18,6 +18,8 @@
     <string name="ads_setting_desc_label2">・容量の追加は1日に1回までです。</string>
     <string name="other_setting_title">その他</string>
     <string name="other_setting_faq_label">よくある質問</string>
+    <string name="other_setting_app_issue_label">アプリの不具合はこちら</string>
+    <string name="other_setting_privacy_policy_label">利用規約とプライバシーポリシー</string>
 
 
     <!-- アプリ内課金画面 -->
