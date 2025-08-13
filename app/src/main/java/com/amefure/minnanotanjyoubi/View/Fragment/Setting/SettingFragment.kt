@@ -171,6 +171,15 @@ class SettingFragment : Fragment() {
                 commit()
             }
         }
+
+        binding.faqLayout.setOnClickListener {
+            val nextFragment = FaqFragment()
+            parentFragmentManager.beginTransaction().apply {
+                add(R.id.main_frame, nextFragment)
+                addToBackStack(null)
+                commit()
+            }
+        }
     }
 
     private fun updateAdsButtonState() {
