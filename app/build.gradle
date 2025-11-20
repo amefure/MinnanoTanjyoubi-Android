@@ -129,10 +129,10 @@ dependencies {
     // Room
 
     // AdMob
-    implementation("com.google.android.gms:play-services-ads:24.5.0")
+    implementation("com.google.android.gms:play-services-ads:24.7.0")
 
     // Firebase
-    implementation(platform("com.google.firebase:firebase-bom:34.1.0"))
+    implementation(platform("com.google.firebase:firebase-bom:34.6.0"))
     implementation("com.google.firebase:firebase-analytics-ktx:22.5.0")
 
     // Google Play Billing Library 7系
@@ -141,6 +141,6 @@ dependencies {
     implementation "com.android.billingclient:billing-ktx:$billing_version"
 
     // Hilt
-    implementation "com.google.dagger:hilt-android:2.56.2"
-    ksp "com.google.dagger:hilt-compiler:2.56.2"
+    implementation "com.google.dagger:hilt-android:2.57.2"
+    ksp "com.google.dagger:hilt-compiler:2.57.2"
 }
