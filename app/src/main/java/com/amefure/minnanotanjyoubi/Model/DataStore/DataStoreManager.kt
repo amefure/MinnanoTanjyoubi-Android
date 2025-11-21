@@ -111,6 +111,18 @@ class DataStoreManager(
                 preferences[NOTIFY_MESSAGE]
             }
 
+    /** 取得；通知メッセージ */
+    suspend fun getNotifyMsg(): String =
+        context.dataStore.data
+            .catch { exception ->
+                if (exception is IOException) {
+                    emit(emptyPreferences())
+                } else {
+                    throw exception
+                }
+            }.firstOrNull() // 最初の値を1回だけ取得
+            ?.get(NOTIFY_MESSAGE) ?: ""
+
     /** 保存；容量 */
     suspend fun saveLimitCapacity(capacity: Int) {
         try {
