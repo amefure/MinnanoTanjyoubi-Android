@@ -61,8 +61,11 @@ class InputNotifyMsgFragment : Fragment() {
                                         android.app.AlertDialog.Builder(context)
                                             .setTitle("Success")
                                             .setMessage("通知メッセージを変更しました。")
-                                            .setPositiveButton("OK") { dialog, _ ->
+                                            .setOnDismissListener {
                                                 parentFragmentManager.popBackStack()
+                                            }
+                                            .setPositiveButton("OK") { dialog, _ ->
+                                                dialog.dismiss()
                                             }.show()
                                     }
                                 }

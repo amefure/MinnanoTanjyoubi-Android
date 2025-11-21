@@ -14,6 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,6 +27,8 @@ class InputNotifyMsgViewModel @Inject constructor(
     var editingMsg by mutableStateOf("")
         private set
 
+    private var isProcessing = false
+
     /** UI通知イベント */
     private val _uiEvent = MutableSharedFlow<UiEvent>()
     val uiEvent = _uiEvent.asSharedFlow()
@@ -36,17 +39,30 @@ class InputNotifyMsgViewModel @Inject constructor(
     }
 
     init {
-        viewModelScope.launch(Dispatchers.IO) {
-            val msg = dataStoreManager.getNotifyMsg()
-            editingMsg = if (msg.isNotEmpty()) msg else context.getString(R.string.notify_default_message)
+        viewModelScope.launch {
+            val msg = withContext(Dispatchers.IO) {
+                dataStoreManager.getNotifyMsg()
+            }
+            val defaultMsg = context.getString(R.string.notify_default_message)
+            withContext(Dispatchers.Main) {
+                // メインスレッドで更新しないと反映されない
+                editingMsg = msg.ifEmpty { defaultMsg }
+            }
         }
     }
 
+
+    /** 編集中メッセージを更新 */
     fun updateEditingMsg(newValue: String) {
         editingMsg = newValue
     }
 
+    /** ローカルに通知メッセージを保存 */
     fun saveNotifyMsg() {
+        // 処置中なら実行しない
+        if (isProcessing)  return
+        // 画面を強制的に戻すためfalseに戻さない
+        isProcessing = true
         viewModelScope.launch(Dispatchers.IO) {
             // キーボードを閉じる
             _uiEvent.emit(UiEvent.HideKeyboard)
