@@ -9,6 +9,7 @@ import com.amefure.minnanotanjyoubi.Model.DataStore.DataStoreManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -20,11 +21,16 @@ import javax.inject.Inject
 @HiltViewModel
 class InputNotifyMsgViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
+    private val savedStateHandle: SavedStateHandle
 ): ViewModel() {
 
     private val dataStoreManager = DataStoreManager(context)
 
-    var editingMsg by mutableStateOf("")
+    private val defaultMsg = context.getString(R.string.notify_default_message)
+
+    var editingMsg by mutableStateOf(
+        savedStateHandle.get<String>("editingMsg") ?: defaultMsg
+    )
         private set
 
     private var isProcessing = false
@@ -40,21 +46,23 @@ class InputNotifyMsgViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            val msg = withContext(Dispatchers.IO) {
-                dataStoreManager.getNotifyMsg()
-            }
-            val defaultMsg = context.getString(R.string.notify_default_message)
+            val msg = withContext(Dispatchers.IO) { dataStoreManager.getNotifyMsg() }
+
+            // SavedStateHandle に値があればそちらを優先
+            val current = savedStateHandle.get<String>(EDITING_MSG) ?: msg.ifEmpty { defaultMsg }
+
             withContext(Dispatchers.Main) {
                 // メインスレッドで更新しないと反映されない
-                editingMsg = msg.ifEmpty { defaultMsg }
+                editingMsg = current
+                savedStateHandle[EDITING_MSG] = current
             }
         }
     }
 
-
     /** 編集中メッセージを更新 */
     fun updateEditingMsg(newValue: String) {
         editingMsg = newValue
+        savedStateHandle[EDITING_MSG] = newValue
     }
 
     /** ローカルに通知メッセージを保存 */
@@ -70,5 +78,9 @@ class InputNotifyMsgViewModel @Inject constructor(
             // 完了通知
             _uiEvent.emit(UiEvent.Saved)
         }
+    }
+
+    companion object {
+        private val EDITING_MSG = "EDITING_MSG"
     }
 }
