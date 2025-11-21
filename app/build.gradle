@@ -91,17 +91,17 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.3.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.7.0'
     // Composeの基本UIコンポーネント（ボタンやテキストなど）
-    implementation "androidx.compose.ui:ui:1.9.4"
+    implementation "androidx.compose.ui:ui:1.9.5"
     // Material Design 3（M3）のCompose対応ライブラリ
     implementation "androidx.compose.material3:material3:1.4.0"
     // Composeのプレビュー表示やツール向けサポートライブラリ
-    implementation "androidx.compose.ui:ui-tooling-preview:1.9.4"
+    implementation "androidx.compose.ui:ui-tooling-preview:1.9.5"
     // デバッグ環境でのComposeのプレビュー表示
-    debugImplementation "androidx.compose.ui:ui-tooling:1.9.4"
+    debugImplementation "androidx.compose.ui:ui-tooling:1.9.5"
     // ActivityでComposeを使うための統合サポートライブラリ
-    implementation "androidx.activity:activity-compose:1.11.0"
+    implementation "androidx.activity:activity-compose:1.12.0"
     // Composeの状態管理やランタイムのコアライブラリ
-    implementation "androidx.compose.runtime:runtime:1.9.4"
+    implementation "androidx.compose.runtime:runtime:1.9.5"
     /** マテリアルアイコン全読み込み */
     implementation 'androidx.compose.material:material-icons-extended:1.7.8'
     // viewmodelsのために追加
@@ -109,7 +109,7 @@ dependencies {
 
     // DataStore
     // 1.1.5では未参照になる
-    implementation("androidx.datastore:datastore-preferences:1.1.7")
+    implementation("androidx.datastore:datastore-preferences:1.2.0")
 
     // Room
     def room_version = "2.7.1"
@@ -121,7 +121,7 @@ dependencies {
     // kapt "androidx.room:room-compiler:$room_version"
     ksp "androidx.room:room-compiler:$room_version"
 
-    implementation 'androidx.room:room-rxjava2:2.8.3'
+    implementation 'androidx.room:room-rxjava2:2.8.4'
     // Room > RxKotlin
     implementation 'io.reactivex.rxjava2:rxjava:2.2.21'
     implementation 'io.reactivex.rxjava2:rxkotlin:2.4.0'
@@ -143,4 +143,6 @@ dependencies {
     // Hilt
     implementation "com.google.dagger:hilt-android:2.57.2"
     ksp "com.google.dagger:hilt-compiler:2.57.2"
+    // Hilt for Navigation Compose
+    implementation "androidx.hilt:hilt-navigation-compose:1.3.0"
 }
