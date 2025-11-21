@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -25,24 +25,39 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amefure.minnanotanjyoubi.R
 
+
 /**
- * BackUpperBar
+ *ActionDownBar
  */
 @Composable
-fun BackUpperBar(
-    onBackClick: () -> Unit
+fun ActionDownBar(
+    onClick: () -> Unit
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 35.dp)
-            .padding(start = 20.dp),
+            .padding(end = 20.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(20.dp)
     ) {
+        // 左側の棒
+        Box(
+            modifier = Modifier
+                .weight(1f) // 余白スペースに広がるように拡大
+                .height(50.dp)
+                .background(
+                    color = colorResource(id = R.color.thema_gray_dark),
+                    shape = RoundedCornerShape(
+                        topEnd = 50.dp,
+                        bottomEnd = 50.dp
+                    )
+                )
+        )
+
         // 戻るボタン
         IconButton(
-            onClick = onBackClick,
+            onClick = onClick,
             modifier = Modifier
                 .size(50.dp)
                 .background(
@@ -51,33 +66,19 @@ fun BackUpperBar(
                 )
         ) {
             Icon(
-                imageVector = Icons.Default.ArrowBackIosNew,
+                imageVector = Icons.Default.Check,
                 contentDescription = stringResource(id = R.string.icon_back),
                 tint = Color.White,
             )
         }
-
-        // 右側の棒
-        Box(
-            modifier = Modifier
-                .weight(1f) // 余白スペースに広がるように拡大
-                .height(50.dp)
-                .background(
-                    color = colorResource(id = R.color.thema_gray_dark),
-                    shape = RoundedCornerShape(
-                        topStart = 50.dp,
-                        bottomStart = 50.dp
-                    )
-                )
-        )
     }
 }
 
 @Preview(showBackground = false)
 @Composable
-private fun BackUpperBarPreView() {
+private fun ActionDownBarPreView() {
     MaterialTheme {
-        BackUpperBar(
+        ActionDownBar(
             {}
         )
     }
