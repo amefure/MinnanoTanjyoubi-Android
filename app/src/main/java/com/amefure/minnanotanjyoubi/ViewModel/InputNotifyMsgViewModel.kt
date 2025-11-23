@@ -29,7 +29,7 @@ class InputNotifyMsgViewModel @Inject constructor(
     private val defaultMsg = context.getString(R.string.notify_default_message)
 
     var editingMsg by mutableStateOf(
-        savedStateHandle.get<String>("editingMsg") ?: defaultMsg
+        savedStateHandle[EDITING_MSG] ?: defaultMsg
     )
         private set
 
@@ -49,7 +49,7 @@ class InputNotifyMsgViewModel @Inject constructor(
             val msg = withContext(Dispatchers.IO) { dataStoreManager.getNotifyMsg() }
 
             // SavedStateHandle に値があればそちらを優先
-            val current = savedStateHandle.get<String>(EDITING_MSG) ?: msg.ifEmpty { defaultMsg }
+            val current = savedStateHandle[EDITING_MSG] ?: msg.ifEmpty { defaultMsg }
 
             withContext(Dispatchers.Main) {
                 // メインスレッドで更新しないと反映されない
