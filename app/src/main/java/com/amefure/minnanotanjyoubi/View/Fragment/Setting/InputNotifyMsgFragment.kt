@@ -33,6 +33,7 @@ import com.amefure.minnanotanjyoubi.View.Compose.ActionDownBar
 import com.amefure.minnanotanjyoubi.View.Compose.components.CustomText
 import com.amefure.minnanotanjyoubi.ViewModel.InputNotifyMsgViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.SharedFlow
 
 @AndroidEntryPoint
 class InputNotifyMsgFragment : Fragment() {
@@ -44,45 +45,66 @@ class InputNotifyMsgFragment : Fragment() {
     ): View {
         return ComposeView(requireContext()).apply {
             setContent {
-                MaterialTheme {
-                    Surface(
-                        modifier = Modifier.fillMaxSize(),
-                        color = colorResource(id = R.color.thema_gray_light)
-                    ) {
-                        // UI イベントを受け取る
-                        LaunchedEffect(Unit) {
-                            viewModel.uiEvent.collect { event ->
-                                when (event) {
-                                    InputNotifyMsgViewModel.UiEvent.HideKeyboard -> {
-                                        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                                        imm.hideSoftInputFromWindow(view?.windowToken, 0)
-                                    }
-                                    InputNotifyMsgViewModel.UiEvent.Saved -> {
-                                        android.app.AlertDialog.Builder(context)
-                                            .setTitle("Success")
-                                            .setMessage("通知メッセージを変更しました。")
-                                            .setOnDismissListener {
-                                                parentFragmentManager.popBackStack()
-                                            }
-                                            .setPositiveButton("OK") { dialog, _ ->
-                                                dialog.dismiss()
-                                            }.show()
-                                    }
-                                }
-                            }
-                        }
-
-                        InputNotifyMsgScreen(
-                            editingMsg = viewModel.editingMsg,
-                            onMsgChange = viewModel::updateEditingMsg,
-                            onSave = viewModel::saveNotifyMsg,
-                            onBack = {
+                InputNotifyMsgScreenRoot(
+                    uiEvent = viewModel.uiEvent,
+                    hideKeyboard = {
+                        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                        imm.hideSoftInputFromWindow(view?.windowToken, 0)
+                    },
+                    onSaved = {
+                        android.app.AlertDialog.Builder(context)
+                            .setTitle("Success")
+                            .setMessage("通知メッセージを変更しました。")
+                            .setOnDismissListener {
                                 parentFragmentManager.popBackStack()
                             }
-                        )
+                            .setPositiveButton("OK") { dialog, _ ->
+                                dialog.dismiss()
+                            }.show()
+                    },
+                    editingMsg = viewModel.editingMsg,
+                    onMsgChange = viewModel::updateEditingMsg,
+                    onSave = viewModel::saveNotifyMsg,
+                    onBack = {
+                        parentFragmentManager.popBackStack()
+                    }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun InputNotifyMsgScreenRoot(
+    uiEvent: SharedFlow<InputNotifyMsgViewModel.UiEvent>,
+    hideKeyboard: () -> Unit,
+    onSaved: () -> Unit,
+    editingMsg: String,
+    onMsgChange: (String) -> Unit,
+    onSave: () -> Unit,
+    onBack: () -> Unit
+) {
+    MaterialTheme {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = colorResource(id = R.color.thema_gray_light)
+        ) {
+            // UI イベントを受け取る
+            LaunchedEffect(Unit) {
+                uiEvent.collect { event ->
+                    when (event) {
+                        InputNotifyMsgViewModel.UiEvent.HideKeyboard -> hideKeyboard
+                        InputNotifyMsgViewModel.UiEvent.Saved -> onSaved
                     }
                 }
             }
+
+            InputNotifyMsgScreen(
+                editingMsg = editingMsg,
+                onMsgChange = onMsgChange,
+                onSave = onSave,
+                onBack = onBack
+            )
         }
     }
 }
@@ -144,7 +166,7 @@ private fun InputNotifyMsgScreen(
 
 @Preview(showBackground = false)
 @Composable
-private fun InputNotifyMsgScreenPreView() {
+private fun InputNotifyMsgScreenPreview() {
     MaterialTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),

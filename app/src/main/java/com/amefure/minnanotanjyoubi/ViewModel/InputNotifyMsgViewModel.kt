@@ -81,6 +81,6 @@ class InputNotifyMsgViewModel @Inject constructor(
     }
 
     companion object {
-        private val EDITING_MSG = "EDITING_MSG"
+        private const val EDITING_MSG = "EDITING_MSG"
     }
 }
