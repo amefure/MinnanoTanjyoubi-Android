@@ -33,29 +33,39 @@ private val faqList = listOf(
     FaqItem("○○な機能を追加してほしい", "設定画面の「不具合はこちら」をクリックしWebサイトのお問い合わせフォームからフィードバックをいただけるとできる限り対処いたします。\nしかしご要望に添えない可能性があることをご了承ください。"),
 )
 
-
 class FaqFragment : Fragment() {
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         return ComposeView(requireContext()).apply {
             setContent {
-                MaterialTheme {
-                    Surface(
-                        modifier = Modifier.fillMaxSize(),
-                        color = colorResource(id = R.color.thema_gray_light)
-                    ) {
-                        FaqScreen(
-                            faqList,
-                            onBack = {
-                                parentFragmentManager.popBackStack()
-                            }
-                        )
+                FaqScreenRoot(
+                    faqList,
+                    onBack = {
+                        parentFragmentManager.popBackStack()
                     }
-
-                }
+                )
             }
+        }
+    }
+}
+
+@Composable
+private fun FaqScreenRoot(
+    faqList: List<FaqItem>,
+    onBack: () -> Unit
+) {
+    MaterialTheme {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = colorResource(id = R.color.thema_gray_light)
+        ) {
+            FaqScreen(
+                faqList = faqList,
+                onBack = onBack
+            )
         }
     }
 }
