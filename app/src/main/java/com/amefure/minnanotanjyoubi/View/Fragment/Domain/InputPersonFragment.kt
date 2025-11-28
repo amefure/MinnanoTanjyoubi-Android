@@ -20,7 +20,7 @@ import com.amefure.minnanotanjyoubi.Manager.CalcDateInfoManager
 import com.amefure.minnanotanjyoubi.Manager.NotificationRequestManager
 import com.amefure.minnanotanjyoubi.Model.DataStore.DataStoreManager
 import com.amefure.minnanotanjyoubi.Model.Keys.*
-import com.amefure.minnanotanjyoubi.Model.Relation
+import com.amefure.minnanotanjyoubi.Model.domain.Relation
 import com.amefure.minnanotanjyoubi.R
 import com.amefure.minnanotanjyoubi.ViewModel.InputPersonViewModel
 import com.amefure.minnanotanjyoubi.databinding.FragmentInputPersonBinding

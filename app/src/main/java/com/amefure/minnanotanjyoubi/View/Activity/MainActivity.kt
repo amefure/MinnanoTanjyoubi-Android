@@ -18,10 +18,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.amefure.minnanotanjyoubi.BuildConfig
 import com.amefure.minnanotanjyoubi.Manager.CalcDateInfoManager
 import com.amefure.minnanotanjyoubi.Manager.NotificationRequestManager
-import com.amefure.minnanotanjyoubi.Model.Capacity
+import com.amefure.minnanotanjyoubi.Model.domain.Capacity
 import com.amefure.minnanotanjyoubi.Model.DataStore.DataStoreManager
 import com.amefure.minnanotanjyoubi.Model.Database.Person
-import com.amefure.minnanotanjyoubi.Model.Relation
+import com.amefure.minnanotanjyoubi.Model.domain.Relation
 import com.amefure.minnanotanjyoubi.R
 import com.amefure.minnanotanjyoubi.View.Adapter.PersonGridLayoutAdapter
 import com.amefure.minnanotanjyoubi.View.Fragment.Domain.DetailPersonFragment

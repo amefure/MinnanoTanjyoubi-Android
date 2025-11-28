@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.amefure.minnanotanjyoubi.Model.Database.Person
-import com.amefure.minnanotanjyoubi.Model.Relation
+import com.amefure.minnanotanjyoubi.Model.domain.Relation
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
