@@ -1,4 +1,4 @@
-package com.amefure.minnanotanjyoubi.Model
+package com.amefure.minnanotanjyoubi.Model.domain
 
 enum class Relation {
     FRIEND {
