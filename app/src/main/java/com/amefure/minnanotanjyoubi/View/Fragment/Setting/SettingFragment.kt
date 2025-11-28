@@ -39,6 +39,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
@@ -323,6 +324,7 @@ private fun SettingScreen(
         LazyColumn(
             modifier = Modifier
                 .padding(horizontal = 20.dp)
+                .weight(1f)
         ) {
             itemsIndexed(settingItems) { index, item ->
                 when (item) {
@@ -440,7 +442,8 @@ private fun SettingRowItem(
                     CustomText(
                         text = buttonText,
                         color = Color.White,
-                        textSize = TextSize.SS
+                        fontWeight = FontWeight.Bold,
+                        textSize = TextSize.S
                     )
                 }
             } else {
