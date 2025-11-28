@@ -6,12 +6,10 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.LinearLayout
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -42,24 +40,17 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import com.amefure.minnanotanjyoubi.BuildConfig
-import com.amefure.minnanotanjyoubi.Model.DataStore.DataStoreManager
 import com.amefure.minnanotanjyoubi.R
-import com.amefure.minnanotanjyoubi.databinding.FragmentSettingBinding
 import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.AdSize
-import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.rewarded.RewardedAd
-import kotlinx.coroutines.launch
 import androidx.core.net.toUri
 import androidx.fragment.app.viewModels
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.amefure.minnanotanjyoubi.View.Compose.BackUpperBar
+import com.amefure.minnanotanjyoubi.View.Compose.components.BannerAdView
 import com.amefure.minnanotanjyoubi.View.Compose.components.CustomText
 import com.amefure.minnanotanjyoubi.View.Compose.components.TextSize
 import com.amefure.minnanotanjyoubi.ViewModel.SettingViewModel
@@ -79,13 +70,7 @@ private sealed class Route {
 class SettingFragment : Fragment() {
 
     private val viewModel: SettingViewModel by viewModels()
-
-    private lateinit var dataStoreManager: DataStoreManager
-
     private var rewardedAd: RewardedAd? = null
-
-    private var _binding: FragmentSettingBinding? = null
-    private val binding get() = _binding!!
 
     private val handlers = object : SettingEventHandler {
         override fun onBack() {
@@ -157,7 +142,6 @@ class SettingFragment : Fragment() {
         // リワード広告の読み込み
         loadingRewordAds()
 
-        dataStoreManager = DataStoreManager(this.requireContext())
         return ComposeView(requireContext()).apply {
             setContent {
                 SettingScreenRoot(handlers)
@@ -216,65 +200,11 @@ class SettingFragment : Fragment() {
             )
         }
 
-    /**
-     *  AdMob バナー広告の追加と読み込み
-     *  adUnitIdを動的に変更するためにはViewをコードで追加する必要がある
-     */
-    private fun addAdBannerView() {
-        lifecycleScope.launch {
-            // 広告削除購入済みなら追加しない
-            dataStoreManager.observeInAppRemoveAds().collect {
-                if (!it) {
-                    // 全てのビューをリセット
-                    // アプリ初回インストール時のみ、通知許可ダイアログがらみ?で2回呼ばれるため
-                    binding.adViewLayout.removeAllViewsInLayout()
-                    // AdViewを生成して設定
-                    val adView =
-                        AdView(this@SettingFragment.requireContext()).apply {
-                            setAdSize(AdSize.BANNER)
-                            adUnitId =
-                                if (BuildConfig.DEBUG) {
-                                    BuildConfig.ADMOB_BANNER_ID_TEST
-                                } else {
-                                    BuildConfig.ADMOB_BANNER_ID_PROD
-                                }
-                            // 広告の読み込み
-                            loadAd(AdRequest.Builder().build())
-                        }
-
-                    // レイアウトパラメータを指定（横幅 match_parent、高さ wrap_content）
-                    val layoutParams =
-                        LinearLayout
-                            .LayoutParams(
-                                LinearLayout.LayoutParams.MATCH_PARENT,
-                                LinearLayout.LayoutParams.WRAP_CONTENT,
-                            ).apply {
-                                gravity = Gravity.CENTER_HORIZONTAL
-                            }
-
-                    adView.layoutParams = layoutParams
-
-                    // adViewLayout に AdView を追加
-                    binding.adViewLayout.addView(adView)
-                } else {
-                    // 広告削除フラグがONなら既に表示している場合もあるので削除
-                    binding.adViewLayout.removeAllViewsInLayout()
-                }
-            }
-        }
-    }
-
     private fun showOffKeyboard() {
         val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view?.windowToken, 0)
     }
-
-    override fun onDestroy() {
-        _binding = null
-        super.onDestroy()
-    }
 }
-
 
 @Composable
 private fun SettingScreenRoot(
@@ -372,6 +302,7 @@ private fun SettingScreenRoot(
         ) {
             SettingScreen(
                 settingItems = settingItems,
+                removeAds = viewModel.removeAds,
                 onBack = handlers::onBack
             )
         }
@@ -379,10 +310,10 @@ private fun SettingScreenRoot(
 }
 
 
-
 @Composable
 private fun SettingScreen(
     settingItems: List<SettingSectionItem>,
+    removeAds: Boolean,
     onBack: () -> Unit,
 ) {
     Column {
@@ -428,6 +359,10 @@ private fun SettingScreen(
                     }
                 }
             }
+        }
+
+        if (!removeAds) {
+            BannerAdView()
         }
     }
 }
@@ -547,54 +482,3 @@ private fun SettingScreenPreview() {
     }
 }
 
-/** 設定画面リスト表示用のインターフェース */
-private interface SettingSectionItem
-
-/** 設定画面リスト行データ */
-private data class SettingRowData(
-    val icon: Painter,
-    val title: String,
-    val onClick: () -> Unit = { },
-    val buttonText: String = "",
-    val buttonOnClick: () -> Unit = { }
-): SettingSectionItem
-
-/** 設定画面リストヘッダー */
-private data class SettingSectionHeader(
-    val title: String,
-): SettingSectionItem
-
-/** 設定画面リストフッター */
-private data class SettingSectionFooter(
-    val title: String,
-): SettingSectionItem
-
-/** 設定画面リストスペーサー */
-private data class SettingSectionSpacer(
-    val padding: Dp = 10.dp,
-): SettingSectionItem
-
-interface SettingEventHandler {
-    /** 戻る */
-    fun onBack()
-
-    /** 通知時間変更ボタン */
-    fun onClickNotifyTimeButton()
-    /** 通知日変更ボタン */
-    fun onClickNotifyDayButton()
-    /** 通知Msg変更 */
-    fun onClickNotifyMessage()
-
-    /** 広告視聴 */
-    fun onClickAdsShow()
-    /** アプリ内課金 */
-    fun onClickInAppPurchase()
-
-    /** よくある質問 */
-    fun onClickFaq()
-    /** お問い合わせ */
-    fun onClickSendIssue()
-    /** プライバシーポリシー */
-    fun onClickPrivacyPolicy()
-
-}

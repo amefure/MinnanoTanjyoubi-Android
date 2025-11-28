@@ -50,6 +50,9 @@ class SettingViewModel @Inject constructor(
     /** 現在の容量 */
     var currentCapacity by mutableStateOf(initialCapacity)
         private set
+    /** 広告削除フラグ */
+    var removeAds by mutableStateOf(false)
+        private set
     /** 容量解放フラグ */
     var unlockStorage by mutableStateOf(false)
         private set
@@ -86,6 +89,7 @@ class SettingViewModel @Inject constructor(
             val capacity = withContext(Dispatchers.IO) { dataStoreManager.getLimitCapacity() }
             val acquisitionDate = withContext(Dispatchers.IO) { dataStoreManager.getLastAcquisitionDate() }
             val unlockStorage = withContext(Dispatchers.IO) { dataStoreManager.getInAppUnlockStorage() }
+            val removeAds =  withContext(Dispatchers.IO) { dataStoreManager.getInAppRemoveAds() }
 
             withContext(Dispatchers.Main) {
                 // メインスレッドで更新しないとUIに反映されない
@@ -95,6 +99,7 @@ class SettingViewModel @Inject constructor(
                 currentCapacity = capacity ?: initialCapacity
                 lastAcquisitionDate = acquisitionDate ?: ""
                 this@SettingViewModel.unlockStorage = unlockStorage
+                this@SettingViewModel.removeAds = removeAds
             }
         }
     }
