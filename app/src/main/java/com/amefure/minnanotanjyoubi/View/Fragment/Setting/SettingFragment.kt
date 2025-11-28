@@ -4,7 +4,6 @@ import android.app.AlertDialog
 import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -13,9 +12,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.LinearLayout
-import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -23,11 +19,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -52,37 +46,32 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.amefure.minnanotanjyoubi.BuildConfig
-import com.amefure.minnanotanjyoubi.Manager.CalcDateInfoManager
-import com.amefure.minnanotanjyoubi.Model.Capacity
 import com.amefure.minnanotanjyoubi.Model.DataStore.DataStoreManager
 import com.amefure.minnanotanjyoubi.R
 import com.amefure.minnanotanjyoubi.databinding.FragmentSettingBinding
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
-import com.google.android.gms.ads.FullScreenContentCallback
-import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.rewarded.RewardedAd
-import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import kotlinx.coroutines.launch
-import java.util.Calendar
 import androidx.core.net.toUri
-import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.viewModels
+import com.amefure.minnanotanjyoubi.Model.domain.NotifyDay
 import com.amefure.minnanotanjyoubi.View.Compose.BackUpperBar
 import com.amefure.minnanotanjyoubi.View.Compose.components.CustomText
 import com.amefure.minnanotanjyoubi.View.Compose.components.TextSize
+import com.amefure.minnanotanjyoubi.ViewModel.SettingViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import kotlin.getValue
 
+@AndroidEntryPoint
 class SettingFragment : Fragment() {
 
+    private val viewModel: SettingViewModel by viewModels()
+
     private lateinit var dataStoreManager: DataStoreManager
-    private val calcDateInfoManager = CalcDateInfoManager()
 
     private var rewardedAd: RewardedAd? = null
-
-    // ローカルデータ格納用
-    private var notifyTime: String? = null
-    private var limitCapacity: Int = Capacity.initialCapacity
-    private var lastDate: String = ""
 
     private var _binding: FragmentSettingBinding? = null
     private val binding get() = _binding!!
@@ -102,63 +91,41 @@ class SettingFragment : Fragment() {
                     }
 
                     override fun onClickFaq() {
-                        parentFragmentManager.beginTransaction()
-                            .add(R.id.main_frame, FaqFragment())
-                            .addToBackStack(null)
-                            .commit()
+                        routeView( FaqFragment())
                     }
                     override fun onClickNotifyTimeButton() {
-                        val hour: Int
-                        val minute: Int
-                        if (notifyTime != null) {
-                            // 日付を選択済みの場合は初期値を変更
-                            val parts = notifyTime!!.split(":")
-                            hour = parts[0].toInt()
-                            minute = parts[1].toInt()
-                        } else {
-                            // 現在の日付情報を取得
-                            // 初期値として7:00を格納しているため実行されない予定
-                            val c = Calendar.getInstance()
-                            hour = c.get(Calendar.HOUR_OF_DAY)
-                            minute = c.get(Calendar.MINUTE)
-                        }
+                        val (hour, minute) = viewModel.fetchNotifyTime()
                         // 取得した日付情報を元にダイアログを生成
-                        val dialog = TimePickerDialog(requireContext(), android.R.style.Theme_Holo_Dialog, timeListener, hour, minute, false)
+                        val dialog = TimePickerDialog(
+                            requireContext(),
+                            android.R.style.Theme_Holo_Dialog,
+                            timeListener,
+                            hour,
+                            minute,
+                            false
+                        )
                         dialog.show()
                     }
                     override fun onClickNotifyDayButton() {
-                        if (binding.notifySettingDayButton.text == "当日") {
+                        if (viewModel.notifyDay == NotifyDay.NOW.value) {
                             setUpNotifyDayAfter()
-                            lifecycleScope.launch {
-                                dataStoreManager.saveNotifyDay("前日")
-                            }
+                            viewModel.saveNotifyDay(NotifyDay.PRE)
                         } else {
                             setUpNotifyDay()
-                            lifecycleScope.launch {
-                                dataStoreManager.saveNotifyDay("当日")
-                            }
+                            viewModel.saveNotifyDay(NotifyDay.NOW)
                         }
                     }
 
                     override fun onClickNotifyMessage() {
-                        val nextFragment = InputNotifyMsgFragment()
-                        parentFragmentManager.beginTransaction().apply {
-                            add(R.id.main_frame, nextFragment)
-                            addToBackStack(null)
-                            commit()
-                        }
+                        routeView( InputNotifyMsgFragment())
                     }
 
                     override fun onClickAdsShow() {
-                        if (!calcDateInfoManager.isToday(lastDate)) {
+                        if (viewModel.isShowAd()) {
                             rewardedAd?.let { ad ->
                                 ad.show(this@SettingFragment.requireActivity(), { _ ->
-                                    lifecycleScope.launch {
-                                        // 広告を視聴し終えたら容量の追加と視聴日を保存
-                                        val newCapacity = limitCapacity + Capacity.addCapacity
-                                        dataStoreManager.saveLimitCapacity(newCapacity)
-                                        dataStoreManager.saveLastAcquisitionDate(calcDateInfoManager.getTodayString())
-                                    }
+                                    // 広告を視聴し終えたら容量の追加と視聴日を保存
+                                    viewModel.updateLimitCapacity()
                                 })
                             } ?: run {
                                 Log.d("TAG", "リワード広告がまだセットされていません。")
@@ -173,28 +140,33 @@ class SettingFragment : Fragment() {
                         }
                     }
                     override fun onClickInAppPurchase() {
-                        val nextFragment = InAppBillingFragment()
-                        parentFragmentManager.beginTransaction().apply {
-                            add(R.id.main_frame, nextFragment)
-                            addToBackStack(null)
-                            commit()
-                        }
+                        routeView(InAppBillingFragment())
                     }
 
                     override fun onClickSendIssue() {
-                        val uri = "https://appdev-room.com/contact".toUri()
-                        val intent = Intent(Intent.ACTION_VIEW,uri)
-                        startActivity(intent)
+                        routeWebView("https://appdev-room.com/contact")
                     }
                     override fun onClickPrivacyPolicy() {
-                        val uri = "https://appdev-room.com/app-terms-of-service".toUri()
-                        val intent = Intent(Intent.ACTION_VIEW,uri)
-                        startActivity(intent)
+                        routeWebView("https://appdev-room.com/app-terms-of-service")
                     }
                 }
 
                 SettingScreenRoot(handlers)
             }
+        }
+    }
+
+    private fun routeWebView(url: String) {
+        val uri = url.toUri()
+        val intent = Intent(Intent.ACTION_VIEW, uri)
+        startActivity(intent)
+    }
+
+    private fun routeView(nextFragment: Fragment) {
+        parentFragmentManager.beginTransaction().apply {
+            add(R.id.main_frame, nextFragment)
+            addToBackStack(null)
+            commit()
         }
     }
 
@@ -241,111 +213,6 @@ class SettingFragment : Fragment() {
 
         // バナーの追加と読み込み
         addAdBannerView()
-
-        // ローカルに保存している情報を取得
-        observeLocalData()
-
-//        // 戻るボタン
-//        binding.componentBackUpperContainer.backButton.setOnClickListener {
-//            showOffKeyboard()
-//            parentFragmentManager.popBackStack()
-//        }
-
-//        binding.notifySettingTimeButton.setOnClickListener {
-//            val hour: Int
-//            val minute: Int
-//            if (notifyTime != null) {
-//                // 日付を選択済みの場合は初期値を変更
-//                val parts = notifyTime!!.split(":")
-//                hour = parts[0].toInt()
-//                minute = parts[1].toInt()
-//            } else {
-//                // 現在の日付情報を取得
-//                // 初期値として7:00を格納しているため実行されない予定
-//                val c = Calendar.getInstance()
-//                hour = c.get(Calendar.HOUR_OF_DAY)
-//                minute = c.get(Calendar.MINUTE)
-//            }
-//            // 取得した日付情報を元にダイアログを生成
-//            val dialog = TimePickerDialog(requireContext(), android.R.style.Theme_Holo_Dialog, timeListener, hour, minute, false)
-//            dialog.show()
-//        }
-
-//        binding.notifySettingDayButton.setOnClickListener {
-//            if (binding.notifySettingDayButton.text == "当日") {
-//                setUpNotifyDayAfter()
-//                lifecycleScope.launch {
-//                    dataStoreManager.saveNotifyDay("前日")
-//                }
-//            } else {
-//                setUpNotifyDay()
-//                lifecycleScope.launch {
-//                    dataStoreManager.saveNotifyDay("当日")
-//                }
-//            }
-//        }
-//        binding.notifySettingMsgButton.setOnClickListener {
-//            val nextFragment = InputNotifyMsgFragment()
-//            parentFragmentManager.beginTransaction().apply {
-//                add(R.id.main_frame, nextFragment)
-//                addToBackStack(null)
-//                commit()
-//            }
-//        }
-
-//        binding.adsRewardPlayButton.setOnClickListener {
-//            if (!calcDateInfoManager.isToday(lastDate)) {
-//                rewardedAd?.let { ad ->
-//                    ad.show(this.requireActivity(), { _ ->
-//                        lifecycleScope.launch {
-//                            // 広告を視聴し終えたら容量の追加と視聴日を保存
-//                            val newCapacity = limitCapacity + Capacity.addCapacity
-//                            dataStoreManager.saveLimitCapacity(newCapacity)
-//                            dataStoreManager.saveLastAcquisitionDate(calcDateInfoManager.getTodayString())
-//                        }
-//                    })
-//                } ?: run {
-//                    Log.d("TAG", "リワード広告がまだセットされていません。")
-//                }
-//            } else {
-//                AlertDialog
-//                    .Builder(this.requireContext())
-//                    .setTitle("お知らせ")
-//                    .setMessage("広告を視聴できるのは1日に1回までです。")
-//                    .setPositiveButton("OK", { _, _ -> })
-//                    .show()
-//            }
-//        }
-
-//        binding.inAppBillingLayout.setOnClickListener {
-//            val nextFragment = InAppBillingFragment()
-//            parentFragmentManager.beginTransaction().apply {
-//                add(R.id.main_frame, nextFragment)
-//                addToBackStack(null)
-//                commit()
-//            }
-//        }
-
-//        binding.faqLayout.setOnClickListener {
-//            val nextFragment = FaqFragment()
-//            parentFragmentManager.beginTransaction().apply {
-//                add(R.id.main_frame, nextFragment)
-//                addToBackStack(null)
-//                commit()
-//            }
-//        }
-
-//        binding.appIssueLayout.setOnClickListener {
-//            val uri = "https://appdev-room.com/contact".toUri()
-//            val intent = Intent(Intent.ACTION_VIEW,uri)
-//            startActivity(intent)
-//        }
-//
-//        binding.privacyPolicyLayout.setOnClickListener {
-//            val uri = "https://appdev-room.com/app-terms-of-service".toUri()
-//            val intent = Intent(Intent.ACTION_VIEW,uri)
-//            startActivity(intent)
-//        }
     }
 
     private fun updateAdsButtonState() {
@@ -375,76 +242,10 @@ class SettingFragment : Fragment() {
     /** 日付ピッカーから選択された時に呼ばれるリスナー */
     private var timeListener =
         TimePickerDialog.OnTimeSetListener { view, hour, minutes ->
-            var minutesStr = minutes.toString()
-            if (minutesStr.length == 1) {
-                minutesStr = "0$minutesStr"
-            }
-            val time = "$hour:$minutesStr"
-            lifecycleScope.launch {
-                dataStoreManager.saveNotifyTime(time)
-            }
-        }
-
-    /** ローカルの情報を観測 */
-    private fun observeLocalData() {
-        // lifecycleScope.launchはまとめると動作しないので分割
-        lifecycleScope.launch {
-            dataStoreManager.observeNotifyTime().collect {
-                if (it != null) {
-                    binding.notifySettingTimeButton.text = it
-                    notifyTime = it
-                } else {
-                    // 初期値格納
-                    dataStoreManager.saveNotifyTime(getString(R.string.notify_default_time))
-                }
-            }
-        }
-        lifecycleScope.launch {
-            dataStoreManager.observeNotifyDay().collect {
-                if (it != null) {
-                    binding.notifySettingDayButton.text = it
-                    if (it == getString(R.string.notify_default_day)) {
-                        setUpNotifyDay()
-                    } else {
-                        setUpNotifyDayAfter()
-                    }
-                } else {
-                    // 初期値格納
-                    dataStoreManager.saveNotifyDay(getString(R.string.notify_default_day))
-                }
-            }
-        }
-
-        lifecycleScope.launch {
-            dataStoreManager.observeLimitCapacity().collect {
-                if (it != null) {
-                    limitCapacity = it
-                    binding.adsSettingCapacityLabel.text = requireContext().getString(R.string.ads_setting_capacity_label, it)
-                } else {
-                    // 初期値格納
-                    dataStoreManager.saveLimitCapacity(Capacity.initialCapacity)
-                }
-            }
-        }
-
-        lifecycleScope.launch {
-            dataStoreManager.observeLastAcquisitionDate().collect {
-                if (it != null) {
-                    lastDate = it
-                } else {
-                    // 初期値格納
-                    dataStoreManager.saveLastAcquisitionDate("")
-                }
-            }
-        }
-
-        lifecycleScope.launch {
-            dataStoreManager.observeInAppUnlockStorage().collect {
-                if (it) {
-                    binding.adsSettingShowReward.visibility = View.GONE
-                    binding.adsSettingCapacityLabel.text = "現在の容量：容量解放済み"
-                }
-            }
+            viewModel.saveNotifyTime(
+                hour = hour,
+                minutes = minutes
+            )
         }
     }
 
@@ -744,7 +545,7 @@ private fun SettingScreenPreview() {
             modifier = Modifier.fillMaxSize(),
             color = colorResource(id = R.color.thema_gray_light)
         ) {
-            
+
             val handlers = object : SettingEventHandler {
                 override fun onBack() {}
                 override fun onClickFaq() {}

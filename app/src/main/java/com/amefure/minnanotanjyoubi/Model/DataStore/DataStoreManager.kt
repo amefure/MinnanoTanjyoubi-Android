@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.amefure.minnanotanjyoubi.Model.domain.NotifyDay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.firstOrNull
@@ -63,16 +64,30 @@ class DataStoreManager(
                 preferences[NOTIFY_TIME]
             }
 
+    /** 取得；通知時間 */
+    suspend fun getNotifyTime(): String? =
+        context.dataStore.data
+            .catch { exception ->
+                if (exception is IOException) {
+                    emit(emptyPreferences())
+                } else {
+                    throw exception
+                }
+            }.firstOrNull() // 最初の値を1回だけ取得
+            ?.get(NOTIFY_TIME)
+
     /** 保存；通知日 */
-    suspend fun saveNotifyDay(notifyDay: String) {
+    suspend fun saveNotifyDay(notifyDay: NotifyDay) {
         try {
             context.dataStore.edit { preferences ->
-                preferences[NOTIFY_DAY] = notifyDay
+                preferences[NOTIFY_DAY] = notifyDay.value
             }
         } catch (e: IOException) {
             // Handle the exception here if needed
         }
     }
+
+
 
     /** 観測；通知日 */
     public fun observeNotifyDay(): Flow<String?> =
@@ -86,6 +101,18 @@ class DataStoreManager(
             }.map { preferences ->
                 preferences[NOTIFY_DAY]
             }
+
+    /** 取得；通知日 */
+    suspend fun getNotifyDay(): String? =
+        context.dataStore.data
+            .catch { exception ->
+                if (exception is IOException) {
+                    emit(emptyPreferences())
+                } else {
+                    throw exception
+                }
+            }.firstOrNull() // 最初の値を1回だけ取得
+            ?.get(NOTIFY_DAY)
 
     /** 保存；通知メッセージ */
     suspend fun saveNotifyMsg(notifyMsg: String) {
@@ -147,6 +174,18 @@ class DataStoreManager(
                 preferences[LIMIT_CAPACITY]
             }
 
+    /** 取得；容量 */
+    suspend fun getLimitCapacity(): Int? =
+        context.dataStore.data
+            .catch { exception ->
+                if (exception is IOException) {
+                    emit(emptyPreferences())
+                } else {
+                    throw exception
+                }
+            }.firstOrNull() // 最初の値を1回だけ取得
+            ?.get(LIMIT_CAPACITY)
+
     /** 保存；最終視聴日 */
     suspend fun saveLastAcquisitionDate(date: String) {
         try {
@@ -170,6 +209,18 @@ class DataStoreManager(
             }.map { preferences ->
                 preferences[LAST_ACQUISITION_DATE]
             }
+
+    /** 取得；最終視聴日 */
+    suspend fun getLastAcquisitionDate(): String? =
+        context.dataStore.data
+            .catch { exception ->
+                if (exception is IOException) {
+                    emit(emptyPreferences())
+                } else {
+                    throw exception
+                }
+            }.firstOrNull() // 最初の値を1回だけ取得
+            ?.get(LAST_ACQUISITION_DATE)
 
     /** 保存；広告削除購入フラグ */
     suspend fun saveInAppRemoveAdsFlag(purchased: Boolean) {
@@ -218,18 +269,6 @@ class DataStoreManager(
         }
     }
 
-    /** 取得；容量解放購入フラグ */
-    suspend fun getInAppUnlockStorage(): Boolean =
-        context.dataStore.data
-            .catch { exception ->
-                if (exception is IOException) {
-                    emit(emptyPreferences())
-                } else {
-                    throw exception
-                }
-            }.firstOrNull() // 最初の値を1回だけ取得
-            ?.get(IN_APP_UNLOCK_STORAGE) ?: false
-
     /** 観測；容量解放購入フラグ */
     public fun observeInAppUnlockStorage(): Flow<Boolean> =
         context.dataStore.data
@@ -242,4 +281,16 @@ class DataStoreManager(
             }.map { preferences ->
                 preferences[IN_APP_UNLOCK_STORAGE] ?: false
             }
+
+    /** 取得；容量解放購入フラグ */
+    suspend fun getInAppUnlockStorage(): Boolean =
+        context.dataStore.data
+            .catch { exception ->
+                if (exception is IOException) {
+                    emit(emptyPreferences())
+                } else {
+                    throw exception
+                }
+            }.firstOrNull() // 最初の値を1回だけ取得
+            ?.get(IN_APP_UNLOCK_STORAGE) ?: false
 }
