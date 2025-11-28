@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.LinearLayout
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -64,6 +65,12 @@ import com.amefure.minnanotanjyoubi.ViewModel.SettingViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.getValue
 
+/** 遷移ロジック */
+private sealed class Route {
+    data class Web(val url: String) : Route()
+    data class View(val fragment: Fragment) : Route()
+}
+
 @AndroidEntryPoint
 class SettingFragment : Fragment() {
 
@@ -91,7 +98,7 @@ class SettingFragment : Fragment() {
                     }
 
                     override fun onClickFaq() {
-                        routeView( FaqFragment())
+                        route(Route.View(FaqFragment()))
                     }
                     override fun onClickNotifyTimeButton() {
                         val (hour, minute) = viewModel.fetchNotifyTime()
@@ -117,7 +124,7 @@ class SettingFragment : Fragment() {
                     }
 
                     override fun onClickNotifyMessage() {
-                        routeView( InputNotifyMsgFragment())
+                        route(Route.View(InputNotifyMsgFragment()))
                     }
 
                     override fun onClickAdsShow() {
@@ -140,14 +147,15 @@ class SettingFragment : Fragment() {
                         }
                     }
                     override fun onClickInAppPurchase() {
-                        routeView(InAppBillingFragment())
+                        route(Route.View(InAppBillingFragment()))
                     }
 
                     override fun onClickSendIssue() {
-                        routeWebView("https://appdev-room.com/contact")
+                        route(Route.Web("https://appdev-room.com/contact"))
                     }
+
                     override fun onClickPrivacyPolicy() {
-                        routeWebView("https://appdev-room.com/app-terms-of-service")
+                        route(Route.Web("https://appdev-room.com/app-terms-of-service"))
                     }
                 }
 
@@ -156,20 +164,21 @@ class SettingFragment : Fragment() {
         }
     }
 
-    private fun routeWebView(url: String) {
-        val uri = url.toUri()
-        val intent = Intent(Intent.ACTION_VIEW, uri)
-        startActivity(intent)
-    }
-
-    private fun routeView(nextFragment: Fragment) {
-        parentFragmentManager.beginTransaction().apply {
-            add(R.id.main_frame, nextFragment)
-            addToBackStack(null)
-            commit()
+    private fun route(to: Route) {
+        when (to) {
+            is Route.Web -> {
+                val intent = Intent(Intent.ACTION_VIEW, to.url.toUri())
+                startActivity(intent)
+            }
+            is Route.View -> {
+                parentFragmentManager.beginTransaction().apply {
+                    add(R.id.main_frame, to.fragment)
+                    addToBackStack(null)
+                    commit()
+                }
+            }
         }
     }
-
 //    override fun onCreateView(
 //        inflater: LayoutInflater,
 //        container: ViewGroup?,
@@ -212,7 +221,7 @@ class SettingFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // バナーの追加と読み込み
-        addAdBannerView()
+       // addAdBannerView()
     }
 
     private fun updateAdsButtonState() {
@@ -247,7 +256,6 @@ class SettingFragment : Fragment() {
                 minutes = minutes
             )
         }
-    }
 
     /**
      *  AdMob バナー広告の追加と読み込み
@@ -306,8 +314,8 @@ class SettingFragment : Fragment() {
         _binding = null
         super.onDestroy()
     }
-
 }
+
 
 @Composable
 private fun SettingScreenRoot(
@@ -482,12 +490,21 @@ private fun SettingRowItem(
         ),
         modifier = Modifier
             .fillMaxWidth()
+            .clickable {
+                onClick()
+            }
     ) {
         Row (
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .padding(8.dp)
         ) {
+
+            Spacer(
+                modifier = Modifier
+                    .width(8.dp)
+            )
+
             Icon(
                 painter = iconPainter,
                 tint = colorResource(id = R.color.thema_orange),
