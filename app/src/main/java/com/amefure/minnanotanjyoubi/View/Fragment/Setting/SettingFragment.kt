@@ -32,6 +32,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -57,11 +58,14 @@ import com.google.android.gms.ads.rewarded.RewardedAd
 import kotlinx.coroutines.launch
 import androidx.core.net.toUri
 import androidx.fragment.app.viewModels
-import com.amefure.minnanotanjyoubi.Model.domain.NotifyDay
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.amefure.minnanotanjyoubi.View.Compose.BackUpperBar
 import com.amefure.minnanotanjyoubi.View.Compose.components.CustomText
 import com.amefure.minnanotanjyoubi.View.Compose.components.TextSize
 import com.amefure.minnanotanjyoubi.ViewModel.SettingViewModel
+import com.google.android.gms.ads.FullScreenContentCallback
+import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.getValue
 
@@ -83,85 +87,108 @@ class SettingFragment : Fragment() {
     private var _binding: FragmentSettingBinding? = null
     private val binding get() = _binding!!
 
+    private val handlers = object : SettingEventHandler {
+        override fun onBack() {
+            showOffKeyboard()
+            parentFragmentManager.popBackStack()
+        }
+
+        override fun onClickFaq() {
+            route(Route.View(FaqFragment()))
+        }
+        override fun onClickNotifyTimeButton() {
+            val (hour, minute) = viewModel.fetchNotifyTime()
+            // 取得した日付情報を元にダイアログを生成
+            val dialog = TimePickerDialog(
+                requireContext(),
+                android.R.style.Theme_Holo_Dialog,
+                timeListener,
+                hour,
+                minute,
+                false
+            )
+            dialog.show()
+        }
+        override fun onClickNotifyDayButton() {
+            viewModel.switchNotifyDay()
+        }
+
+        override fun onClickNotifyMessage() {
+            route(Route.View(InputNotifyMsgFragment()))
+        }
+
+        override fun onClickAdsShow() {
+            if (viewModel.isShowAd()) {
+                rewardedAd?.let { ad ->
+                    ad.show(this@SettingFragment.requireActivity(), { _ ->
+                        // 広告を視聴し終えたら容量の追加と視聴日を保存
+                        viewModel.updateLimitCapacity()
+                    })
+                } ?: run {
+                    Log.e("AdMob", "リワード広告がまだセットされていません。")
+                }
+            } else {
+                AlertDialog
+                    .Builder(this@SettingFragment.requireContext())
+                    .setTitle("お知らせ")
+                    .setMessage("広告を視聴できるのは1日に1回までです。")
+                    .setPositiveButton("OK", { _, _ -> })
+                    .show()
+            }
+        }
+        override fun onClickInAppPurchase() {
+            route(Route.View(InAppBillingFragment()))
+        }
+
+        override fun onClickSendIssue() {
+            route(Route.Web("https://appdev-room.com/contact"))
+        }
+
+        override fun onClickPrivacyPolicy() {
+            route(Route.Web("https://appdev-room.com/app-terms-of-service"))
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        // リワード広告の読み込み
+        loadingRewordAds()
+
         dataStoreManager = DataStoreManager(this.requireContext())
         return ComposeView(requireContext()).apply {
             setContent {
-                val handlers = object : SettingEventHandler {
-                    override fun onBack() {
-                        showOffKeyboard()
-                        parentFragmentManager.popBackStack()
-                    }
-
-                    override fun onClickFaq() {
-                        route(Route.View(FaqFragment()))
-                    }
-                    override fun onClickNotifyTimeButton() {
-                        val (hour, minute) = viewModel.fetchNotifyTime()
-                        // 取得した日付情報を元にダイアログを生成
-                        val dialog = TimePickerDialog(
-                            requireContext(),
-                            android.R.style.Theme_Holo_Dialog,
-                            timeListener,
-                            hour,
-                            minute,
-                            false
-                        )
-                        dialog.show()
-                    }
-                    override fun onClickNotifyDayButton() {
-                        if (viewModel.notifyDay == NotifyDay.NOW.value) {
-                            setUpNotifyDayAfter()
-                            viewModel.saveNotifyDay(NotifyDay.PRE)
-                        } else {
-                            setUpNotifyDay()
-                            viewModel.saveNotifyDay(NotifyDay.NOW)
-                        }
-                    }
-
-                    override fun onClickNotifyMessage() {
-                        route(Route.View(InputNotifyMsgFragment()))
-                    }
-
-                    override fun onClickAdsShow() {
-                        if (viewModel.isShowAd()) {
-                            rewardedAd?.let { ad ->
-                                ad.show(this@SettingFragment.requireActivity(), { _ ->
-                                    // 広告を視聴し終えたら容量の追加と視聴日を保存
-                                    viewModel.updateLimitCapacity()
-                                })
-                            } ?: run {
-                                Log.d("TAG", "リワード広告がまだセットされていません。")
-                            }
-                        } else {
-                            AlertDialog
-                                .Builder(this@SettingFragment.requireContext())
-                                .setTitle("お知らせ")
-                                .setMessage("広告を視聴できるのは1日に1回までです。")
-                                .setPositiveButton("OK", { _, _ -> })
-                                .show()
-                        }
-                    }
-                    override fun onClickInAppPurchase() {
-                        route(Route.View(InAppBillingFragment()))
-                    }
-
-                    override fun onClickSendIssue() {
-                        route(Route.Web("https://appdev-room.com/contact"))
-                    }
-
-                    override fun onClickPrivacyPolicy() {
-                        route(Route.Web("https://appdev-room.com/app-terms-of-service"))
-                    }
-                }
-
                 SettingScreenRoot(handlers)
             }
         }
+    }
+
+    private fun loadingRewordAds() {
+        val rewardId = if (BuildConfig.DEBUG) BuildConfig.ADMOB_REWARD_ID_TEST else BuildConfig.ADMOB_REWARD_ID_PROD
+        val adRequest = AdRequest.Builder().build()
+        RewardedAd.load(
+            this.requireContext(),
+            rewardId,
+            adRequest,
+            object : RewardedAdLoadCallback() {
+                override fun onAdFailedToLoad(adError: LoadAdError) {
+                    Log.d("AdMob", "ロード失敗")
+                    rewardedAd = null
+                    viewModel.updateAdsButtonState(false)
+                }
+
+                override fun onAdLoaded(ad: RewardedAd) {
+                    Log.d("AdMob", "ロード完了")
+                    rewardedAd = ad
+                    viewModel.updateAdsButtonState(true)
+                }
+            },
+        )
+
+        // これがないと視聴できない？
+        rewardedAd?.fullScreenContentCallback = object : FullScreenContentCallback() {}
     }
 
     private fun route(to: Route) {
@@ -178,74 +205,6 @@ class SettingFragment : Fragment() {
                 }
             }
         }
-    }
-//    override fun onCreateView(
-//        inflater: LayoutInflater,
-//        container: ViewGroup?,
-//        savedInstanceState: Bundle?,
-//    ): View {
-//        _binding = FragmentSettingBinding.inflate(inflater, container, false)
-//
-//        val rewardId = if (BuildConfig.DEBUG) BuildConfig.ADMOB_REWARD_ID_TEST else BuildConfig.ADMOB_REWARD_ID_PROD
-//        val adRequest = AdRequest.Builder().build()
-//        RewardedAd.load(
-//            this.requireContext(),
-//            rewardId,
-//            adRequest,
-//            object : RewardedAdLoadCallback() {
-//                override fun onAdFailedToLoad(adError: LoadAdError) {
-//                    Log.d("Admob", "ロード失敗")
-//                    rewardedAd = null
-//                    updateAdsButtonState()
-//                }
-//
-//                override fun onAdLoaded(ad: RewardedAd) {
-//                    Log.d("Admob", "ロード完了")
-//                    rewardedAd = ad
-//                    updateAdsButtonState()
-//                }
-//            },
-//        )
-//
-//        // これがないと視聴できない？
-//        rewardedAd?.fullScreenContentCallback = object : FullScreenContentCallback() {}
-//
-//        dataStoreManager = DataStoreManager(this.requireContext())
-//        return binding.root
-//    }
-
-    override fun onViewCreated(
-        view: View,
-        savedInstanceState: Bundle?,
-    ) {
-        super.onViewCreated(view, savedInstanceState)
-
-        // バナーの追加と読み込み
-       // addAdBannerView()
-    }
-
-    private fun updateAdsButtonState() {
-        if (rewardedAd != null) {
-            binding.adsRewardPlayButton.text = "追加"
-            val colorValue = ContextCompat.getColorStateList(this.requireContext(), R.color.thema_yelow)
-            binding.adsRewardPlayButton.backgroundTintList = colorValue
-        } else {
-            binding.adsRewardPlayButton.text = getString(R.string.ads_setting_loading)
-            val colorValue = ContextCompat.getColorStateList(this.requireContext(), R.color.thema_gray_dark)
-            binding.adsRewardPlayButton.backgroundTintList = colorValue
-        }
-    }
-
-    private fun setUpNotifyDay() {
-        binding.notifySettingDayButton.text = "当日"
-        val colorValue = ContextCompat.getColorStateList(this.requireContext(), R.color.thema_red)
-        binding.notifySettingDayButton.backgroundTintList = colorValue
-    }
-
-    private fun setUpNotifyDayAfter() {
-        binding.notifySettingDayButton.text = "前日"
-        val colorValue = ContextCompat.getColorStateList(this.requireContext(), R.color.thema_blue)
-        binding.notifySettingDayButton.backgroundTintList = colorValue
     }
 
     /** 日付ピッカーから選択された時に呼ばれるリスナー */
@@ -320,7 +279,12 @@ class SettingFragment : Fragment() {
 @Composable
 private fun SettingScreenRoot(
     handlers: SettingEventHandler,
+    viewModel: SettingViewModel = hiltViewModel()
 ) {
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchSetUpLocalData()
+    }
 
     val settingItems = listOf(
 
@@ -331,13 +295,13 @@ private fun SettingScreenRoot(
         SettingRowData(
             icon = painterResource(R.drawable.ic_notify_clock),
             title = stringResource(R.string.notify_setting_label),
-            buttonText = "7:00",
+            buttonText = viewModel.notifyTime,
             buttonOnClick = handlers::onClickNotifyTimeButton
         ),
         SettingRowData(
             icon =  painterResource(R.drawable.ic_calendar),
             title = stringResource(R.string.notify_setting_label2),
-            buttonText = stringResource(R.string.notify_default_day),
+            buttonText = viewModel.notifyDay,
             buttonOnClick = handlers::onClickNotifyDayButton
         ),
         SettingRowData(
@@ -358,12 +322,12 @@ private fun SettingScreenRoot(
         SettingRowData(
             icon = painterResource(R.drawable.ic_person_add),
             title = stringResource(R.string.ads_setting_show_label),
-            buttonText = stringResource(R.string.ads_setting_loading),
+            buttonText = viewModel.adsButtonText,
             buttonOnClick = handlers::onClickAdsShow
         ),
         SettingRowData(
             icon =  painterResource(R.drawable.ic_person),
-            title = stringResource(R.string.ads_setting_capacity_label),
+            title = stringResource(R.string.ads_setting_capacity_label, viewModel.currentCapacity),
         ),
         SettingRowData(
             icon =  painterResource(R.drawable.ic_giftcard),
@@ -398,6 +362,7 @@ private fun SettingScreenRoot(
             title = stringResource(R.string.other_setting_privacy_policy_label),
             onClick = handlers::onClickPrivacyPolicy,
         ),
+        SettingSectionSpacer(),
     )
 
     MaterialTheme {

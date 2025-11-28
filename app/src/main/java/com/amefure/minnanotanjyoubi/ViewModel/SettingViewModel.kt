@@ -1,6 +1,7 @@
 package com.amefure.minnanotanjyoubi.ViewModel
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -35,20 +36,25 @@ class SettingViewModel @Inject constructor(
     private val defaultNotifyTime = context.getString(R.string.notify_default_time)
     /** デフォルト通知日 */
     private val defaultNotifyDay = context.getString(R.string.notify_default_day)
+    /** リワード広告読み込み中 */
+    private val adsLoadingText = context.getString(R.string.ads_setting_loading)
     /** 初期容量 */
     private val initialCapacity = Capacity.initialCapacity
 
     /** 通知時間 */
-    public var notifyTime by mutableStateOf(defaultNotifyTime)
+    var notifyTime by mutableStateOf(defaultNotifyTime)
         private set
     /** 通知日 */
-    public var notifyDay by mutableStateOf(defaultNotifyDay)
+    var notifyDay by mutableStateOf(defaultNotifyDay)
         private set
     /** 現在の容量 */
-    public var currentCapacity by mutableStateOf(initialCapacity)
+    var currentCapacity by mutableStateOf(initialCapacity)
         private set
     /** 容量解放フラグ */
-    public var unlockStorage by mutableStateOf(false)
+    var unlockStorage by mutableStateOf(false)
+        private set
+    /** リワード広告視聴開始ボタン */
+    var adsButtonText by mutableStateOf(adsLoadingText)
         private set
 
     /** 最終視聴日 */
@@ -65,7 +71,15 @@ class SettingViewModel @Inject constructor(
         object Saved : UiEvent()
     }
 
-    init {
+    fun updateAdsButtonState(isEnabled: Boolean) {
+        if (isEnabled) {
+            adsButtonText = context.getString(R.string.ads_setting_add)
+        } else {
+            adsButtonText = adsLoadingText
+        }
+    }
+
+    fun fetchSetUpLocalData() {
         viewModelScope.launch {
             val time = withContext(Dispatchers.IO) { dataStoreManager.getNotifyTime() }
             val day = withContext(Dispatchers.IO) { dataStoreManager.getNotifyDay() }
@@ -76,6 +90,7 @@ class SettingViewModel @Inject constructor(
             withContext(Dispatchers.Main) {
                 // メインスレッドで更新しないとUIに反映されない
                 notifyTime = time ?: defaultNotifyTime
+                Log.d("99999", "取得" + notifyTime)
                 notifyDay = day ?: defaultNotifyDay
                 currentCapacity = capacity ?: initialCapacity
                 lastAcquisitionDate = acquisitionDate ?: ""
@@ -84,9 +99,20 @@ class SettingViewModel @Inject constructor(
         }
     }
 
-    fun saveNotifyDay(notifyDay: NotifyDay) {
-        viewModelScope.launch {
+    fun switchNotifyDay() {
+        if (notifyDay == NotifyDay.NOW.value) {
+            saveNotifyDay(NotifyDay.PRE)
+        } else {
+            saveNotifyDay(NotifyDay.NOW)
+        }
+    }
+
+    private fun saveNotifyDay(notifyDay: NotifyDay) {
+        viewModelScope.launch(Dispatchers.IO) {
             dataStoreManager.saveNotifyDay(notifyDay)
+            withContext(Dispatchers.Main) {
+                this@SettingViewModel.notifyDay = notifyDay.value
+            }
         }
     }
 
@@ -96,8 +122,11 @@ class SettingViewModel @Inject constructor(
             minutesStr = "0$minutesStr"
         }
         val time = "$hour:$minutesStr"
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             dataStoreManager.saveNotifyTime(time)
+            withContext(Dispatchers.Main) {
+                notifyTime = time
+            }
         }
     }
 
